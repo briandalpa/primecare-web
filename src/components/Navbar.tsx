@@ -14,6 +14,12 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import MobileNavDrawer from '@/components/MobileNavDrawer';
+import UserProfileDrawer from '@/components/UserProfileDrawer';
+import NavUserMenu from '@/components/NavUserMenu';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { useSession } from '@/lib/auth-client';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
+import { getInitials } from '@/utils/auth';
 
 export interface NavLink {
   label: string;
@@ -84,7 +90,10 @@ function MobileMenuButton({
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [navDrawerOpen, setNavDrawerOpen] = useState(false);
+  const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
+  const { data: session } = useSession();
+  const { profile, effectiveRole, isPending } = useCurrentUser();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -104,12 +113,33 @@ export default function Navbar() {
         )}
       >
         <div className="container mx-auto px-4 grid grid-cols-3 items-center h-16 md:h-20 md:flex md:items-center md:gap-8">
-          {/* Left slot: reserved for profile button (added after auth feature) */}
-          <div className="md:hidden" />
+          {/* Left slot: avatar button on mobile that opens the nav drawer */}
+          <div className="md:hidden">
+            {session && (
+              <button
+                aria-label="Open account menu"
+                onClick={() => setProfileDrawerOpen(true)}
+                className="p-1 rounded-full active:bg-accent/80 transition-colors"
+              >
+                <Avatar size="sm" className="ring-2 ring-primary/80">
+                  <AvatarImage
+                    src={
+                      profile?.avatarUrl ?? session.user.image ?? undefined
+                    }
+                    alt={session.user.name}
+                    referrerPolicy="no-referrer"
+                  />
+                  <AvatarFallback>
+                    {getInitials(session.user.name)}
+                  </AvatarFallback>
+                </Avatar>
+              </button>
+            )}
+          </div>
 
           <Link
             to="/"
-            className="flex items-center gap-2 justify-self-center md:justify-self-auto"
+            className="flex items-center gap-2 justify-self-center md:justify-self-auto md:flex-1"
           >
             <Bubbles className="h-7 w-7 text-primary" />
             <span className="text-xl font-bold text-primary-dark font-heading">
@@ -121,20 +151,35 @@ export default function Navbar() {
             <DesktopNavLinks />
           </div>
 
-          <div className="flex items-center justify-end gap-3">
-            <DesktopAuthButtons />
+          <div className="flex items-center justify-end gap-3 md:flex-1">
+            {isPending ? null : session ? (
+              <NavUserMenu
+                name={session.user.name}
+                email={session.user.email}
+                avatarUrl={profile?.avatarUrl ?? session.user.image ?? undefined}
+                role={effectiveRole}
+              />
+            ) : (
+              <DesktopAuthButtons />
+            )}
             <MobileMenuButton
-              open={drawerOpen}
-              onClick={() => setDrawerOpen(true)}
+              open={navDrawerOpen}
+              onClick={() => setNavDrawerOpen(true)}
             />
           </div>
         </div>
       </nav>
 
       <MobileNavDrawer
-        open={drawerOpen}
-        onOpenChange={setDrawerOpen}
+        open={navDrawerOpen}
+        onOpenChange={setNavDrawerOpen}
         navLinks={navLinks}
+        isAuthenticated={!!session}
+      />
+      <UserProfileDrawer
+        open={profileDrawerOpen}
+        onOpenChange={setProfileDrawerOpen}
+        session={session ? { user: { ...session.user, role: effectiveRole } } : null}
       />
     </>
   );

@@ -17,6 +17,7 @@ interface MobileNavDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   navLinks: NavLink[];
+  isAuthenticated: boolean;
 }
 
 function useActiveHash() {
@@ -117,6 +118,7 @@ export default function MobileNavDrawer({
   open,
   onOpenChange,
   navLinks,
+  isAuthenticated,
 }: MobileNavDrawerProps) {
   const handleClose = () => onOpenChange(false);
 
@@ -151,7 +153,7 @@ export default function MobileNavDrawer({
           <NavLinkList links={navLinks} onClose={handleClose} />
         </nav>
 
-        <DrawerAuthButtons onClose={handleClose} />
+        {!isAuthenticated && <DrawerAuthButtons onClose={handleClose} />}
       </DrawerContent>
     </Drawer>
   );
