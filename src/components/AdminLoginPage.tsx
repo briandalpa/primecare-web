@@ -35,36 +35,75 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <form
-        onSubmit={handleLogin}
-        className="w-96 space-y-4 rounded-lg border p-6 shadow"
-      >
-        <h1 className="text-xl font-bold">Admin Portal</h1>
+  <div className="flex min-h-screen items-center justify-center bg-gray-50">
+    <div className="w-[420px] rounded-2xl bg-white p-8 shadow-lg">
 
-        <input
-          type="email"
-          placeholder="Email"
-          className="w-full border p-2"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+      {/* Logo */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-400 text-white text-sm font-bold">
+          PC
+        </div>
+        <span className="text-2xl font-semibold text-teal-600">
+          PrimeCare
+        </span>
+      </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="w-full border p-2"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+      {/* Admin Portal */}
+      <div className="flex items-center justify-center gap-2 text-gray-500 mb-4">
+        <span>🛡️</span>
+        <span className="text-sm font-medium">ADMIN PORTAL</span>
+      </div>
+
+      {/* Title */}
+      <h1 className="text-center text-2xl font-bold mb-2">
+        Admin Sign In
+      </h1>
+
+      <p className="text-center text-gray-500 mb-6">
+        Access the management dashboard
+      </p>
+
+      <form onSubmit={handleLogin} className="space-y-4">
+
+        <div>
+          <label className="text-sm font-medium">Email</label>
+          <input
+            type="email"
+            placeholder="admin@primecare.com"
+            className="mt-1 w-full rounded-lg border p-2"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="text-sm font-medium">Password</label>
+          <input
+            type="password"
+            placeholder="••••••••"
+            className="mt-1 w-full rounded-lg border p-2"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
 
         <button
           type="submit"
-          className="w-full rounded bg-teal-600 p-2 text-white"
+          className="w-full rounded-lg bg-teal-600 py-2 text-white font-medium hover:bg-teal-700"
         >
           Sign In
         </button>
+
       </form>
+
+      <p className="mt-6 text-center text-sm text-gray-500">
+        Not an admin?{" "}
+        <a href="/" className="text-teal-600 hover:underline">
+          Customer Login
+        </a>
+      </p>
+
     </div>
-  );
+  </div>
+);
 }
