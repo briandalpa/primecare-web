@@ -1,3 +1,4 @@
+import BrandStorySection from '@/features/landing-page/brand-story/BrandStorySection';
 import ServicesSection from '@/features/landing-page/company-services/ServicesSection';
 import FAQSection from '@/features/landing-page/faq/FAQSection';
 import FeaturesStrip from '@/features/landing-page/features-strip/FeaturesStrip';
@@ -15,6 +16,7 @@ export default function LandingPage() {
       <HowItWorksSection />
       <FAQSection />
       <OutletsSection />
+      <BrandStorySection />
     </MainLayout>
   );
 }
