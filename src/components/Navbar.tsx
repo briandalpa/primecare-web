@@ -123,9 +123,7 @@ export default function Navbar() {
               >
                 <Avatar size="sm" className="ring-2 ring-primary/80">
                   <AvatarImage
-                    src={
-                      profile?.avatarUrl ?? session.user.image ?? undefined
-                    }
+                    src={profile?.avatarUrl ?? session.user.image ?? undefined}
                     alt={session.user.name}
                     referrerPolicy="no-referrer"
                   />
@@ -156,7 +154,9 @@ export default function Navbar() {
               <NavUserMenu
                 name={session.user.name}
                 email={session.user.email}
-                avatarUrl={profile?.avatarUrl ?? session.user.image ?? undefined}
+                avatarUrl={
+                  profile?.avatarUrl ?? session.user.image ?? undefined
+                }
                 role={effectiveRole}
               />
             ) : (
@@ -179,7 +179,9 @@ export default function Navbar() {
       <UserProfileDrawer
         open={profileDrawerOpen}
         onOpenChange={setProfileDrawerOpen}
-        session={session ? { user: { ...session.user, role: effectiveRole } } : null}
+        session={
+          session ? { user: { ...session.user, role: effectiveRole } } : null
+        }
       />
     </>
   );
