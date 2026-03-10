@@ -1,20 +1,19 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useSession } from "@/lib/auth-client";
-
-type UserRole = "CUSTOMER" | "SUPER_ADMIN" | "OUTLET_ADMIN" | "WORKER" | "DRIVER";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import type { UserRole } from "@/utils/auth";
 
 interface RoleRouteProps {
   allowedRoles: UserRole[];
 }
 
 export function RoleRoute({ allowedRoles }: RoleRouteProps) {
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending: sessionPending } = useSession();
+  const { effectiveRole, isPending: profilePending } = useCurrentUser();
 
-  if (isPending) return null;
+  if (sessionPending || profilePending) return null;
   if (!session) return <Navigate to="/" replace />;
-
-  const role = session.user.role as UserRole;
-  if (!allowedRoles.includes(role)) return <Navigate to="/" replace />;
+  if (!allowedRoles.includes(effectiveRole)) return <Navigate to="/" replace />;
 
   return <Outlet />;
 }
