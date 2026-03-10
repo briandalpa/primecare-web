@@ -1,4 +1,5 @@
-import { Bubbles, X } from 'lucide-react';
+import { X } from 'lucide-react';
+import primeCareLogo from '@/assets/prime-care.png';
 import { Link } from 'react-router-dom';
 import {
   Drawer,
@@ -43,7 +44,7 @@ export default function UserProfileDrawer({
               className="flex items-center gap-2"
               aria-label="PrimeCare home"
             >
-              <Bubbles className="h-7 w-7 text-primary" />
+              <img src={primeCareLogo} alt="PrimeCare" className="h-7 w-7 object-contain -mx-1" />
               <span className="text-xl font-bold text-primary-dark font-heading">
                 PrimeCare
               </span>
@@ -52,7 +53,7 @@ export default function UserProfileDrawer({
           <DrawerClose asChild>
             <button
               aria-label="Close account menu"
-              className="rounded-md p-2 active:bg-accent/80 transition-colors -mr-1"
+              className="rounded-md p-2 active:bg-accent/80 transition-colors cursor-pointer -mr-1"
             >
               <X className="h-5 w-5 text-foreground" />
             </button>

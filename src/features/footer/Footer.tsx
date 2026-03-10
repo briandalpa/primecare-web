@@ -1,4 +1,5 @@
-import { Mail, Instagram, Facebook, Twitter, Bubbles } from 'lucide-react';
+import { Mail, Instagram, Facebook, Twitter } from 'lucide-react';
+import primeCareLogo from '@/assets/prime-care.png';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +11,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <Bubbles className="text-primary-foreground" />
+              <img src={primeCareLogo} alt="PrimeCare" className="h-7 w-7 object-contain -mx-1" />
               <span className="text-lg font-bold text-primary-foreground font-heading">
                 PrimeCare
               </span>

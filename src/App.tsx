@@ -4,7 +4,7 @@ import "./App.css";
 import LandingPage from "./pages/LandingPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 
-import AdminRoleRoute from "@/layouts/AdminRoleRoute";
+import { RoleRoute } from "@/features/auth/RoleRoute";
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
         {/* Admin Protected Routes */}
         <Route
           element={
-            <AdminRoleRoute allowedRoles={["SUPER_ADMIN", "OUTLET_ADMIN"]} />
+            <RoleRoute allowedRoles={["SUPER_ADMIN", "OUTLET_ADMIN"]} />
           }
         >
           <Route

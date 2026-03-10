@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const ARROW_CLS =
-  'h-10 w-10 rounded-full bg-background/10 backdrop-blur-sm border border-background/20 flex items-center justify-center text-background/80 hover:bg-background/20 transition-colors';
+  'h-10 w-10 rounded-full bg-background/10 backdrop-blur-sm border border-background/20 flex items-center justify-center text-background/80 hover:bg-background/20 transition-colors cursor-pointer';
 
 function CarouselDots({
   count,
@@ -18,7 +18,7 @@ function CarouselDots({
         <button
           key={i}
           onClick={() => goTo(i, i > current ? 'next' : 'prev')}
-          className={`h-2 rounded-full transition-all duration-500 ${i === current ? 'w-8 bg-primary' : 'w-2 bg-background/40 hover:bg-background/60'}`}
+          className={`h-2 rounded-full transition-all duration-500 cursor-pointer ${i === current ? 'w-8 bg-primary' : 'w-2 bg-background/40 hover:bg-background/60'}`}
           aria-label={`Go to slide ${i + 1}`}
         />
       ))}

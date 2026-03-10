@@ -35,7 +35,7 @@ export default function DrawerUserSection({
       <Link
         to="/profile"
         onClick={onClose}
-        className="flex items-center gap-4 px-5 py-4 hover:bg-accent/50 active:bg-accent/80 transition-colors"
+        className="flex items-center gap-4 px-5 py-4 hover:bg-accent/50 active:bg-accent/80 transition-colors cursor-pointer"
       >
         <Avatar size="lg" className="ring-2 ring-primary/80">
           <AvatarImage src={imageSrc} alt={name} referrerPolicy="no-referrer" />
@@ -62,7 +62,7 @@ export default function DrawerUserSection({
               <Link
                 to={getDashboardRoute(role)}
                 onClick={onClose}
-                className="flex items-center w-full px-5 py-3.5 text-sm font-medium text-foreground/80 hover:bg-accent/50 active:bg-accent/80 transition-colors"
+                className="flex items-center w-full px-5 py-3.5 text-sm font-medium text-foreground/80 hover:bg-accent/50 active:bg-accent/80 transition-colors cursor-pointer"
               >
                 Dashboard
               </Link>
@@ -73,7 +73,7 @@ export default function DrawerUserSection({
               <Link
                 to="/orders"
                 onClick={onClose}
-                className="flex items-center w-full px-5 py-3.5 text-sm font-medium text-foreground/80 hover:bg-accent/50 active:bg-accent/80 transition-colors"
+                className="flex items-center w-full px-5 py-3.5 text-sm font-medium text-foreground/80 hover:bg-accent/50 active:bg-accent/80 transition-colors cursor-pointer"
               >
                 My Orders
               </Link>
@@ -84,7 +84,7 @@ export default function DrawerUserSection({
 
       <button
         onClick={handleSignOut}
-        className="flex items-center justify-between w-full px-5 py-3.5 text-sm font-medium text-destructive hover:bg-destructive/10 active:bg-destructive/10 transition-colors"
+        className="flex items-center justify-between w-full px-5 py-3.5 text-sm font-medium text-destructive hover:bg-destructive/10 active:bg-destructive/10 transition-colors cursor-pointer"
       >
         Logout
         <LogOut className="h-5 w-5 text-destructive" aria-hidden="true" />
