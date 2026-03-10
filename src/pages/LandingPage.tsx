@@ -4,7 +4,7 @@ import FAQSection from '@/features/landing-page/faq/FAQSection';
 import FeaturesStrip from '@/features/landing-page/features-strip/FeaturesStrip';
 import HeroSection from '@/features/landing-page/hero/HeroSection';
 import HowItWorksSection from '@/features/landing-page/how-it-works/HowItWorksSection';
-import OutletsSection from '@/features/landing-page/outlet/OutletSection';
+import OutletsSection from '@/features/landing-page/outlet/OutletsSection';
 import TestimonialsSection from '@/features/landing-page/testimonial/TestimonialsSection';
 import PricingSection from '@/features/pricing/PricingSection';
 import MainLayout from '@/layouts/MainLayout';
