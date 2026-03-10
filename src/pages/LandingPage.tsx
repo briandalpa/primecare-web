@@ -6,6 +6,7 @@ import HeroSection from '@/features/landing-page/hero/HeroSection';
 import HowItWorksSection from '@/features/landing-page/how-it-works/HowItWorksSection';
 import OutletsSection from '@/features/landing-page/outlet/OutletSection';
 import TestimonialsSection from '@/features/landing-page/testimonial/TestimonialsSection';
+import PricingSection from '@/features/pricing/PricingSection';
 import MainLayout from '@/layouts/MainLayout';
 
 export default function LandingPage() {
@@ -15,6 +16,7 @@ export default function LandingPage() {
       <FeaturesStrip />
       <ServicesSection />
       <TestimonialsSection />
+      <PricingSection />
       <HowItWorksSection />
       <FAQSection />
       <OutletsSection />
