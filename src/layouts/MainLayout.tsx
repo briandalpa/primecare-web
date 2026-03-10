@@ -1,4 +1,4 @@
-import Footer from '@/features/navigation/Footer';
+import Footer from '@/features/footer/Footer';
 import Navbar from '@/features/navigation/Navbar';
 
 interface MainLayoutProps {

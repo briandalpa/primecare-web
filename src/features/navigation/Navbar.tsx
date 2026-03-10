@@ -1,92 +1,18 @@
 import { useState, useEffect } from 'react';
-import {
-  Menu,
-  X,
-  Shirt,
-  Tag,
-  ListOrdered,
-  MapPin,
-  HelpCircle,
-  Bubbles,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Bubbles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
-import MobileNavDrawer from '@/features/navigation/MobileNavDrawer';
-import UserProfileDrawer from '@/features/navigation/UserProfileDrawer';
-import NavUserMenu from '@/features/navigation/NavUserMenu';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useSession } from '@/lib/auth-client';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { getInitials } from '@/utils/auth';
-
-export interface NavLink {
-  label: string;
-  href: string;
-  icon: LucideIcon;
-}
-
-const navLinks: NavLink[] = [
-  { label: 'Services', href: '#services', icon: Shirt },
-  { label: 'Pricing', href: '#pricing', icon: Tag },
-  { label: 'How It Works', href: '#how-it-works', icon: ListOrdered },
-  { label: 'Outlets', href: '#outlets', icon: MapPin },
-  { label: 'FAQ', href: '#faq', icon: HelpCircle },
-];
-
-function DesktopNavLinks() {
-  return (
-    <ul className="hidden md:flex items-center gap-8 list-none">
-      {navLinks.map((link) => (
-        <li key={link.label}>
-          <a
-            href={link.href}
-            className="text-sm font-medium text-foreground/70 hover:text-primary transition-colors"
-          >
-            {link.label}
-          </a>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function DesktopAuthButtons() {
-  return (
-    <div className="hidden md:flex items-center gap-3">
-      <Button asChild variant="ghost" size="lg">
-        <Link to="/login">Login</Link>
-      </Button>
-      <Button asChild size="lg" className="rounded-full px-6">
-        <Link to="/register">Register</Link>
-      </Button>
-    </div>
-  );
-}
-
-function MobileMenuButton({
-  open,
-  onClick,
-}: {
-  open: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      className="md:hidden p-2 rounded-md active:bg-accent/80 transition-colors"
-      aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
-      aria-expanded={open}
-      onClick={onClick}
-    >
-      {open ? (
-        <X className="h-6 w-6 text-foreground" />
-      ) : (
-        <Menu className="h-6 w-6 text-foreground" />
-      )}
-    </button>
-  );
-}
+import MobileNavDrawer from '@/features/navigation/MobileNavDrawer';
+import UserProfileDrawer from '@/features/navigation/UserProfileDrawer';
+import NavUserMenu from '@/features/navigation/NavUserMenu';
+import DesktopNavLinks from '@/features/navigation/DesktopNavLinks';
+import DesktopAuthButtons from '@/features/navigation/DesktopAuthButtons';
+import MobileMenuButton from '@/features/navigation/MobileMenuButton';
+import { navLinks } from '@/features/navigation/nav-links';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -113,7 +39,7 @@ export default function Navbar() {
         )}
       >
         <div className="container mx-auto px-4 grid grid-cols-3 items-center h-16 md:h-20 md:flex md:items-center md:gap-8">
-          {/* Left slot: avatar button on mobile that opens the nav drawer */}
+          {/* Left slot: avatar button on mobile that opens the profile drawer */}
           <div className="md:hidden">
             {session && (
               <button
@@ -121,7 +47,10 @@ export default function Navbar() {
                 onClick={() => setProfileDrawerOpen(true)}
                 className="p-1 rounded-full active:bg-accent/80 transition-colors"
               >
-                <Avatar size="sm" className="ring-2 ring-primary/80">
+                <Avatar
+                  size="sm"
+                  className={cn('ring-2', scrolled ? 'ring-primary' : 'ring-primary-foreground')}
+                >
                   <AvatarImage
                     src={profile?.avatarUrl ?? session?.user?.image ?? undefined}
                     alt={session?.user?.name ?? "User"}
@@ -139,14 +68,21 @@ export default function Navbar() {
             to="/"
             className="flex items-center gap-2 justify-self-center md:justify-self-auto md:flex-1"
           >
-            <Bubbles className="h-7 w-7 text-primary" />
-            <span className="text-xl font-bold text-primary-dark font-heading">
+            <Bubbles
+              className={cn('h-7 w-7', scrolled ? 'text-primary' : 'text-primary-foreground')}
+            />
+            <span
+              className={cn(
+                'text-xl font-bold font-heading',
+                scrolled ? 'text-primary-dark' : 'text-primary-foreground',
+              )}
+            >
               PrimeCare
             </span>
           </Link>
 
           <div className="hidden md:flex flex-1 justify-center">
-            <DesktopNavLinks />
+            <DesktopNavLinks scrolled={scrolled} />
           </div>
 
           <div className="flex items-center justify-end gap-3 md:flex-1">
@@ -158,13 +94,15 @@ export default function Navbar() {
                   profile?.avatarUrl ?? session?.user?.image ?? undefined
                 }
                 role={effectiveRole}
+                scrolled={scrolled}
               />
             ) : (
-              <DesktopAuthButtons />
+              <DesktopAuthButtons scrolled={scrolled} />
             )}
             <MobileMenuButton
               open={navDrawerOpen}
               onClick={() => setNavDrawerOpen(true)}
+              scrolled={scrolled}
             />
           </div>
         </div>

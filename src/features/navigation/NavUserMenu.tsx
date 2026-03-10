@@ -11,6 +11,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
 import { getInitials, getDashboardRoute, type UserRole } from '@/utils/auth';
 
 interface NavUserMenuProps {
@@ -19,6 +20,7 @@ interface NavUserMenuProps {
   avatarUrl?: string | null;
   image?: string | null;
   role: UserRole;
+  scrolled: boolean;
 }
 
 export default function NavUserMenu({
@@ -27,6 +29,7 @@ export default function NavUserMenu({
   avatarUrl,
   image,
   role,
+  scrolled,
 }: NavUserMenuProps) {
   const navigate = useNavigate();
   const imageSrc = avatarUrl ?? image ?? undefined;
@@ -42,7 +45,12 @@ export default function NavUserMenu({
         <DropdownMenuTrigger asChild>
           <button
             aria-label="Open account menu"
-            className="rounded-full p-0.5 ring-2 ring-primary/80 hover:ring-primary active:ring-primary transition-all cursor-pointer"
+            className={cn(
+              'rounded-full p-0.5 ring-2 transition-all cursor-pointer',
+              scrolled
+                ? 'ring-primary hover:ring-primary/70 active:ring-primary'
+                : 'ring-primary-foreground hover:ring-primary-foreground/70 active:ring-primary-foreground',
+            )}
           >
             <Avatar size="default">
               <AvatarImage
