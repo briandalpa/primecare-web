@@ -5,6 +5,17 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4rem; /* 64px — mobile navbar h-16 */
+}
+
+@media (min-width: 768px) {
+  html {
+    scroll-padding-top: 5rem; /* 80px — desktop navbar h-20 */
+  }
+}
+
 :root {
   font-family: var(--font-sans);
   line-height: 1.5;
