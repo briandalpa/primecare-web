@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Bubbles, X } from 'lucide-react';
+import { X } from 'lucide-react';
+import primeCareLogo from '@/assets/prime-care.png';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -48,7 +49,7 @@ function NavLinkItem({
         href={link.href}
         onClick={onClose}
         className={cn(
-          'flex items-center gap-3 min-h-[3rem] px-5 py-3 text-sm font-medium transition-colors',
+          'flex items-center gap-3 min-h-[3rem] px-5 py-3 text-sm font-medium transition-colors cursor-pointer',
           'active:bg-accent/80 active:text-primary active:border-primary',
           isActive
             ? 'border-primary text-primary bg-accent/50'
@@ -133,7 +134,11 @@ export default function MobileNavDrawer({
               className="flex items-center gap-2"
               aria-label="PrimeCare home"
             >
-              <Bubbles className="h-7 w-7 text-primary" />
+              <img
+                src={primeCareLogo}
+                alt="PrimeCare"
+                className="h-7 w-7 object-contain ml-0 -mr-1"
+              />
               <span className="text-xl font-bold text-primary-dark font-heading">
                 PrimeCare
               </span>
@@ -142,7 +147,7 @@ export default function MobileNavDrawer({
           <DrawerClose asChild>
             <button
               aria-label="Close navigation"
-              className="rounded-md p-2 active:bg-accent/80 transition-colors -mr-1"
+              className="rounded-md p-2 active:bg-accent/80 transition-colors cursor-pointer -mr-1"
             >
               <X className="h-5 w-5 text-foreground" />
             </button>

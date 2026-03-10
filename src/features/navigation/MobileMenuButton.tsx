@@ -13,7 +13,7 @@ export default function MobileMenuButton({
   const iconClass = cn('h-6 w-6', scrolled ? 'text-foreground' : 'text-primary-foreground');
   return (
     <button
-      className="md:hidden p-2 rounded-md active:bg-accent/80 transition-colors"
+      className="md:hidden p-2 rounded-md active:bg-accent/80 transition-colors cursor-pointer"
       aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
       aria-expanded={open}
       onClick={onClick}

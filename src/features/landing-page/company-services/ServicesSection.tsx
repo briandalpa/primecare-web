@@ -43,7 +43,7 @@ export default function ServicesSection() {
           {services.map((s) => (
             <div
               key={s.title}
-              className="group relative p-6 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-lg transition-all duration-300 cursor-pointer"
+              className="group relative p-6 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-lg transition-all duration-300"
             >
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
                 <s.icon className="h-6 w-6 text-primary group-hover:text-primary-foreground transition-colors" />

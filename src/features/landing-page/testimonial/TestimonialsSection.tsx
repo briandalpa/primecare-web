@@ -118,7 +118,7 @@ export default function TestimonialsSection() {
                 <button
                   key={i}
                   onClick={() => api?.scrollTo(i)}
-                  className={`h-2 rounded-full transition-all duration-300 ${
+                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
                     i === current
                       ? 'w-6 bg-primary'
                       : 'w-2 bg-border hover:bg-muted-foreground/30'

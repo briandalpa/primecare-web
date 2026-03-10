@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bubbles } from 'lucide-react';
+import primeCareLogo from '@/assets/prime-care.png';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -45,19 +45,24 @@ export default function Navbar() {
               <button
                 aria-label="Open account menu"
                 onClick={() => setProfileDrawerOpen(true)}
-                className="p-1 rounded-full active:bg-accent/80 transition-colors"
+                className="p-1 rounded-full active:bg-accent/80 transition-colors cursor-pointer"
               >
                 <Avatar
                   size="sm"
-                  className={cn('ring-2', scrolled ? 'ring-primary' : 'ring-primary-foreground')}
+                  className={cn(
+                    'ring-2',
+                    scrolled ? 'ring-primary' : 'ring-primary-foreground',
+                  )}
                 >
                   <AvatarImage
-                    src={profile?.avatarUrl ?? session?.user?.image ?? undefined}
-                    alt={session?.user?.name ?? "User"}
+                    src={
+                      profile?.avatarUrl ?? session?.user?.image ?? undefined
+                    }
+                    alt={session?.user?.name ?? 'User'}
                     referrerPolicy="no-referrer"
                   />
                   <AvatarFallback>
-                    {getInitials(session?.user?.name ?? "")}
+                    {getInitials(session?.user?.name ?? '')}
                   </AvatarFallback>
                 </Avatar>
               </button>
@@ -68,8 +73,10 @@ export default function Navbar() {
             to="/"
             className="flex items-center gap-2 justify-self-center md:justify-self-auto md:flex-1"
           >
-            <Bubbles
-              className={cn('h-7 w-7', scrolled ? 'text-primary' : 'text-primary-foreground')}
+            <img
+              src={primeCareLogo}
+              alt="PrimeCare"
+              className="h-7 w-7 object-contain -mx-1"
             />
             <span
               className={cn(
@@ -88,8 +95,8 @@ export default function Navbar() {
           <div className="flex items-center justify-end gap-3 md:flex-1">
             {isPending ? null : session ? (
               <NavUserMenu
-                name={session?.user?.name ?? ""}
-                email={session?.user?.email ?? ""}
+                name={session?.user?.name ?? ''}
+                email={session?.user?.email ?? ''}
                 avatarUrl={
                   profile?.avatarUrl ?? session?.user?.image ?? undefined
                 }
