@@ -162,6 +162,24 @@
   --color-surface-warm: var(--surface-warm);
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);
+  --animate-slide-to-left: slide-to-left 0.7s ease-in-out both;
+  --animate-slide-from-right: slide-from-right 0.7s ease-in-out both;
+  --animate-ken-burns: ken-burns 8s ease-in-out infinite alternate;
+}
+
+@keyframes slide-to-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+
+@keyframes slide-from-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes ken-burns {
+  from { transform: scale(1) translate(0, 0); }
+  to   { transform: scale(1.1) translate(-1%, -1%); }
 }
 
 .dark {
