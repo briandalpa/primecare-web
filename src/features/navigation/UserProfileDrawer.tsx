@@ -7,7 +7,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import DrawerUserSection from '@/components/DrawerUserSection';
+import DrawerUserSection from '@/features/navigation/DrawerUserSection';
 import type { UserRole } from '@/utils/auth';
 
 interface UserProfileDrawerProps {

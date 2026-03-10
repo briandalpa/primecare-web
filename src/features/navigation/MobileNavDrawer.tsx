@@ -11,7 +11,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import type { NavLink } from '@/components/Navbar';
+import type { NavLink } from '@/features/navigation/Navbar';
 
 interface MobileNavDrawerProps {
   open: boolean;

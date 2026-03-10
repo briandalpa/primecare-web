@@ -26,6 +26,7 @@ dist/
 CLAUDE.md
 .claude/
 .claude-plugin/
+.superpowers/
 
 # debug
 npm-debug.log*
