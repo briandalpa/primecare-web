@@ -123,12 +123,12 @@ export default function Navbar() {
               >
                 <Avatar size="sm" className="ring-2 ring-primary/80">
                   <AvatarImage
-                    src={profile?.avatarUrl ?? session.user.image ?? undefined}
-                    alt={session.user.name}
+                    src={profile?.avatarUrl ?? session?.user?.image ?? undefined}
+                    alt={session?.user?.name ?? "User"}
                     referrerPolicy="no-referrer"
                   />
                   <AvatarFallback>
-                    {getInitials(session.user.name)}
+                    {getInitials(session?.user?.name ?? "")}
                   </AvatarFallback>
                 </Avatar>
               </button>
@@ -152,10 +152,10 @@ export default function Navbar() {
           <div className="flex items-center justify-end gap-3 md:flex-1">
             {isPending ? null : session ? (
               <NavUserMenu
-                name={session.user.name}
-                email={session.user.email}
+                name={session?.user?.name ?? ""}
+                email={session?.user?.email ?? ""}
                 avatarUrl={
-                  profile?.avatarUrl ?? session.user.image ?? undefined
+                  profile?.avatarUrl ?? session?.user?.image ?? undefined
                 }
                 role={effectiveRole}
               />
