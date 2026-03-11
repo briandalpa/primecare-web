@@ -20,10 +20,10 @@ export default function DesktopAuthButtons({
             : 'text-foreground/70 hover:text-primary',
         )}
       >
-        <Link to="/login">Login</Link>
+        <Link to="/auth/login">Login</Link>
       </Button>
       <Button asChild size="lg" className="rounded-full px-6">
-        <Link to="/register">Register</Link>
+        <Link to="/auth/register">Register</Link>
       </Button>
     </div>
   );
