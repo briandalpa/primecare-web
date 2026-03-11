@@ -46,7 +46,7 @@ export function useAdminLogin() {
     try {
       const signInResult = await authClient.signIn.email(result.data);
       if (signInResult.error) {
-        toast.error('Sign in failed', {
+        toast.error('Login failed', {
           description: signInResult.error.message,
         });
         return;
@@ -56,6 +56,9 @@ export function useAdminLogin() {
       const role = profile?.staff?.role;
 
       if (role && (ADMIN_ROLES as readonly string[]).includes(role)) {
+        toast.success('Login success!', {
+          description: `Welcome back, ${profile?.name ?? ''}!`.trim() || 'Welcome back!',
+        });
         navigate(getDashboardRoute(role), { replace: true });
       } else {
         toast.error('Unauthorized', {
