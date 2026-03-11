@@ -27,6 +27,8 @@ CLAUDE.md
 .claude/
 .claude-plugin/
 .superpowers/
+.agents/
+skills-lock.json
 
 # debug
 npm-debug.log*
