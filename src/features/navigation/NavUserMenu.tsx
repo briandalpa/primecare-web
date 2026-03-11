@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { User, LayoutDashboard, Package, LogOut } from 'lucide-react';
+import { toast } from 'sonner';
 import { signOut } from '@/lib/auth-client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -35,8 +36,13 @@ export default function NavUserMenu({
   const imageSrc = avatarUrl ?? image ?? undefined;
 
   async function handleSignOut() {
-    await signOut();
-    navigate('/');
+    try {
+      await signOut();
+      toast.success('Logged out', { description: 'See you next time!' });
+      navigate('/');
+    } catch {
+      toast.error('Logout failed', { description: 'Please try again.' });
+    }
   }
 
   return (
