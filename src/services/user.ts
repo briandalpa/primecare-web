@@ -23,5 +23,5 @@ export interface UserProfile {
 
 export const getMyProfile = () =>
   axiosInstance
-    .get<{ data: UserProfile }>('/users/me')
+    .get<{ data: UserProfile }>('/api/v1/users/me')
     .then((r: AxiosResponse<{ data: UserProfile }>) => r.data.data);
