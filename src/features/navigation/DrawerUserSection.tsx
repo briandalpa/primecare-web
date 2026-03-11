@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronRight, LogOut } from 'lucide-react';
+import { toast } from 'sonner';
 import { signOut } from '@/lib/auth-client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { getInitials, getDashboardRoute, type UserRole } from '@/utils/auth';
@@ -25,9 +26,14 @@ export default function DrawerUserSection({
   const imageSrc = avatarUrl ?? image ?? undefined;
 
   async function handleSignOut() {
-    await signOut();
-    onClose();
-    navigate('/');
+    try {
+      await signOut();
+      toast.success('Logged out', { description: 'See you next time!' });
+      onClose();
+      navigate('/');
+    } catch {
+      toast.error('Logout failed', { description: 'Please try again.' });
+    }
   }
 
   return (

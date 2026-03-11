@@ -6,34 +6,32 @@ import { authClient } from '@/lib/auth-client';
 import { getMyProfile } from '@/services/user';
 import { getDashboardRoute } from '@/utils/auth';
 import {
-  adminLoginSchema,
-  type AdminLoginFormValues,
-  type AdminLoginFormErrors,
-} from '@/features/auth/adminLoginSchema';
+  loginSchema,
+  type LoginFormValues,
+  type LoginFormErrors,
+} from '@/features/auth/loginSchema';
 
-const ADMIN_ROLES = ['SUPER_ADMIN', 'OUTLET_ADMIN'] as const;
-
-export function useAdminLogin() {
+export function useCustomerLogin() {
   const navigate = useNavigate();
-  const [values, setValues] = useState<AdminLoginFormValues>({
+  const [values, setValues] = useState<LoginFormValues>({
     email: '',
     password: '',
   });
-  const [errors, setErrors] = useState<AdminLoginFormErrors>({});
+  const [errors, setErrors] = useState<LoginFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleChange(field: keyof AdminLoginFormValues, value: string) {
+  function handleChange(field: keyof LoginFormValues, value: string) {
     setValues((v) => ({ ...v, [field]: value }));
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const result = adminLoginSchema.safeParse(values);
+    const result = loginSchema.safeParse(values);
     if (!result.success) {
-      const fieldErrors: AdminLoginFormErrors = {};
+      const fieldErrors: LoginFormErrors = {};
       for (const issue of result.error.issues) {
-        const key = issue.path[0] as keyof AdminLoginFormValues;
+        const key = issue.path[0] as keyof LoginFormValues;
         if (!fieldErrors[key]) fieldErrors[key] = issue.message;
       }
       setErrors(fieldErrors);
@@ -53,18 +51,11 @@ export function useAdminLogin() {
       }
 
       const profile = await getMyProfile();
-      const role = profile?.staff?.role;
-
-      if (role && (ADMIN_ROLES as readonly string[]).includes(role)) {
-        toast.success('Login success!', {
-          description: `Welcome back, ${profile?.name ?? ''}!`.trim() || 'Welcome back!',
-        });
-        navigate(getDashboardRoute(role), { replace: true });
-      } else {
-        toast.error('Unauthorized', {
-          description: 'Admin access only. Use the customer login instead.',
-        });
-      }
+      const role = profile?.staff?.role ?? 'CUSTOMER';
+      toast.success('Login success!', {
+        description: `Welcome back, ${profile?.name ?? ''}!`.trim() || 'Welcome back!',
+      });
+      navigate(getDashboardRoute(role), { replace: true });
     } catch {
       toast.error('Something went wrong. Please try again.');
     } finally {

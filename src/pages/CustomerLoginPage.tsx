@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { ShieldCheck } from 'lucide-react';
 import {
   CardContent,
   CardDescription,
@@ -14,29 +13,39 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useAdminLogin } from '@/hooks/useAdminLogin';
+import { Separator } from '@/components/ui/separator';
+import { useCustomerLogin } from '@/hooks/useCustomerLogin';
+import { useGoogleSignIn } from '@/hooks/useGoogleSignIn';
+import GoogleSignInButton from '@/features/auth/GoogleSignInButton';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { AuthLogo } from '@/features/auth/AuthLogo';
 
-export default function AdminLoginPage() {
+export default function CustomerLoginPage() {
   const { values, errors, isSubmitting, handleChange, handleSubmit } =
-    useAdminLogin();
+    useCustomerLogin();
+  const { signInWithGoogle, isLoading: isGoogleLoading } = useGoogleSignIn();
 
   return (
-    <AuthLayout cardClassName="border-secondary">
+    <AuthLayout>
       <CardHeader className="text-center space-y-3">
         <AuthLogo />
-        <div className="flex items-center justify-center gap-2 text-muted-foreground">
-          <ShieldCheck className="h-5 w-5" />
-          <span className="text-xs font-medium uppercase tracking-wider">
-            Admin Portal
-          </span>
-        </div>
-        <CardTitle className="text-2xl font-heading">Admin Login</CardTitle>
-        <CardDescription>Access the management dashboard</CardDescription>
+        <CardTitle className="text-2xl font-heading">Welcome back</CardTitle>
+        <CardDescription>Log in to manage your laundry orders</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6">
+        <GoogleSignInButton
+          onClick={signInWithGoogle}
+          isLoading={isGoogleLoading}
+          disabled={isSubmitting}
+        />
+
+        <div className="flex items-center gap-3">
+          <Separator className="flex-1" />
+          <span className="text-xs text-muted-foreground uppercase">or</span>
+          <Separator className="flex-1" />
+        </div>
+
         <form onSubmit={handleSubmit} noValidate>
           <FieldGroup>
             <Field data-invalid={!!errors.email || undefined}>
@@ -44,7 +53,7 @@ export default function AdminLoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="email@example.com"
+                placeholder="you@example.com"
                 autoComplete="email"
                 value={values.email}
                 onChange={(e) => handleChange('email', e.target.value)}
@@ -54,7 +63,15 @@ export default function AdminLoginPage() {
             </Field>
 
             <Field data-invalid={!!errors.password || undefined}>
-              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <div className="flex items-center justify-between">
+                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <Link
+                  to="/auth/forgot-password"
+                  className="text-xs text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <Input
                 id="password"
                 type="password"
@@ -72,19 +89,19 @@ export default function AdminLoginPage() {
             type="submit"
             className="w-full mt-6 cursor-pointer"
             size="lg"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isGoogleLoading}
           >
             {isSubmitting ? 'Logging in…' : 'Login'}
           </Button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground">
-          Not an admin?{' '}
+          Don't have an account?{' '}
           <Link
-            to="/auth/login"
+            to="/auth/register"
             className="text-primary font-semibold hover:underline"
           >
-            Customer Login
+            Register
           </Link>
         </p>
       </CardContent>
