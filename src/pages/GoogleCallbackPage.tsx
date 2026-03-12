@@ -28,6 +28,11 @@ export default function GoogleCallbackPage() {
       return;
     }
 
+    if (!session.user.emailVerified) {
+      navigate('/', { replace: true });
+      return;
+    }
+
     didRedirect.current = true;
 
     getMyProfile()
