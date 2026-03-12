@@ -13,6 +13,7 @@ import DesktopNavLinks from '@/features/navigation/DesktopNavLinks';
 import DesktopAuthButtons from '@/features/navigation/DesktopAuthButtons';
 import MobileMenuButton from '@/features/navigation/MobileMenuButton';
 import { navLinks } from '@/features/navigation/nav-links';
+import VerificationBanner from '@/features/auth/VerificationBanner';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -20,7 +21,6 @@ export default function Navbar() {
   const [profileDrawerOpen, setProfileDrawerOpen] = useState(false);
   const { data: session } = useSession();
   const { profile, effectiveRole, isPending } = useCurrentUser();
-
   useEffect(() => {
     let rafId: number;
     const onScroll = () => {
@@ -45,6 +45,7 @@ export default function Navbar() {
             : 'bg-transparent',
         )}
       >
+        <VerificationBanner scrolled={scrolled} />
         <div className="container mx-auto px-4 grid grid-cols-3 items-center h-16 md:h-20 md:flex md:items-center md:gap-8">
           {/* Left slot: avatar button on mobile that opens the profile drawer */}
           <div className="md:hidden">
