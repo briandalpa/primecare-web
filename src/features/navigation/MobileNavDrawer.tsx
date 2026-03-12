@@ -109,7 +109,7 @@ function DrawerAuthButtons({ onClose }: { onClose: () => void }) {
         onClick={onClose}
         className="w-full rounded-full"
       >
-        <Link to="/auth/register">Get Started</Link>
+        <Link to="/auth/register">Register</Link>
       </Button>
     </DrawerFooter>
   );
