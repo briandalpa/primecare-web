@@ -5,7 +5,7 @@ import type { UserRole } from '@/utils/auth';
 export interface StaffInfo {
   role: Exclude<UserRole, 'CUSTOMER'>;
   workerType: string | null;
-  outletId: string;
+  outletId: string | null;
   isActive: boolean;
 }
 
@@ -14,6 +14,7 @@ export interface UserProfile {
   name: string;
   email: string;
   emailVerified: boolean;
+  role: UserRole;
   image: string | null;
   avatarUrl: string | null;
   phone: string | null;
