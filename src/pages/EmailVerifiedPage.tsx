@@ -28,7 +28,7 @@ export default function EmailVerifiedPage() {
       </CardHeader>
       <CardContent>
         <Button asChild className="w-full cursor-pointer" size="lg">
-          <Link to="/">Continue to Dashboard</Link>
+          <Link to="/auth/login">Login</Link>
         </Button>
       </CardContent>
     </AuthLayout>

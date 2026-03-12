@@ -11,6 +11,7 @@ import EmailVerifiedPage from './pages/EmailVerifiedPage';
 import GoogleCallbackPage from './pages/GoogleCallbackPage';
 
 import { RoleRoute } from '@/features/auth/RoleRoute';
+import { GuestRoute } from '@/features/auth/GuestRoute';
 import { Toaster } from '@/components/ui/sonner';
 
 function App() {
@@ -19,13 +20,17 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
-        <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route path="/auth/login" element={<CustomerLoginPage />} />
-        <Route path="/auth/register" element={<RegisterPage />} />
-        <Route path="/auth/verify-email" element={<VerifyEmailPage />} />
         <Route path="/auth/set-password" element={<SetPasswordPage />} />
         <Route path="/auth/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
+
+        {/* Guest-only Routes (redirect authenticated users to their dashboard) */}
+        <Route element={<GuestRoute />}>
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/auth/login" element={<CustomerLoginPage />} />
+          <Route path="/auth/register" element={<RegisterPage />} />
+          <Route path="/auth/verify-email" element={<VerifyEmailPage />} />
+        </Route>
 
         {/* Admin Protected Routes */}
         <Route

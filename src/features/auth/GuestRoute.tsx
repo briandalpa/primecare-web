@@ -1,19 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useSession } from "@/lib/auth-client";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import type { UserRole } from "@/utils/auth";
+import { getDashboardRoute } from "@/utils/auth";
 
-interface RoleRouteProps {
-  allowedRoles: UserRole[];
-}
-
-export function RoleRoute({ allowedRoles }: RoleRouteProps) {
+export function GuestRoute() {
   const { data: session } = useSession();
   const { effectiveRole, isPending } = useCurrentUser();
 
   if (isPending) return null;
-  if (!session) return <Navigate to="/" replace />;
-  if (!allowedRoles.includes(effectiveRole)) return <Navigate to="/" replace />;
+  if (session) return <Navigate to={getDashboardRoute(effectiveRole)} replace />;
 
   return <Outlet />;
 }

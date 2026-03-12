@@ -53,7 +53,8 @@ export function useCustomerLogin() {
       const profile = await getMyProfile();
       const role = profile?.staff?.role ?? 'CUSTOMER';
       toast.success('Login success!', {
-        description: `Welcome back, ${profile?.name ?? ''}!`.trim() || 'Welcome back!',
+        description:
+          `Welcome, ${profile?.name ?? ''}!`.trim() || 'Welcome back!',
       });
       navigate(getDashboardRoute(role), { replace: true });
     } catch {
