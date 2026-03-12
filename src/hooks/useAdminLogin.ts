@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { authClient } from '@/lib/auth-client';
+import { authClient, signOut } from '@/lib/auth-client';
 import { getMyProfile } from '@/services/user';
 import { getDashboardRoute } from '@/utils/auth';
 import {
@@ -57,10 +57,12 @@ export function useAdminLogin() {
 
       if (role && (ADMIN_ROLES as readonly string[]).includes(role)) {
         toast.success('Login success!', {
-          description: `Welcome back, ${profile?.name ?? ''}!`.trim() || 'Welcome back!',
+          description:
+            `Welcome, ${profile?.name ?? ''}!`.trim() || 'Welcome back!',
         });
         navigate(getDashboardRoute(role), { replace: true });
       } else {
+        await signOut();
         toast.error('Unauthorized', {
           description: 'Admin access only. Use the customer login instead.',
         });
