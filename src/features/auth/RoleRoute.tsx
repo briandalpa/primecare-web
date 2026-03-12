@@ -8,10 +8,10 @@ interface RoleRouteProps {
 }
 
 export function RoleRoute({ allowedRoles }: RoleRouteProps) {
-  const { data: session, isPending: sessionPending } = useSession();
-  const { effectiveRole, isPending: profilePending } = useCurrentUser();
+  const { data: session } = useSession();
+  const { effectiveRole, isPending } = useCurrentUser();
 
-  if (sessionPending || profilePending) return null;
+  if (isPending) return null;
   if (!session) return <Navigate to="/" replace />;
   if (!allowedRoles.includes(effectiveRole)) return <Navigate to="/" replace />;
 
