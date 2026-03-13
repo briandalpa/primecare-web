@@ -1,30 +1,32 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import './App.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import "./App.css"
 
-import LandingPage from './pages/LandingPage';
-import AdminLoginPage from './pages/AdminLoginPage';
-import CustomerLoginPage from './pages/CustomerLoginPage';
-import RegisterPage from './pages/RegisterPage';
-import VerifyEmailPage from './pages/VerifyEmailPage';
-import SetPasswordPage from './pages/SetPasswordPage';
-import EmailVerifiedPage from './pages/EmailVerifiedPage';
-import GoogleCallbackPage from './pages/GoogleCallbackPage';
+import LandingPage from "./pages/LandingPage"
+import AdminLoginPage from "./pages/AdminLoginPage"
+import CustomerLoginPage from "./pages/CustomerLoginPage"
+import RegisterPage from "./pages/RegisterPage"
+import VerifyEmailPage from "./pages/VerifyEmailPage"
+import SetPasswordPage from "./pages/SetPasswordPage"
+import EmailVerifiedPage from "./pages/EmailVerifiedPage"
+import GoogleCallbackPage from "./pages/GoogleCallbackPage"
+import { UsersPage } from "./pages/UsersPage"
 
-import { RoleRoute } from '@/features/auth/RoleRoute';
-import { GuestRoute } from '@/features/auth/GuestRoute';
-import { Toaster } from '@/components/ui/sonner';
+import { RoleRoute } from "@/features/auth/RoleRoute"
+import { GuestRoute } from "@/features/auth/GuestRoute"
+import { Toaster } from "@/components/ui/sonner"
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth/set-password" element={<SetPasswordPage />} />
         <Route path="/auth/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
 
-        {/* Guest-only Routes (redirect authenticated users to their dashboard) */}
+        {/* Guest-only Routes */}
         <Route element={<GuestRoute />}>
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/auth/login" element={<CustomerLoginPage />} />
@@ -34,14 +36,18 @@ function App() {
 
         {/* Admin Protected Routes */}
         <Route
-          element={<RoleRoute allowedRoles={['SUPER_ADMIN', 'OUTLET_ADMIN']} />}
+          element={<RoleRoute allowedRoles={["SUPER_ADMIN", "OUTLET_ADMIN"]} />}
         >
           <Route path="/admin/dashboard" element={<div>Admin Dashboard</div>} />
+          <Route path="/admin/users" element={<UsersPage />} />
         </Route>
+
       </Routes>
+
       <Toaster />
+
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App
