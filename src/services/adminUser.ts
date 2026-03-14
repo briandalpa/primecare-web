@@ -5,10 +5,12 @@ export type User = {
   name: string
   email: string
   role: string
+  emailVerified?: boolean
+  createdAt?: string
   outlet?: {
     id: string
     name: string
-  }
+  } | null
 }
 
 export type GetUsersParams = {
@@ -19,7 +21,18 @@ export type GetUsersParams = {
   outletId?: string
 }
 
-export const getUsers = async (params: GetUsersParams) => {
-  const res = await axiosInstance.get("/admin/users", { params })
+export type GetUsersResponse = {
+  status: string
+  message: string
+  data: User[]
+}
+
+export const getUsers = async (
+  params: GetUsersParams
+): Promise<GetUsersResponse> => {
+  const res = await axiosInstance.get("/admin/users", {
+    params,
+  })
+
   return res.data
 }
