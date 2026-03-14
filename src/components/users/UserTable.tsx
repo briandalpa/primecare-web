@@ -1,6 +1,9 @@
 import { useUsers } from "@/hooks/useUsers"
 import { RoleBadge } from "./RoleBadge"
 
+import { deleteUser } from "@/services/adminUser"
+import { toast } from "sonner"
+
 import { Card, CardContent } from "@/components/ui/card"
 import {
   Table,
@@ -22,13 +25,26 @@ type Props = {
 
 export const UserTable = ({ search, role, outletId, page }: Props) => {
 
-  const { data, isLoading, error } = useUsers({
+  const { data, isLoading, error, refetch } = useUsers({
     page,
     limit: 10,
     search,
     role: role === "ALL" ? undefined : role,
     outletId,
   })
+
+  const handleDelete = async (id: string) => {
+    const confirmed = window.confirm("Are you sure you want to delete this user?")
+    if (!confirmed) return
+
+    try {
+      await deleteUser(id)
+      toast.success("User deleted successfully")
+      refetch()
+    } catch {
+      toast.error("Failed to delete user")
+    }
+  }
 
   if (isLoading) {
     return (
@@ -99,8 +115,21 @@ export const UserTable = ({ search, role, outletId, page }: Props) => {
                   {user.outlet?.name ?? "-"}
                 </TableCell>
 
-                <TableCell className="text-right">
-                  Edit
+                <TableCell className="text-right space-x-3">
+
+                  <button
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(user.id)}
+                    className="text-red-600 hover:underline text-sm"
+                  >
+                    Delete
+                  </button>
+
                 </TableCell>
 
               </TableRow>

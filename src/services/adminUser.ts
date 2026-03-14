@@ -36,3 +36,12 @@ export const getUsers = async (
 
   return res.data
 }
+
+/* =========================
+   DELETE USER
+========================= */
+
+export const deleteUser = async (userId: string) => {
+  const res = await axiosInstance.delete(`/admin/users/${userId}`)
+  return res.data
+}
