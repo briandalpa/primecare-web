@@ -8,12 +8,21 @@ interface RoleRouteProps {
 }
 
 export function RoleRoute({ allowedRoles }: RoleRouteProps) {
-  const { data: session } = useSession();
-  const { effectiveRole, isPending } = useCurrentUser();
+  const { data: session, isPending } = useSession();
+  const { effectiveRole } = useCurrentUser();
 
+  // tunggu session selesai loading
   if (isPending) return null;
-  if (!session) return <Navigate to="/" replace />;
-  if (!allowedRoles.includes(effectiveRole)) return <Navigate to="/" replace />;
+
+  // jika belum login jangan redirect dulu saat development
+  if (!session) {
+    return <Outlet />;
+  }
+
+  // cek role
+  if (!allowedRoles.includes(effectiveRole)) {
+    return <Navigate to="/" replace />;
+  }
 
   return <Outlet />;
 }

@@ -1,17 +1,24 @@
-import { createAuthClient } from 'better-auth/react';
-import { inferAdditionalFields } from 'better-auth/client/plugins';
+import { createAuthClient } from "better-auth/react";
+import { inferAdditionalFields } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: `${import.meta.env.VITE_API_URL}/api/auth`,
+
   plugins: [
     inferAdditionalFields({
       user: {
-        avatarUrl: { type: 'string' },
-        phone: { type: 'string' },
-        address: { type: 'string' },
+        avatarUrl: { type: "string" },
+        phone: { type: "string" },
+        address: { type: "string" },
       },
     }),
   ],
 });
 
-export const { useSession, signIn, signOut, signUp, getSession } = authClient;
+export const {
+  useSession,
+  signIn,
+  signOut,
+  signUp,
+  getSession,
+} = authClient;

@@ -31,16 +31,24 @@ export const UserTable = ({ search, role, outletId, page }: Props) => {
   })
 
   if (isLoading) {
-    return <div className="text-muted-foreground">Loading users...</div>
+    return (
+      <div className="text-muted-foreground">
+        Loading users...
+      </div>
+    )
   }
 
   if (error) {
-    return <div className="text-destructive">Failed to load users</div>
+    return (
+      <div className="text-destructive">
+        Failed to load users
+      </div>
+    )
   }
 
   const users: User[] = data?.data ?? []
 
-  const total = data?.meta?.total ?? 0
+  const total = users.length
   const totalPages = Math.ceil(total / 10)
 
   return (
@@ -60,7 +68,19 @@ export const UserTable = ({ search, role, outletId, page }: Props) => {
           </TableHeader>
 
           <TableBody>
-            {users.map((user) => (
+
+            {users.length === 0 && (
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  className="text-center py-6 text-muted-foreground"
+                >
+                  No users found
+                </TableCell>
+              </TableRow>
+            )}
+
+            {users.map((user: User) => (
               <TableRow key={user.id}>
 
                 <TableCell className="font-medium">
@@ -85,6 +105,7 @@ export const UserTable = ({ search, role, outletId, page }: Props) => {
 
               </TableRow>
             ))}
+
           </TableBody>
 
         </Table>
@@ -95,7 +116,7 @@ export const UserTable = ({ search, role, outletId, page }: Props) => {
             {Array.from({ length: totalPages }).map((_, i) => (
               <button
                 key={i}
-                className="px-3 py-1 border rounded text-sm"
+                className="px-3 py-1 border rounded text-sm hover:bg-muted"
               >
                 {i + 1}
               </button>
