@@ -24,11 +24,24 @@ export default function AdminCreateOrderPage() {
   const [pricePerKg, setPricePerKg] = useState(0)
   const [weight, setWeight] = useState(0)
 
+  // modal state
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+
   const totalPrice = pricePerKg * weight
 
-  const handleSubmit = () => {
+  const selectedPickup = pickupRequests.find(
+    (p) => p.id === pickupRequestId
+  )
+
+  const handleCreateClick = () => {
 
     if (!pickupRequestId) return
+
+    setIsConfirmOpen(true)
+
+  }
+
+  const handleConfirm = () => {
 
     mutate(
       {
@@ -126,12 +139,75 @@ export default function AdminCreateOrderPage() {
 
       {/* Button */}
       <button
-        onClick={handleSubmit}
+        onClick={handleCreateClick}
         disabled={isPending}
         className="bg-primary text-primary-foreground px-4 py-2 rounded"
       >
-        {isPending ? "Creating..." : "Create Order"}
+        Create Order
       </button>
+
+      {/* ================= CONFIRM MODAL ================= */}
+
+      {isConfirmOpen && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+
+          <div className="bg-background border border-border rounded-lg p-6 w-[400px] space-y-4">
+
+            <h2 className="text-lg font-semibold">
+              Confirm Order
+            </h2>
+
+            <div className="space-y-2 text-sm">
+
+              <p>
+                <span className="font-medium">Pickup Request:</span>{" "}
+                {selectedPickup?.id}
+              </p>
+
+              <p>
+                <span className="font-medium">Customer:</span>{" "}
+                {selectedPickup?.customerUser?.name}
+              </p>
+
+              <p>
+                <span className="font-medium">Price per Kg:</span>{" "}
+                Rp {pricePerKg}
+              </p>
+
+              <p>
+                <span className="font-medium">Weight:</span>{" "}
+                {weight} Kg
+              </p>
+
+              <p className="text-base font-semibold pt-2">
+                Total: Rp {totalPrice}
+              </p>
+
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4">
+
+              <button
+                onClick={() => setIsConfirmOpen(false)}
+                className="px-4 py-2 border border-border rounded"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleConfirm}
+                disabled={isPending}
+                className="bg-primary text-primary-foreground px-4 py-2 rounded"
+              >
+                {isPending ? "Creating..." : "Confirm Order"}
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
 
     </div>
   )
