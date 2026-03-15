@@ -2,23 +2,28 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import "./App.css"
 
 import LandingPage from "./pages/LandingPage"
+
 import AdminLoginPage from "./pages/AdminLoginPage"
+
 import CustomerLoginPage from "./pages/CustomerLoginPage"
 import RegisterPage from "./pages/RegisterPage"
 import VerifyEmailPage from "./pages/VerifyEmailPage"
 import SetPasswordPage from "./pages/SetPasswordPage"
 import EmailVerifiedPage from "./pages/EmailVerifiedPage"
 import GoogleCallbackPage from "./pages/GoogleCallbackPage"
+
 import { UsersPage } from "./pages/UsersPage"
 
 import AdminOrdersPage from "./pages/AdminOrdersPage"
 import AdminOrderDetailPage from "./pages/AdminOrderDetailPage"
+import AdminCreateOrderPage from "./pages/AdminCreateOrderPage"
 
 import { Toaster } from "@/components/ui/sonner"
 
 function App() {
   return (
     <BrowserRouter>
+
       <Routes>
 
         {/* ================= PUBLIC ROUTES ================= */}
@@ -45,6 +50,9 @@ function App() {
 
         {/* PCS-121 Admin Order Detail */}
         <Route path="/admin/orders/:id" element={<AdminOrderDetailPage />} />
+
+        {/* PCS-125 Create Order */}
+        <Route path="/admin/orders/create" element={<AdminCreateOrderPage />} />
 
       </Routes>
 
