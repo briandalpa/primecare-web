@@ -11,6 +11,8 @@ import EmailVerifiedPage from "./pages/EmailVerifiedPage"
 import GoogleCallbackPage from "./pages/GoogleCallbackPage"
 import { UsersPage } from "./pages/UsersPage"
 
+import AdminOrdersPage from "./pages/AdminOrdersPage"
+
 import { Toaster } from "@/components/ui/sonner"
 
 function App() {
@@ -28,9 +30,12 @@ function App() {
         <Route path="/auth/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
 
-        {/* Admin Routes (temporary dev mode) */}
+        {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<div>Admin Dashboard</div>} />
         <Route path="/admin/users" element={<UsersPage />} />
+
+        {/* PCS-120 Admin Orders */}
+        <Route path="/admin/orders" element={<AdminOrdersPage />} />
 
       </Routes>
 
