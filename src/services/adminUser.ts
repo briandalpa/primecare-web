@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/axiosInstance"
+import axiosInstance from "@/lib/axiosInstance"
 
 export type User = {
   id: string

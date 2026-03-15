@@ -1,4 +1,4 @@
-import { axiosInstance } from '@/lib/axiosInstance';
+import axiosInstance from "@/lib/axiosInstance"
 import type { AxiosResponse } from 'axios';
 import type { UserRole } from '@/utils/auth';
 
@@ -24,5 +24,5 @@ export interface UserProfile {
 
 export const getMyProfile = () =>
   axiosInstance
-    .get<{ data: UserProfile }>('/api/v1/users/me')
+    .get<{ data: UserProfile }>('/users/me')
     .then((r: AxiosResponse<{ data: UserProfile }>) => r.data.data);

@@ -38,8 +38,6 @@ export default function AdminOrderDetailPage() {
   return (
     <div className="p-6 bg-background text-foreground space-y-8">
 
-      {/* HEADER */}
-
       <div className="flex items-center justify-between">
 
         <h1 className="text-2xl font-bold">
@@ -55,23 +53,15 @@ export default function AdminOrderDetailPage() {
 
       </div>
 
-      {/* ORDER INFO */}
-
       <div className="space-y-2">
 
         <p><b>Order ID:</b> {order?.id}</p>
-
         <p><b>Outlet:</b> {order?.outlet?.name}</p>
-
         <p><b>Total Weight:</b> {order?.totalWeightKg} Kg</p>
-
         <p><b>Price per Kg:</b> Rp {order?.pricePerKg}</p>
-
         <p><b>Total Price:</b> Rp {order?.totalPrice}</p>
 
       </div>
-
-      {/* CUSTOMER */}
 
       <div className="space-y-2">
 
@@ -88,8 +78,6 @@ export default function AdminOrderDetailPage() {
         </p>
 
       </div>
-
-      {/* ITEMS */}
 
       <div className="space-y-4">
 
@@ -112,12 +100,8 @@ export default function AdminOrderDetailPage() {
 
               {order?.items?.map((item: OrderItem) => (
                 <TableRow key={item.id}>
-                  <TableCell>
-                    {item.laundryItem.name}
-                  </TableCell>
-                  <TableCell>
-                    {item.quantity}
-                  </TableCell>
+                  <TableCell>{item.laundryItem.name}</TableCell>
+                  <TableCell>{item.quantity}</TableCell>
                 </TableRow>
               ))}
 

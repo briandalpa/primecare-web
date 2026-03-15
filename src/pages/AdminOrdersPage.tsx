@@ -22,6 +22,7 @@ type Order = {
 }
 
 export default function AdminOrdersPage() {
+
   const [page, setPage] = useState(1)
 
   const navigate = useNavigate()
@@ -64,10 +65,7 @@ export default function AdminOrdersPage() {
 
             {orders.length === 0 && (
               <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="text-center text-muted-foreground py-6"
-                >
+                <TableCell colSpan={5} className="text-center text-muted-foreground py-6">
                   No orders found
                 </TableCell>
               </TableRow>
@@ -94,8 +92,6 @@ export default function AdminOrdersPage() {
         </Table>
 
       </div>
-
-      {/* Pagination */}
 
       <div className="flex items-center gap-4">
 
