@@ -27,7 +27,6 @@ export const UserFilters = ({
   return (
     <div className="flex gap-4 flex-wrap">
 
-      {/* Search */}
       <Input
         placeholder="Search name..."
         value={search}
@@ -35,7 +34,6 @@ export const UserFilters = ({
         className="max-w-xs"
       />
 
-      {/* Role Filter */}
       <Select value={role} onValueChange={onRoleChange}>
         <SelectTrigger className="w-[180px]">
           <SelectValue placeholder="Filter role" />
@@ -50,7 +48,6 @@ export const UserFilters = ({
         </SelectContent>
       </Select>
 
-      {/* Outlet Filter */}
       <Input
         placeholder="Outlet ID"
         value={outletId}
