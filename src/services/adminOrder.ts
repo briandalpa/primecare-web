@@ -1,9 +1,14 @@
-import axiosInstance from "@/lib/axiosInstance"
+import { axiosInstance } from '@/lib/axiosInstance'
+import type { CreateOrderPayload, PaginatedResponse, AdminOrder, AdminOrderParams } from '@/types/order'
 
-export const getAdminOrders = async (page: number = 1, limit: number = 10) => {
-  const response = await axiosInstance.get("/admin/orders", {
-    params: { page, limit },
-  });
+export const getAdminOrders = async (
+  params: AdminOrderParams = {},
+): Promise<PaginatedResponse<AdminOrder>> => {
+  const res = await axiosInstance.get('/admin/orders', { params })
+  return res.data
+}
 
-  return response.data;
-};
+export const createAdminOrder = async (data: CreateOrderPayload) => {
+  const res = await axiosInstance.post('/admin/orders', data)
+  return res.data
+}

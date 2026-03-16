@@ -1,9 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { getAdminOrders } from "@/services/adminOrder";
+import { useQuery } from '@tanstack/react-query'
+import type { AdminOrderParams } from '@/types/order'
+import { getAdminOrders } from '@/services/adminOrder'
 
-export const useAdminOrders = (page: number) => {
+export const useAdminOrders = (params: AdminOrderParams) => {
   return useQuery({
-    queryKey: ["admin-orders", page],
-    queryFn: () => getAdminOrders(page),
-  });
-};
+    queryKey: ['admin-orders', params],
+    queryFn: () => getAdminOrders(params),
+  })
+}

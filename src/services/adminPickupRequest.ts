@@ -1,4 +1,4 @@
-import axiosInstance from "@/lib/axiosInstance"
+import { axiosInstance } from "@/lib/axiosInstance"
 
 export const getAdminPickupRequests = async () => {
   const response = await axiosInstance.get("/admin/pickup-requests");
