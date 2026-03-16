@@ -1,37 +1,33 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"
-import "./App.css"
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import './App.css';
+import LandingPage from './pages/LandingPage';
+import AdminLoginPage from './pages/AdminLoginPage';
+import CustomerLoginPage from './pages/CustomerLoginPage';
+import RegisterPage from './pages/RegisterPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
+import SetPasswordPage from './pages/SetPasswordPage';
+import EmailVerifiedPage from './pages/EmailVerifiedPage';
+import GoogleCallbackPage from './pages/GoogleCallbackPage';
+import { Toaster } from '@/components/ui/sonner';
+import UserManagementPage from './pages/UserManagementPage';
+import OrderOverviewPage from './pages/OrderOverviewPage';
+import CreateOrderPage from './pages/CreateOrderPage';
+import AdminOrderDetailPage from './pages/AdminOrderDetailPage';
+import OrderListPage from './pages/OrderListPage';
+import CustomerOrderDetailPage from './pages/CustomerOrderDetailPage';
+import AdminLayout from './layouts/AdminLayout';
+import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminProfilePage from './pages/AdminProfilePage';
+import AdminSettingsPage from './pages/AdminSettingsPage';
+import AdminOutletsPage from './pages/AdminOutletsPage';
 
-import LandingPage from "./pages/LandingPage"
-
-import AdminLoginPage from "./pages/AdminLoginPage"
-
-import CustomerLoginPage from "./pages/CustomerLoginPage"
-import RegisterPage from "./pages/RegisterPage"
-import VerifyEmailPage from "./pages/VerifyEmailPage"
-import SetPasswordPage from "./pages/SetPasswordPage"
-import EmailVerifiedPage from "./pages/EmailVerifiedPage"
-import GoogleCallbackPage from "./pages/GoogleCallbackPage"
-
-import { UsersPage } from "./pages/UsersPage"
-
-import AdminOrdersPage from "./pages/AdminOrdersPage"
-import AdminOrderDetailPage from "./pages/AdminOrderDetailPage"
-import AdminCreateOrderPage from "./pages/AdminCreateOrderPage"
-
-import { Toaster } from "@/components/ui/sonner"
-
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
-
       <Routes>
-
-        {/* ================= PUBLIC ROUTES ================= */}
-
+        {/* PUBLIC ROUTES */}
         <Route path="/" element={<LandingPage />} />
-
         <Route path="/admin/login" element={<AdminLoginPage />} />
-
         <Route path="/auth/login" element={<CustomerLoginPage />} />
         <Route path="/auth/register" element={<RegisterPage />} />
         <Route path="/auth/verify-email" element={<VerifyEmailPage />} />
@@ -39,27 +35,25 @@ function App() {
         <Route path="/auth/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
 
-        {/* ================= ADMIN ROUTES ================= */}
+        {/* ADMIN ROUTES */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboardPage />} />
+          <Route path="users" element={<UserManagementPage />} />
+          <Route path="orders" element={<OrderOverviewPage />} />
+          <Route path="orders/create" element={<CreateOrderPage />} />
+          <Route path="orders/:id" element={<AdminOrderDetailPage />} />
+          <Route path="profile" element={<AdminProfilePage />} />
+          <Route path="settings" element={<AdminSettingsPage />} />
+          <Route path="outlets" element={<AdminOutletsPage />} />
+        </Route>
 
-        <Route path="/admin/dashboard" element={<div>Admin Dashboard</div>} />
+        {/* CUSTOMER ROUTES */}
 
-        <Route path="/admin/users" element={<UsersPage />} />
-
-        {/* PCS-120 Admin Orders List */}
-        <Route path="/admin/orders" element={<AdminOrdersPage />} />
-
-        {/* PCS-121 Admin Order Detail */}
-        <Route path="/admin/orders/:id" element={<AdminOrderDetailPage />} />
-
-        {/* PCS-125 Create Order */}
-        <Route path="/admin/orders/create" element={<AdminCreateOrderPage />} />
-
+        <Route path="/orders" element={<OrderListPage />} />
+        <Route path="/orders/:id" element={<CustomerOrderDetailPage />} />
       </Routes>
 
       <Toaster />
-
     </BrowserRouter>
-  )
+  );
 }
-
-export default App
