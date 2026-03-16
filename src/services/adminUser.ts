@@ -1,45 +1,28 @@
-import { axiosInstance } from "@/lib/axiosInstance"
+import { axiosInstance } from '@/lib/axiosInstance'
+import type {
+  User,
+  GetUsersParams,
+  GetUsersResponse,
+  CreateUserPayload,
+  UpdateUserPayload,
+} from '@/types/user'
 
-export type User = {
-  id: string
-  name: string
-  email: string
-  role: string
-  emailVerified?: boolean
-  createdAt?: string
-  outlet?: {
-    id: string
-    name: string
-  } | null
-}
+export type { User, GetUsersParams, GetUsersResponse, CreateUserPayload, UpdateUserPayload }
 
-export type GetUsersParams = {
-  page?: number
-  limit?: number
-  search?: string
-  role?: string
-  outletId?: string
-}
-
-export type GetUsersResponse = {
-  status: string
-  message: string
-  data: User[]
-}
-
-export const getUsers = async (
-  params: GetUsersParams
-): Promise<GetUsersResponse> => {
-  const res = await axiosInstance.get("/admin/users", {
-    params,
-  })
-
+export const getUsers = async (params: GetUsersParams): Promise<GetUsersResponse> => {
+  const res = await axiosInstance.get('/admin/users', { params })
   return res.data
 }
 
-/* =========================
-   DELETE USER
-========================= */
+export const createUser = async (payload: CreateUserPayload) => {
+  const res = await axiosInstance.post('/admin/users', payload)
+  return res.data
+}
+
+export const updateUser = async (userId: string, payload: UpdateUserPayload) => {
+  const res = await axiosInstance.patch(`/admin/users/${userId}`, payload)
+  return res.data
+}
 
 export const deleteUser = async (userId: string) => {
   const res = await axiosInstance.delete(`/admin/users/${userId}`)

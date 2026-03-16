@@ -1,9 +1,5 @@
-export type UserRole =
-  | 'CUSTOMER'
-  | 'SUPER_ADMIN'
-  | 'OUTLET_ADMIN'
-  | 'WORKER'
-  | 'DRIVER';
+export type { UserRole } from '@/types/user'
+import type { UserRole } from '@/types/user'
 
 export function getInitials(name: string): string {
   const trimmed = name.trim();
