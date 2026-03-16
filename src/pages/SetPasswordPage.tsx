@@ -1,10 +1,5 @@
-import { useState, useEffect } from 'react';
-import type { FormEvent } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { z } from 'zod';
-import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 import { Lock } from 'lucide-react';
-import { AxiosError } from 'axios';
 import {
   CardContent,
   CardDescription,
@@ -19,98 +14,13 @@ import {
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { setPassword } from '@/services/auth';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { AuthLogo } from '@/features/auth/AuthLogo';
-
-const passwordSchema = z
-  .object({
-    password: z
-      .string()
-      .min(8, { message: 'Password must be at least 8 characters' }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  });
-
-type PasswordFormValues = z.infer<typeof passwordSchema>;
-type PasswordFormErrors = Partial<Record<keyof PasswordFormValues, string>>;
+import { useSetPassword } from '@/hooks/useSetPassword';
 
 export default function SetPasswordPage() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get('token');
-
-  const [values, setValues] = useState<PasswordFormValues>({
-    password: '',
-    confirmPassword: '',
-  });
-  const [errors, setErrors] = useState<PasswordFormErrors>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [tokenError, setTokenError] = useState(false);
-
-  useEffect(() => {
-    if (!token) setTokenError(true);
-  }, [token]);
-
-  function handleChange(field: keyof PasswordFormValues, value: string) {
-    setValues((v) => ({ ...v, [field]: value }));
-    if (errors[field]) setErrors((e) => ({ ...e, [field]: undefined }));
-  }
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!token) {
-      setTokenError(true);
-      return;
-    }
-
-    const result = passwordSchema.safeParse(values);
-    if (!result.success) {
-      const fieldErrors: PasswordFormErrors = {};
-      for (const issue of result.error.issues) {
-        const key = issue.path[0] as keyof PasswordFormValues;
-        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
-      }
-      setErrors(fieldErrors);
-      return;
-    }
-
-    setErrors({});
-    setIsSubmitting(true);
-
-    try {
-      await setPassword({ token, password: result.data.password });
-      toast.success('Password set successfully!', {
-        description: 'You can now login with your new password.',
-      });
-      navigate('/auth/email-verified', { replace: true });
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        const status = error.response?.status;
-        const message = error.response?.data?.message;
-
-        if (status === 400 || status === 404) {
-          setTokenError(true);
-          toast.error('Invalid or expired link', {
-            description: 'Please request a new verification email.',
-          });
-        } else {
-          toast.error('Failed to set password', {
-            description: message || 'Please try again.',
-          });
-        }
-      } else {
-        toast.error('Something went wrong', {
-          description: 'Please check your connection and try again.',
-        });
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
+  const { values, errors, isSubmitting, tokenError, handleChange, handleSubmit } =
+    useSetPassword();
 
   if (tokenError) {
     return (

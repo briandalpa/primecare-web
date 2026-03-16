@@ -67,13 +67,6 @@ export function useAdminLogin() {
       }
 
       /**
-       * Save token for API requests
-       */
-      if (signInResult.data?.token) {
-        localStorage.setItem("auth_token", signInResult.data.token);
-      }
-
-      /**
        * Fetch profile to get role
        */
       const profile = await getMyProfile();
