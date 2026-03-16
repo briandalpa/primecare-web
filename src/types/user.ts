@@ -53,6 +53,7 @@ export type GetUsersResponse = {
   status: string
   message: string
   data: User[]
+  meta: { page: number; limit: number; total: number; totalPages: number }
 }
 
 // ─── Admin user mutations ─────────────────────────────────────────────────────

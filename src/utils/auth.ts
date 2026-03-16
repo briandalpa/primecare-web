@@ -8,7 +8,7 @@ export function getInitials(name: string): string {
 }
 
 export function getDashboardRoute(role: UserRole): string {
-  if (role === 'OUTLET_ADMIN' || role === 'SUPER_ADMIN') return '/admin/dashboard';
+  if (role === 'OUTLET_ADMIN' || role === 'SUPER_ADMIN') return '/admin';
   if (role === 'WORKER') return '/worker/dashboard';
   if (role === 'DRIVER') return '/driver/dashboard';
   return '/';
