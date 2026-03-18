@@ -7,7 +7,7 @@ export function useCurrentUser() {
   const { data: session, isPending: sessionPending } = useSession();
 
   const query = useQuery({
-    queryKey: ['me'],
+    queryKey: ['me', session?.user?.id],
     queryFn: getMyProfile,
     enabled: !!session,
     staleTime: 5 * 60 * 1000,

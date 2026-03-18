@@ -1,31 +1,6 @@
-import axiosInstance from "@/lib/axiosInstance"
+import { axiosInstance } from "@/lib/axiosInstance"
 import type { AxiosResponse } from 'axios';
-
-interface RegisterRequest {
-  name: string;
-  email: string;
-}
-
-interface RegisterResponse {
-  status: string;
-  message: string;
-  data: {
-    id: string;
-    name: string;
-    email: string;
-    emailVerified: boolean;
-  };
-}
-
-interface SetPasswordRequest {
-  token: string;
-  password: string;
-}
-
-interface AuthResponse {
-  status: string;
-  message: string;
-}
+import type { RegisterRequest, RegisterResponse, SetPasswordRequest, AuthResponse } from '@/types/auth';
 
 export const registerUser = (data: RegisterRequest) =>
   axiosInstance

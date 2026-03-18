@@ -1,118 +1,135 @@
-import { useParams, useNavigate } from "react-router-dom"
-import { useAdminOrderDetail } from "@/hooks/useAdminOrderDetail"
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-
-type OrderItem = {
-  id: string
-  quantity: number
-  laundryItem: {
-    name: string
-  }
-}
+import { useParams, useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
+import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAdminOrderDetail } from '@/hooks/useAdminOrderDetail';
+import { OrderStatus } from '@/types/enums';
+import { ORDER_STATUS_LABEL, ORDER_STATUS_COLOR, PAYMENT_BADGE } from '@/utils/orderStatus';
+import { cn } from '@/lib/utils';
+import StatusTimeline from '@/features/orders/StatusTimeline';
+import OrderItemsCard from '@/features/orders/OrderItemsCard';
+import OrderPriceCard from '@/features/orders/OrderPriceCard';
+import type { AdminOrderDetail } from '@/types/order';
 
 export default function AdminOrderDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { data, isPending, isError } = useAdminOrderDetail(id ?? '');
 
-  const { id } = useParams()
-  const navigate = useNavigate()
-
-  const { data, isLoading } = useAdminOrderDetail(id || "")
-
-  if (isLoading) {
-    return (
-      <div className="p-6 text-muted-foreground">
-        Loading order detail...
-      </div>
-    )
+  if (isPending) {
+    return <p className="text-center text-muted-foreground py-8">Loading...</p>;
   }
 
-  const order = data?.data
+  if (isError || !data?.data) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">Order not found.</p>
+        <Button variant="link" className="mt-4" onClick={() => navigate('/admin/orders')}>
+          Back to Orders
+        </Button>
+      </div>
+    );
+  }
+
+  const order = data.data;
 
   return (
-    <div className="p-6 bg-background text-foreground space-y-8">
-
-      <div className="flex items-center justify-between">
-
-        <h1 className="text-2xl font-bold">
-          Order Detail
-        </h1>
-
-        <button
-          onClick={() => navigate("/admin/orders")}
-          className="text-primary hover:underline"
-        >
-          ← Back to Orders
-        </button>
-
-      </div>
-
-      <div className="space-y-2">
-
-        <p><b>Order ID:</b> {order?.id}</p>
-        <p><b>Outlet:</b> {order?.outlet?.name}</p>
-        <p><b>Total Weight:</b> {order?.totalWeightKg} Kg</p>
-        <p><b>Price per Kg:</b> Rp {order?.pricePerKg}</p>
-        <p><b>Total Price:</b> Rp {order?.totalPrice}</p>
-
-      </div>
-
-      <div className="space-y-2">
-
-        <h2 className="text-lg font-semibold">
-          Customer
-        </h2>
-
-        <p>
-          <b>Name:</b> {order?.pickupRequest?.customerUser?.name}
-        </p>
-
-        <p>
-          <b>Email:</b> {order?.pickupRequest?.customerUser?.email}
-        </p>
-
-      </div>
-
-      <div className="space-y-4">
-
-        <h2 className="text-lg font-semibold">
-          Laundry Items
-        </h2>
-
-        <div className="rounded-lg border border-border overflow-hidden">
-
-          <Table>
-
-            <TableHeader className="bg-muted">
-              <TableRow>
-                <TableHead>Item</TableHead>
-                <TableHead>Quantity</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-
-              {order?.items?.map((item: OrderItem) => (
-                <TableRow key={item.id}>
-                  <TableCell>{item.laundryItem.name}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
-                </TableRow>
-              ))}
-
-            </TableBody>
-
-          </Table>
-
+    <div className="max-w-4xl">
+      <Button variant="ghost" size="sm" className="mb-4" onClick={() => navigate('/admin/orders')}>
+        <ArrowLeft className="h-4 w-4 mr-1" /> Back to Orders
+      </Button>
+      <OrderHeader order={order} />
+      <div className="grid md:grid-cols-3 gap-6">
+        <StatusTimeline status={order.status as OrderStatus} />
+        <div className="md:col-span-2 space-y-6">
+          <CustomerCard order={order} />
+          <OrderItemsCard items={order.items} />
+          <OrderPriceCard
+            totalWeightKg={order.totalWeightKg}
+            pricePerKg={order.pricePerKg}
+            totalPrice={order.totalPrice}
+          />
+          <StationRecordsCard order={order} />
         </div>
-
       </div>
-
     </div>
-  )
+  );
+}
+
+function OrderHeader({ order }: { order: AdminOrderDetail }) {
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Order</h1>
+        <p className="text-sm text-muted-foreground">
+          Created {format(new Date(order.createdAt), 'dd MMM yyyy, HH:mm')}
+        </p>
+      </div>
+      <div className="flex gap-2">
+        <Badge variant="outline" className={cn('text-xs', ORDER_STATUS_COLOR[order.status as OrderStatus])}>
+          {ORDER_STATUS_LABEL[order.status as OrderStatus] ?? order.status}
+        </Badge>
+        <Badge variant="outline" className={cn('text-xs capitalize', PAYMENT_BADGE[order.paymentStatus])}>
+          {order.paymentStatus}
+        </Badge>
+      </div>
+    </div>
+  );
+}
+
+function CustomerCard({ order }: { order: AdminOrderDetail }) {
+  const customer = order.pickupRequest?.customerUser;
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base">Customer</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-1 text-sm">
+        <p><span className="text-muted-foreground">Name:</span> {customer?.name ?? '\u2014'}</p>
+        <p><span className="text-muted-foreground">Email:</span> {customer?.email ?? '\u2014'}</p>
+        <p><span className="text-muted-foreground">Outlet:</span> {order.outlet?.name ?? '\u2014'}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function StationRecordsCard({ order }: { order: AdminOrderDetail }) {
+  if (!order.stationRecords?.length) return null;
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base">Station Records</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {order.stationRecords.map((rec) => (
+          <div key={rec.id} className="border rounded-lg p-3 space-y-1 text-sm">
+            <div className="flex items-center justify-between">
+              <span className="font-medium">{rec.station}</span>
+              <Badge variant="outline" className="text-xs">{rec.status}</Badge>
+            </div>
+            <p className="text-muted-foreground">Worker: {rec.staff?.user?.name ?? '\u2014'}</p>
+            {rec.completedAt && (
+              <p className="text-muted-foreground">
+                Completed: {format(new Date(rec.completedAt), 'dd MMM yyyy, HH:mm')}
+              </p>
+            )}
+            {rec.bypassRequests?.length > 0 && (
+              <div className="mt-2 space-y-1">
+                {rec.bypassRequests.map((bp) => (
+                  <div key={bp.id} className="text-xs bg-muted p-2 rounded">
+                    <span className="font-medium">Bypass: {bp.status}</span>
+                    {bp.problemDescription && (
+                      <p className="text-muted-foreground">{bp.problemDescription}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
 }
