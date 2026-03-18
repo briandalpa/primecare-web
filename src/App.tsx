@@ -16,7 +16,9 @@ import AdminOrderDetailPage from './pages/AdminOrderDetailPage';
 import OrderListPage from './pages/OrderListPage';
 import CustomerOrderDetailPage from './pages/CustomerOrderDetailPage';
 import AdminLayout from './layouts/AdminLayout';
+import CustomerLayout from './layouts/CustomerLayout';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import AddressManagementPage from './pages/AddressManagementPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminOutletsPage from './pages/AdminOutletsPage';
@@ -48,9 +50,11 @@ export default function App() {
         </Route>
 
         {/* CUSTOMER ROUTES */}
-
-        <Route path="/orders" element={<OrderListPage />} />
-        <Route path="/orders/:id" element={<CustomerOrderDetailPage />} />
+        <Route element={<CustomerLayout />}>
+          <Route path="/addresses" element={<AddressManagementPage />} />
+          <Route path="/orders" element={<OrderListPage />} />
+          <Route path="/orders/:id" element={<CustomerOrderDetailPage />} />
+        </Route>
       </Routes>
 
       <Toaster />
