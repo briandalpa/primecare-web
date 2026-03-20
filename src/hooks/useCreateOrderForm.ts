@@ -24,9 +24,13 @@ export function useCreateOrderForm() {
   });
 
   const { register, handleSubmit, control, watch, trigger, formState: { errors } } = form;
+  // Dynamic item rows backed by react-hook-form's useFieldArray — append/remove
+  // keep the array in sync with the form state without manual index management.
   const { fields, append, remove } = useFieldArray({ control, name: 'items' });
 
+  // Derived total: recalculates reactively whenever weight or price/kg changes.
   const totalPrice = (watch('totalWeightKg') || 0) * (watch('pricePerKg') || 0);
+  // Resolve the full pickup request object so the form can display customer details.
   const selectedPickup = pickups.find((p) => p.id === watch('pickupRequestId'));
 
   const onConfirm = (values: FormValues) => {

@@ -6,7 +6,7 @@ export function useProvinces() {
   return useQuery({
     queryKey: ['regions', 'provinces'],
     queryFn: getProvinces,
-    staleTime: Infinity,
+    staleTime: Infinity,  // Province and city lists are static government data — cache indefinitely for the session.
     select: (data) => data.map(p => ({ ...p, name: toTitleCase(p.name) })),
   })
 }
@@ -15,7 +15,7 @@ export function useCities(provinceId: number | null) {
   return useQuery({
     queryKey: ['regions', 'cities', provinceId],
     queryFn: () => getCitiesByProvince(provinceId!),
-    enabled: provinceId !== null,
+    enabled: provinceId !== null,  // Cities are province-scoped; don't fetch until a province is selected.
     staleTime: Infinity,
     select: (data) => data.map(c => ({ ...c, name: toTitleCase(c.name) })),
   })
@@ -25,7 +25,7 @@ export function useGeocode(city: string, province: string) {
   return useQuery({
     queryKey: ['geocode', city, province],
     queryFn: () => geocodeAddress(city, province),
-    enabled: !!city && !!province,
+    enabled: !!city && !!province,  // Geocoding is triggered automatically once both city and province are populated by the address form.
     staleTime: Infinity,
   })
 }

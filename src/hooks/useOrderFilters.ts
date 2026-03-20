@@ -11,6 +11,8 @@ export function useOrderFilters() {
 
   const setPage = (p: number) => setPageState(p);
 
+  // Reset to page 1 whenever a filter changes — server-side pagination means
+  // the current page may not exist under the new filter set.
   const setSearch = (v: string) => {
     setSearchState(v);
     setPageState(1);
@@ -26,6 +28,7 @@ export function useOrderFilters() {
     setPageState(1);
   };
 
+  // Sort value is encoded as "<field>-<direction>" (e.g. "createdAt-desc") to fit a single select input.
   const setSortValue = (combined: string) => {
     const [s, o] = combined.split('-');
     setSortBy(s);
@@ -39,7 +42,7 @@ export function useOrderFilters() {
     page,
     limit: 10,
     search: search || undefined,
-    status: status !== 'ALL' ? status : undefined,
+    status: status !== 'ALL' ? status : undefined,  // 'ALL' is a UI-only sentinel; omit the param so the backend returns every status.
     outletId: outletId || undefined,
     sortBy,
     order,

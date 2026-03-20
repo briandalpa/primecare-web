@@ -66,9 +66,7 @@ export function useAdminLogin() {
         return;
       }
 
-      /**
-       * Fetch profile to get role
-       */
+      // Session alone doesn't carry role; fetch profile to verify this user is an admin.
       const profile = await getMyProfile();
       const role = profile?.staff?.role;
 
@@ -80,6 +78,7 @@ export function useAdminLogin() {
 
         navigate(getDashboardRoute(role), { replace: true });
       } else {
+        // Enforce admin-only access: sign out and reject if the account is a customer or worker.
         await signOut();
 
         toast.error("Unauthorized", {
