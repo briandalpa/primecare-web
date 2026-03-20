@@ -11,15 +11,14 @@ export function RoleRoute({ allowedRoles }: RoleRouteProps) {
   const { data: session, isPending } = useSession();
   const { effectiveRole } = useCurrentUser();
 
-  // tunggu session selesai loading
+  // Don't render until both session and profile are resolved — effectiveRole defaults to CUSTOMER
   if (isPending) return null;
 
-  // jika belum login jangan redirect dulu saat development
   if (!session) {
-    return <Outlet />;
+    return <Navigate to="/" replace />;
   }
 
-  // cek role
+  // Role lives on the Staff model, not session.user — see useCurrentUser for resolution logic
   if (!allowedRoles.includes(effectiveRole)) {
     return <Navigate to="/" replace />;
   }
