@@ -33,8 +33,8 @@ const addressSchema = z.object({
   street: z.string().trim().min(1, 'Street is required').max(255),
   city: z.string().trim().min(1, 'City is required'),
   province: z.string().trim().min(1, 'Province is required'),
-  latitude: z.number(),
-  longitude: z.number(),
+  latitude: z.number().refine(n => n !== 0, { message: 'Location could not be determined. Please select a city.' }),
+  longitude: z.number().refine(n => n !== 0, { message: 'Location could not be determined. Please select a city.' }),
 });
 
 type FormValues = z.infer<typeof addressSchema>;
@@ -57,7 +57,7 @@ type Props = {
 export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props) {
   const create = useCreateAddress();
   const update = useUpdateAddress();
-  const isPending = create.isPending || update.isPending;
+  const mutationPending = create.isPending || update.isPending;
 
   const [selectedProvinceId, setSelectedProvinceId] = useState<number | null>(null);
   const hasReset = useRef(false);
@@ -82,7 +82,8 @@ export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props)
   const watchedCity = watch('city');
   const watchedProvince = watch('province');
 
-  const { data: geocodeData } = useGeocode(watchedCity, watchedProvince);
+  const { data: geocodeData, isFetching: geocodeFetching } = useGeocode(watchedCity, watchedProvince);
+  const isPending = mutationPending || geocodeFetching;
 
   useEffect(() => {
     if (geocodeData) {
@@ -91,6 +92,7 @@ export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props)
     }
   }, [geocodeData, setValue]);
 
+  // Effect 1: reset form once per open session
   useEffect(() => {
     if (!open) {
       hasReset.current = false;
@@ -106,14 +108,19 @@ export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props)
         latitude: editingAddress.latitude,
         longitude: editingAddress.longitude,
       });
-      const matched = provinces.find(p => p.name === editingAddress.province);
-      setSelectedProvinceId(matched?.id ?? null);
     } else {
       reset(defaultValues);
       setSelectedProvinceId(null);
     }
     hasReset.current = true;
-  }, [open, editingAddress, provinces, reset]);
+  }, [open, editingAddress, reset]);
+
+  // Effect 2: resolve province ID whenever provinces load (runs independently of hasReset)
+  useEffect(() => {
+    if (!open || !editingAddress || !provinces.length) return;
+    const matched = provinces.find(p => p.name === editingAddress.province);
+    setSelectedProvinceId(matched?.id ?? null);
+  }, [open, editingAddress, provinces]);
 
   const onSubmit = async (values: FormValues) => {
     try {

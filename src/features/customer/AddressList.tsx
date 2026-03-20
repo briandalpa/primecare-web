@@ -56,10 +56,8 @@ export function AddressList({
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {addr.street}, {toTitleCase(addr.city)}, {toTitleCase(addr.province)}
-                  </p>
-                  <p className="text-xs text-muted-foreground/70 mt-1">
-                    ({addr.latitude}, {addr.longitude})
+                    {addr.street}, {toTitleCase(addr.city)},{' '}
+                    {toTitleCase(addr.province)}
                   </p>
                   <div className="flex items-center gap-2 mt-3">
                     {!addr.isPrimary && (
@@ -75,7 +73,7 @@ export function AddressList({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 text-xs gap-1"
+                      className="text-xs gap-1"
                       onClick={() => onEdit(addr)}
                     >
                       <Pencil className="h-3 w-3" /> Edit
@@ -83,7 +81,7 @@ export function AddressList({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 text-xs gap-1 text-destructive hover:text-destructive"
+                      className="text-xs gap-1 text-destructive hover:text-destructive hover:bg-destructive/10"
                       onClick={() => onDelete(addr.id)}
                     >
                       <Trash2 className="h-3 w-3" /> Delete
