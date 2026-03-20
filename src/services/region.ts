@@ -15,7 +15,7 @@ export const geocodeAddress = async (
   city: string,
   province: string,
 ): Promise<{ latitude: number; longitude: number }> => {
-  const res = await axiosInstance.get<{ data: { latitude: number; longitude: number } }>('/api/v1/geocode', {
+  const res = await axiosInstance.get<{ data: { latitude: number; longitude: number } }>('/api/v1/regions/geocode', {
     params: { city, province },
   })
   return res.data.data
