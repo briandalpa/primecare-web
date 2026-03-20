@@ -40,6 +40,12 @@ const ROLE_OPTIONS = [
   { value: 'DRIVER', label: 'Driver' },
 ] as const;
 
+const WORKER_TYPE_OPTIONS = [
+  { value: 'WASHING', label: 'Washing' },
+  { value: 'IRONING', label: 'Ironing' },
+  { value: 'PACKING', label: 'Packing' },
+] as const;
+
 // ─── Create form ─────────────────────────────────────────────────────────────
 
 const CreateForm = ({
@@ -57,7 +63,7 @@ const CreateForm = ({
     formState: { errors },
   } = useForm<CreateUserFormValues>({
     resolver: zodResolver(createUserSchema),
-    defaultValues: { name: '', email: '', role: 'WORKER', outletId: '' },
+    defaultValues: { name: '', email: '', role: 'WORKER', outletId: '', workerType: undefined },
   });
 
   const roleValue = useWatch({ control, name: 'role' });
@@ -111,6 +117,29 @@ const CreateForm = ({
           <FieldError errors={[errors.role]} />
         </Field>
 
+        {roleValue === 'WORKER' && (
+          <Field data-invalid={!!errors.workerType}>
+            <FieldLabel>Worker Type</FieldLabel>
+            <Select
+              onValueChange={(val) =>
+                setValue('workerType', val as CreateUserFormValues['workerType'])
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select worker type" />
+              </SelectTrigger>
+              <SelectContent>
+                {WORKER_TYPE_OPTIONS.map(({ value, label }) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FieldError errors={[errors.workerType]} />
+          </Field>
+        )}
+
         <Field>
           <FieldLabel htmlFor="outletId">Outlet ID (optional)</FieldLabel>
           <Input
@@ -161,11 +190,13 @@ const EditForm = ({
       role: user.role as UpdateUserFormValues['role'],
       outletId: user.outlet?.id ?? '',
       isActive: true,
+      workerType: (user.workerType as UpdateUserFormValues['workerType']) ?? undefined,
     },
   });
 
   const roleValue = useWatch({ control, name: 'role' });
   const isActiveValue = useWatch({ control, name: 'isActive' });
+  const workerTypeValue = useWatch({ control, name: 'workerType' });
   const { mutate, isPending } = useUpdateUser(() => {
     onSuccess();
     onClose();
@@ -201,6 +232,30 @@ const EditForm = ({
           </Select>
           <FieldError errors={[errors.role]} />
         </Field>
+
+        {roleValue === 'WORKER' && (
+          <Field data-invalid={!!errors.workerType}>
+            <FieldLabel>Worker Type</FieldLabel>
+            <Select
+              value={workerTypeValue ?? ''}
+              onValueChange={(val) =>
+                setValue('workerType', val as UpdateUserFormValues['workerType'])
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select worker type" />
+              </SelectTrigger>
+              <SelectContent>
+                {WORKER_TYPE_OPTIONS.map(({ value, label }) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FieldError errors={[errors.workerType]} />
+          </Field>
+        )}
 
         <Field>
           <FieldLabel htmlFor="outletId">Outlet ID (optional)</FieldLabel>
