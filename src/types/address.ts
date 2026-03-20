@@ -28,5 +28,5 @@ export type Province = {
 export type City = {
   id: number
   name: string
-  zip_code: string
+  zipCode: string
 }
