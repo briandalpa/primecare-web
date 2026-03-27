@@ -64,7 +64,24 @@ export function useSetPassword() {
         const status = error.response?.status;
         const message = error.response?.data?.message;
 
-        if (status === 400 || status === 404) {
+        if (status === 400) {
+          const errorsPayload = error.response?.data?.errors;
+          if (Array.isArray(errorsPayload)) {
+            // Backend Zod validation error — map field errors back into the form.
+            const fieldErrors: SetPasswordFormErrors = {};
+            for (const issue of errorsPayload as { path: string[]; message: string }[]) {
+              const key = issue.path[0] as keyof SetPasswordFormValues;
+              if (key && !fieldErrors[key]) fieldErrors[key] = issue.message;
+            }
+            setErrors(fieldErrors);
+          } else {
+            // String errors payload means token error (e.g. "Invalid or expired token").
+            setTokenError(true);
+            toast.error('Invalid or expired link', {
+              description: 'Please request a new verification email.',
+            });
+          }
+        } else if (status === 404) {
           setTokenError(true);
           toast.error('Invalid or expired link', {
             description: 'Please request a new verification email.',

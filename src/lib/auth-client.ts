@@ -9,7 +9,6 @@ export const authClient = createAuthClient({
       user: {
         avatarUrl: { type: "string" },
         phone: { type: "string" },
-        address: { type: "string" },
       },
     }),
   ],

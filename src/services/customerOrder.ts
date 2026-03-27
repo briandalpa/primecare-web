@@ -4,18 +4,18 @@ import type { PaginatedResponse, CustomerOrder, CustomerOrderDetail, CustomerOrd
 export const getCustomerOrders = async (
   params: CustomerOrderParams = {},
 ): Promise<PaginatedResponse<CustomerOrder>> => {
-  const res = await axiosInstance.get('/orders', { params })
+  const res = await axiosInstance.get('/api/v1/orders', { params })
   return res.data
 }
 
 export const getCustomerOrderDetail = async (
   id: string,
 ): Promise<{ data: CustomerOrderDetail }> => {
-  const res = await axiosInstance.get(`/orders/${id}`)
+  const res = await axiosInstance.get(`/api/v1/orders/${id}`)
   return res.data
 }
 
 export const confirmOrderReceipt = async (id: string) => {
-  const res = await axiosInstance.post(`/orders/${id}/confirm`)
+  const res = await axiosInstance.post(`/api/v1/orders/${id}/confirm`)
   return res.data
 }

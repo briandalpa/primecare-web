@@ -4,11 +4,11 @@ import type { CreateOrderPayload, PaginatedResponse, AdminOrder, AdminOrderParam
 export const getAdminOrders = async (
   params: AdminOrderParams = {},
 ): Promise<PaginatedResponse<AdminOrder>> => {
-  const res = await axiosInstance.get('/admin/orders', { params })
+  const res = await axiosInstance.get('/api/v1/admin/orders', { params })
   return res.data
 }
 
 export const createAdminOrder = async (data: CreateOrderPayload) => {
-  const res = await axiosInstance.post('/admin/orders', data)
+  const res = await axiosInstance.post('/api/v1/admin/orders', data)
   return res.data
 }

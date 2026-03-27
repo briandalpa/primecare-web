@@ -26,6 +26,9 @@ export interface UserProfile {
   avatarUrl: string | null
   phone: string | null
   createdAt: string
+  // staff is null for plain customers (User without a Staff record).
+  // All non-customer roles (OUTLET_ADMIN, WORKER, DRIVER) are stored on the Staff model.
+  // Use staff.role for role checks — never rely on the top-level `role` field which is always CUSTOMER.
   staff: StaffInfo | null
 }
 
@@ -36,6 +39,7 @@ export type User = {
   name: string
   email: string
   role: string
+  workerType?: string | null
   emailVerified?: boolean
   createdAt?: string
   outlet?: { id: string; name: string } | null
@@ -65,10 +69,12 @@ export type CreateUserPayload = {
   email: string
   role: StaffRole
   outletId?: string
+  workerType?: string
 }
 
 export type UpdateUserPayload = {
   role?: StaffRole
   outletId?: string
   isActive?: boolean
+  workerType?: string
 }

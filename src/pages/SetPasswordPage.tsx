@@ -79,6 +79,9 @@ export default function SetPasswordPage() {
                 aria-invalid={!!errors.password}
                 disabled={isSubmitting}
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Must be at least 8 characters with uppercase, lowercase, and a number.
+              </p>
               {errors.password && <FieldError>{errors.password}</FieldError>}
             </Field>
 
