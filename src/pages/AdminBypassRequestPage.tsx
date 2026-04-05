@@ -1,18 +1,27 @@
 import { useEffect, useState } from 'react';
-import {
-  getAdminBypassRequests,
-  approveBypassRequest,
-  rejectBypassRequest,
-} from '@/services/adminBypassRequest';
+import { getAdminBypassRequests, approveBypassRequest, rejectBypassRequest } from '@/services/adminBypassRequest';
 import type { BypassRequest } from '@/types/bypassRequest';
 import PageHeader from '@/components/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import ApproveRejectModal from '@/components/admin/ApproveRejectModal';
+import type { AxiosError } from 'axios';
+
+type ActionType = 'APPROVE' | 'REJECT';
+type ErrorResponse = {
+  errors?: string;
+  message?: string;
+};
 
 export default function AdminBypassRequestPage() {
   const [data, setData] = useState<BypassRequest[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [actionType, setActionType] = useState<ActionType | null>(null);
+  const [password, setPassword] = useState<string>('');
+  const [problemDescription, setProblemDescription] = useState<string>('');
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,33 +47,54 @@ export default function AdminBypassRequestPage() {
     fetchData();
   }, []);
 
-  const handleApprove = async (id: string) => {
-    const password = prompt('Enter admin password');
-    const problemDescription = prompt('Enter problem description');
-
-    if (!password || !problemDescription) return;
-
-    try {
-      await approveBypassRequest(id, { password, problemDescription });
-
-      setData((prev) => prev.filter((item) => item.id !== id));
-    } catch {
-      alert('Failed to approve');
-    }
+  const openModal = (id: string, type: ActionType) => {
+    setSelectedId(id);
+    setActionType(type);
+    setPassword('');
+    setProblemDescription('');
   };
 
-  const handleReject = async (id: string) => {
-    const password = prompt('Enter admin password');
-    const problemDescription = prompt('Enter problem description');
+  const closeModal = () => {
+    setSelectedId(null);
+    setActionType(null);
+    setPassword('');
+    setProblemDescription('');
+  };
 
+  const handleSubmit = async () => {
+    if (!selectedId || !actionType) return;
     if (!password || !problemDescription) return;
 
-    try {
-      await rejectBypassRequest(id, { password, problemDescription });
+    setSubmitting(true);
 
-      setData((prev) => prev.filter((item) => item.id !== id));
-    } catch {
-      alert('Failed to reject');
+    try {
+      if (actionType === 'APPROVE') {
+        await approveBypassRequest(selectedId, {
+          password,
+          problemDescription,
+        });
+      } else {
+        await rejectBypassRequest(selectedId, {
+          password,
+          problemDescription,
+        });
+      }
+
+      setData((prev) => prev.filter((item) => item.id !== selectedId));
+      closeModal();
+    } catch (err: unknown) {
+      console.error(err);
+
+      let message = 'Failed to submit';
+
+      if (isAxiosError(err)) {
+        const data = err.response?.data as ErrorResponse | undefined;
+        message = data?.errors || data?.message || message;
+      }
+
+      alert(message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -133,7 +163,7 @@ export default function AdminBypassRequestPage() {
                         <div className="flex gap-2">
                           <Button
                             size="sm"
-                            onClick={() => handleApprove(item.id)}
+                            onClick={() => openModal(item.id, 'APPROVE')}
                           >
                             Approve
                           </Button>
@@ -141,7 +171,7 @@ export default function AdminBypassRequestPage() {
                           <Button
                             size="sm"
                             variant="destructive"
-                            onClick={() => handleReject(item.id)}
+                            onClick={() => openModal(item.id, 'REJECT')}
                           >
                             Reject
                           </Button>
@@ -155,6 +185,22 @@ export default function AdminBypassRequestPage() {
           )}
         </CardContent>
       </Card>
+
+      <ApproveRejectModal
+        open={!!selectedId}
+        actionType={actionType}
+        password={password}
+        problemDescription={problemDescription}
+        submitting={submitting}
+        onClose={closeModal}
+        onSubmit={handleSubmit}
+        onChangePassword={setPassword}
+        onChangeProblem={setProblemDescription}
+      />
     </div>
   );
+}
+
+function isAxiosError(error: unknown): error is AxiosError {
+  return typeof error === 'object' && error !== null && 'isAxiosError' in error;
 }
