@@ -37,6 +37,7 @@ import WorkerOrderProcessPage from '@/pages/WorkerOrderProcessPage';
 import WorkerLayout from './layouts/WorkerLayout';
 
 import { Toaster } from '@/components/ui/sonner';
+import CreatePickupPage from './pages/CreatePickupPage';
 
 export default function App() {
   return (
@@ -72,6 +73,7 @@ export default function App() {
           <Route path="/addresses" element={<AddressManagementPage />} />
           <Route path="/orders" element={<OrderListPage />} />
           <Route path="/orders/:id" element={<CustomerOrderDetailPage />} />
+          <Route path="/pickup/create" element={<CreatePickupPage />} />
         </Route>
 
         {/* ================= WORKER ROUTES ================= */}
