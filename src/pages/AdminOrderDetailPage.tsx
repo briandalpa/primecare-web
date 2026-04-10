@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAdminOrderDetail } from '@/hooks/useAdminOrderDetail';
-import { OrderStatus } from '@/types/enums';
 import { ORDER_STATUS_LABEL, ORDER_STATUS_COLOR, PAYMENT_BADGE } from '@/utils/orderStatus';
 import { cn } from '@/lib/utils';
 import StatusTimeline from '@/features/orders/StatusTimeline';
@@ -42,10 +41,10 @@ export default function AdminOrderDetailPage() {
       </Button>
       <OrderHeader order={order} />
       <div className="grid md:grid-cols-3 gap-6">
-        <StatusTimeline status={order.status as OrderStatus} />
+        <StatusTimeline status={order.status} />
         <div className="md:col-span-2 space-y-6">
           <CustomerCard order={order} />
-          <OrderItemsCard items={order.items} />
+          <OrderItemsCard items={order.items.map((i) => ({ id: i.id, name: i.laundryItem.name, quantity: i.quantity }))} />
           <OrderPriceCard
             totalWeightKg={order.totalWeightKg}
             pricePerKg={order.pricePerKg}
@@ -68,8 +67,8 @@ function OrderHeader({ order }: { order: AdminOrderDetail }) {
         </p>
       </div>
       <div className="flex gap-2">
-        <Badge variant="outline" className={cn('text-xs', ORDER_STATUS_COLOR[order.status as OrderStatus])}>
-          {ORDER_STATUS_LABEL[order.status as OrderStatus] ?? order.status}
+        <Badge variant="outline" className={cn('text-xs', ORDER_STATUS_COLOR[order.status])}>
+          {ORDER_STATUS_LABEL[order.status]}
         </Badge>
         <Badge variant="outline" className={cn('text-xs capitalize', PAYMENT_BADGE[order.paymentStatus])}>
           {order.paymentStatus}
@@ -92,6 +91,19 @@ function CustomerCard({ order }: { order: AdminOrderDetail }) {
         <p><span className="text-muted-foreground">Outlet:</span> {order.outlet?.name ?? '\u2014'}</p>
       </CardContent>
     </Card>
+  );
+}
+
+type BypassRequest = AdminOrderDetail['stationRecords'][number]['bypassRequests'][number];
+
+function BypassRequestItem({ bp }: { bp: BypassRequest }) {
+  return (
+    <div className="text-xs bg-muted p-2 rounded">
+      <span className="font-medium">Bypass: {bp.status}</span>
+      {bp.problemDescription && (
+        <p className="text-muted-foreground">{bp.problemDescription}</p>
+      )}
+    </div>
   );
 }
 
@@ -118,12 +130,7 @@ function StationRecordsCard({ order }: { order: AdminOrderDetail }) {
             {rec.bypassRequests?.length > 0 && (
               <div className="mt-2 space-y-1">
                 {rec.bypassRequests.map((bp) => (
-                  <div key={bp.id} className="text-xs bg-muted p-2 rounded">
-                    <span className="font-medium">Bypass: {bp.status}</span>
-                    {bp.problemDescription && (
-                      <p className="text-muted-foreground">{bp.problemDescription}</p>
-                    )}
-                  </div>
+                  <BypassRequestItem key={bp.id} bp={bp} />
                 ))}
               </div>
             )}

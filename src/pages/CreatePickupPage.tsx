@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import { toast } from 'sonner'
 import { useAddresses } from '@/hooks/useAddresses'
 import { useCreatePickupRequest } from '@/hooks/usePickupRequest'
@@ -15,6 +16,13 @@ function buildScheduledAt(date: Date, timeSlot: string): string {
   const scheduled = new Date(date)
   scheduled.setHours(hour, 0, 0, 0)
   return scheduled.toISOString()
+}
+
+function toPickupErrorMessage(err: unknown): string {
+  if (axios.isAxiosError(err) && err.response?.status === 422) {
+    return 'No outlet available in your area. Please try a different address.';
+  }
+  return 'Failed to schedule pickup. Please try again.';
 }
 
 export default function CreatePickupPage() {
@@ -48,12 +56,7 @@ export default function CreatePickupPage() {
       toast.success(`Pickup scheduled! ${result.outlet.name} will handle your order.`)
       navigate('/orders')
     } catch (err: unknown) {
-      const status = (err as { response?: { status?: number } })?.response?.status
-      if (status === 422) {
-        toast.error('No outlet available in your area. Please try a different address.')
-      } else {
-        toast.error('Failed to schedule pickup. Please try again.')
-      }
+      toast.error(toPickupErrorMessage(err))
     }
   }
 
