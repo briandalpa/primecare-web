@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import type { Address } from '@/types/address';
 import { useCreateAddress, useUpdateAddress } from '@/hooks/useAddresses';
-import { useProvinces, useCities, useGeocode } from '@/hooks/useRegions';
+import { useProvinces, useGeocode } from '@/hooks/useRegions';
+import { useAddressFormSync } from '@/hooks/useAddressFormSync';
+import { UseLocationButton, type LocatedPayload } from '@/features/customer/UseLocationButton';
 import {
   Dialog,
   DialogContent,
@@ -40,12 +42,7 @@ const addressSchema = z.object({
 type FormValues = z.infer<typeof addressSchema>;
 
 const defaultValues: FormValues = {
-  label: '',
-  street: '',
-  city: '',
-  province: '',
-  latitude: 0,
-  longitude: 0,
+  label: '', street: '', city: '', province: '', latitude: 0, longitude: 0,
 };
 
 type Props = {
@@ -59,28 +56,18 @@ export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props)
   const update = useUpdateAddress();
   const mutationPending = create.isPending || update.isPending;
 
-  const [selectedProvinceId, setSelectedProvinceId] = useState<number | null>(null);
-  const hasReset = useRef(false);
-
   const { data: provinces = [], isLoading: provincesLoading } = useProvinces();
-  const { data: cities = [], isLoading: citiesLoading } = useCities(selectedProvinceId);
-
-  const sortedProvinces = useMemo(
-    () => [...provinces].sort((a, b) => a.name.localeCompare(b.name)),
-    [provinces],
-  );
-  const sortedCities = useMemo(
-    () => [...cities].sort((a, b) => a.name.localeCompare(b.name)),
-    [cities],
-  );
-
-  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, reset, setValue, watch, trigger, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(addressSchema),
     defaultValues,
   });
 
   const watchedCity = watch('city');
   const watchedProvince = watch('province');
+
+  const { selectedProvinceId, setSelectedProvinceId, sortedProvinces, sortedCities, citiesLoading } = useAddressFormSync({
+    open, editingAddress, provinces, reset,
+  });
 
   const { data: geocodeData, isFetching: geocodeFetching } = useGeocode(watchedCity, watchedProvince);
   const isPending = mutationPending || geocodeFetching;
@@ -92,35 +79,19 @@ export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props)
     }
   }, [geocodeData, setValue]);
 
-  // Effect 1: reset form once per open session
-  useEffect(() => {
-    if (!open) {
-      hasReset.current = false;
+  const handleLocated = useCallback(({ coords, geocode }: LocatedPayload) => {
+    setValue('latitude', coords.latitude);
+    setValue('longitude', coords.longitude);
+    if (!geocode) {
+      toast.error("We couldn't identify your area — please select province and city manually.");
       return;
     }
-    if (hasReset.current) return;
-    if (editingAddress) {
-      reset({
-        label: editingAddress.label,
-        street: editingAddress.street,
-        city: editingAddress.city,
-        province: editingAddress.province,
-        latitude: editingAddress.latitude,
-        longitude: editingAddress.longitude,
-      });
-    } else {
-      reset(defaultValues);
-      setSelectedProvinceId(null);
-    }
-    hasReset.current = true;
-  }, [open, editingAddress, reset]);
-
-  // Effect 2: resolve province ID whenever provinces load (runs independently of hasReset)
-  useEffect(() => {
-    if (!open || !editingAddress || !provinces.length) return;
-    const matched = provinces.find(p => p.name === editingAddress.province);
-    setSelectedProvinceId(matched?.id ?? null);
-  }, [open, editingAddress, provinces]);
+    setValue('province', geocode.province);
+    setSelectedProvinceId(geocode.provinceId);
+    setValue('city', geocode.city);
+    if (geocode.street) setValue('street', geocode.street);
+    void trigger(['province', 'city', 'street', 'latitude', 'longitude']);
+  }, [setValue, setSelectedProvinceId, trigger]);
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -146,6 +117,7 @@ export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props)
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <UseLocationButton onLocated={handleLocated} disabled={isPending} />
           <FieldGroup className="mb-4">
             <Field>
               <FieldLabel htmlFor="label">Label</FieldLabel>
