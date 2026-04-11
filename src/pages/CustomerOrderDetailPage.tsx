@@ -94,7 +94,7 @@ function PaymentActions({ order }: { order: OrderDetailType }) {
   }
   return (
     <>
-      {(!order.payment || order.payment.status === PaymentStatus.EXPIRED) && (
+      {(!order.payment || order.payment.status === PaymentStatus.EXPIRED || order.payment.status === PaymentStatus.UNPAID) && (
         <Link to={`/orders/${order.id}/pay`}>
           <Button><CreditCard className="h-4 w-4 mr-2" /> Pay Now</Button>
         </Link>
