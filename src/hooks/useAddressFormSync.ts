@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import type { UseFormReturn } from 'react-hook-form';
+import { useEffect, useMemo, useRef } from 'react';
+import { useWatch, type Control, type UseFormReturn } from 'react-hook-form';
 import type { Address, Province } from '@/types/address';
 import { useCities } from '@/hooks/useRegions';
 
@@ -20,12 +20,18 @@ type Params = {
   open: boolean;
   editingAddress: Address | null;
   provinces: Province[];
+  control: Control<FormValues>;
   reset: UseFormReturn<FormValues>['reset'];
 };
 
-export function useAddressFormSync({ open, editingAddress, provinces, reset }: Params) {
-  const [selectedProvinceId, setSelectedProvinceId] = useState<number | null>(null);
+export function useAddressFormSync({ open, editingAddress, provinces, control, reset }: Params) {
   const hasReset = useRef(false);
+  const watchedProvince = useWatch({ control, name: 'province' });
+
+  const selectedProvinceId = useMemo(() => {
+    if (!watchedProvince || !provinces.length) return null;
+    return provinces.find(p => p.name === watchedProvince)?.id ?? null;
+  }, [watchedProvince, provinces]);
 
   const { data: cities = [], isLoading: citiesLoading } = useCities(selectedProvinceId);
 
@@ -35,20 +41,15 @@ export function useAddressFormSync({ open, editingAddress, provinces, reset }: P
   useEffect(() => {
     if (!open) { hasReset.current = false; return; }
     if (hasReset.current) return;
+
     if (editingAddress) {
       reset({ label: editingAddress.label, street: editingAddress.street, city: editingAddress.city, province: editingAddress.province, latitude: editingAddress.latitude, longitude: editingAddress.longitude });
     } else {
       reset(DEFAULT_VALUES);
-      setSelectedProvinceId(null);
     }
+
     hasReset.current = true;
   }, [open, editingAddress, reset]);
 
-  useEffect(() => {
-    if (!open || !editingAddress || !provinces.length) return;
-    const matched = provinces.find(p => p.name === editingAddress.province);
-    setSelectedProvinceId(matched?.id ?? null);
-  }, [open, editingAddress, provinces]);
-
-  return { selectedProvinceId, setSelectedProvinceId, sortedProvinces, sortedCities, citiesLoading };
+  return { selectedProvinceId, sortedProvinces, sortedCities, citiesLoading };
 }
