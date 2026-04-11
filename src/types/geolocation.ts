@@ -16,5 +16,5 @@ export interface ReverseGeocodeResult {
   provinceId: number;
   city: string;
   cityId: number;
-  street: string | null;
+  streetAddress: string | null;
 }
