@@ -34,6 +34,45 @@ export default function PaymentPage() {
     loadSnapScript();
   }, []);
 
+  function buildSnapCallbacks() {
+    return {
+      onSuccess: () => {
+        verifyPayment(id ?? '').catch(() => {});
+        queryClient.invalidateQueries({ queryKey: queryKeys.customerOrderDetail(id ?? '') });
+        queryClient.invalidateQueries({ queryKey: queryKeys.customerOrders() });
+        navigate(`/orders/${id}/payment-success`);
+      },
+      onPending: () => {
+        toast.info('Payment pending — complete the transfer to confirm your order.');
+        navigate(`/orders/${id}`);
+      },
+      onError: () => navigate(`/orders/${id}/payment-failure`),
+      onClose: () => toast.info('Payment cancelled. You can retry anytime.'),
+    };
+  }
+
+  function handleSnapReady(payment: InitiatePaymentResponse) {
+    if (!window.snap) {
+      if (payment.redirectUrl) window.location.assign(payment.redirectUrl);
+      else toast.error('Payment service unavailable. Please try again later.');
+      return;
+    }
+    window.snap.pay(payment.snapToken, buildSnapCallbacks());
+  }
+
+  const handlePay = async () => {
+    try {
+      await loadSnapScript();
+    } catch {
+      toast.error('Payment service unavailable. Please try again later.');
+      return;
+    }
+    initiatePayment(order!.id, {
+      onSuccess: ({ data: payment }) => handleSnapReady(payment),
+      onError: () => navigate(`/orders/${id}/payment-failure`),
+    });
+  };
+
   if (isLoading) {
     return <p className="text-muted-foreground">Loading order…</p>;
   }
@@ -78,45 +117,6 @@ export default function PaymentPage() {
       </div>
     );
   }
-
-  function buildSnapCallbacks() {
-    return {
-      onSuccess: () => {
-        verifyPayment(id ?? '').catch(() => {});
-        queryClient.invalidateQueries({ queryKey: queryKeys.customerOrderDetail(id ?? '') });
-        queryClient.invalidateQueries({ queryKey: queryKeys.customerOrders() });
-        navigate(`/orders/${id}/payment-success`);
-      },
-      onPending: () => {
-        toast.info('Payment pending — complete the transfer to confirm your order.');
-        navigate(`/orders/${id}`);
-      },
-      onError: () => navigate(`/orders/${id}/payment-failure`),
-      onClose: () => toast.info('Payment cancelled. You can retry anytime.'),
-    };
-  }
-
-  function handleSnapReady(payment: InitiatePaymentResponse) {
-    if (!window.snap) {
-      if (payment.redirectUrl) window.location.href = payment.redirectUrl;
-      else toast.error('Payment service unavailable. Please try again later.');
-      return;
-    }
-    window.snap.pay(payment.snapToken, buildSnapCallbacks());
-  }
-
-  const handlePay = async () => {
-    try {
-      await loadSnapScript();
-    } catch {
-      toast.error('Payment service unavailable. Please try again later.');
-      return;
-    }
-    initiatePayment(order.id, {
-      onSuccess: ({ data: payment }) => handleSnapReady(payment),
-      onError: () => navigate(`/orders/${id}/payment-failure`),
-    });
-  };
 
   return (
     <div className="max-w-2xl">
