@@ -7,8 +7,12 @@ type ApiResponse<T> = {
 
 export const getAdminBypassRequests = async (): Promise<BypassRequest[]> => {
   const res = await axiosInstance.get<ApiResponse<BypassRequest[]>>(
-    '/api/v1/admin/bypass-requests'
+    '/api/v1/admin/bypass-requests?status=PENDING'
   );
+
+  if (!Array.isArray(res.data.data)) {
+    throw new Error('Invalid response format');
+  }
 
   return res.data.data;
 };

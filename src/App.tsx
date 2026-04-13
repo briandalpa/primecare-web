@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
+
 import LandingPage from './pages/LandingPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import CustomerLoginPage from './pages/CustomerLoginPage';
@@ -8,26 +9,31 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import SetPasswordPage from './pages/SetPasswordPage';
 import EmailVerifiedPage from './pages/EmailVerifiedPage';
 import GoogleCallbackPage from './pages/GoogleCallbackPage';
-import { Toaster } from '@/components/ui/sonner';
+
 import UserManagementPage from './pages/UserManagementPage';
 import OrderOverviewPage from './pages/OrderOverviewPage';
 import CreateOrderPage from './pages/CreateOrderPage';
 import AdminOrderDetailPage from './pages/AdminOrderDetailPage';
 import OrderListPage from './pages/OrderListPage';
 import CustomerOrderDetailPage from './pages/CustomerOrderDetailPage';
+
 import AdminLayout from './layouts/AdminLayout';
 import CustomerLayout from './layouts/CustomerLayout';
+
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AddressManagementPage from './pages/AddressManagementPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminOutletsPage from './pages/AdminOutletsPage';
-import AdminBypassRequestPage from "@/pages/AdminBypassRequestPage";
+import AdminBypassRequestPage from './pages/AdminBypassRequestPage';
+
+import { Toaster } from '@/components/ui/sonner';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         {/* PUBLIC ROUTES */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -48,7 +54,7 @@ export default function App() {
           <Route path="profile" element={<AdminProfilePage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
           <Route path="outlets" element={<AdminOutletsPage />} />
-          <Route path="/admin/bypass-requests" element={<AdminBypassRequestPage />} />
+          <Route path="bypass-requests" element={<AdminBypassRequestPage />} />
         </Route>
 
         {/* CUSTOMER ROUTES */}
@@ -57,6 +63,7 @@ export default function App() {
           <Route path="/orders" element={<OrderListPage />} />
           <Route path="/orders/:id" element={<CustomerOrderDetailPage />} />
         </Route>
+
       </Routes>
 
       <Toaster />

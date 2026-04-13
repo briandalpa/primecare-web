@@ -6,8 +6,10 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
-type ActionType = 'APPROVE' | 'REJECT';
+import type { ActionType } from '@/types/bypassRequest';
+import type { ChangeEvent } from 'react';
 
 interface Props {
   open: boolean;
@@ -15,6 +17,7 @@ interface Props {
   password: string;
   problemDescription: string;
   submitting: boolean;
+  error: string | null;
   onClose: () => void;
   onSubmit: () => void;
   onChangePassword: (value: string) => void;
@@ -27,19 +30,14 @@ export default function ApproveRejectModal({
   password,
   problemDescription,
   submitting,
+  error,
   onClose,
   onSubmit,
   onChangePassword,
   onChangeProblem,
 }: Props) {
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(val) => {
-    
-        if (!val) onClose();
-      }}
-    >
+    <Dialog open={open} onOpenChange={(val) => !val && onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -54,19 +52,23 @@ export default function ApproveRejectModal({
             type="password"
             placeholder="Enter admin password"
             value={password}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
               onChangePassword(e.target.value)
             }
           />
 
-          <textarea
-            className="w-full border rounded-md p-2 text-sm"
+          <Textarea
+            rows={4}
             placeholder="Enter problem description"
             value={problemDescription}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
               onChangeProblem(e.target.value)
             }
           />
+
+          {error && (
+            <p className="text-sm text-destructive">{error}</p>
+          )}
 
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose}>

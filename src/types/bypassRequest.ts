@@ -1,8 +1,10 @@
 export type BypassStatus = "PENDING" | "APPROVED" | "REJECTED";
 
+export type ActionType = "APPROVE" | "REJECT";
+
 export interface BypassRequest {
   id: string;
-  problemDescription: string;
+  problemDescription: string | null;
   status: BypassStatus;
   createdAt: string;
 
