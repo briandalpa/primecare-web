@@ -26,10 +26,15 @@ export default function BypassActionDialog({
 }: Props) {
   const [password, setPassword] = useState('');
   const [problemDescription, setProblemDescription] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = () => {
-    if (!password || !problemDescription) return;
+    if (!password || !problemDescription) {
+      setError('All fields are required');
+      return;
+    }
 
+    setError(null);
     onSubmit({ password, problemDescription });
 
     setPassword('');
@@ -57,6 +62,10 @@ export default function BypassActionDialog({
             value={problemDescription}
             onChange={(e) => setProblemDescription(e.target.value)}
           />
+
+          {error && (
+            <p className="text-sm text-destructive">{error}</p>
+          )}
         </div>
 
         <AlertDialogFooter>

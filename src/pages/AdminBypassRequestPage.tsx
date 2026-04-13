@@ -63,19 +63,27 @@ export default function AdminBypassRequestPage() {
         </CardHeader>
 
         <CardContent>
-          {isLoading && <p>Loading...</p>}
+          {isLoading && (
+            <p className="text-sm text-muted-foreground text-center">
+              Loading...
+            </p>
+          )}
 
           {isError && (
-            <div className="space-y-2">
-              <p className="text-destructive">Failed to load data</p>
+            <div className="text-center space-y-2">
+              <p className="text-sm text-destructive">
+                Failed to load data
+              </p>
               <Button size="sm" onClick={() => refetch()}>
                 Retry
               </Button>
             </div>
           )}
 
-          {data && data.length === 0 && (
-            <p className="text-muted-foreground">No pending requests</p>
+          {!isLoading && data?.length === 0 && (
+            <div className="text-center py-6 text-muted-foreground text-sm">
+              No pending bypass requests
+            </div>
           )}
 
           {data && data.length > 0 && (

@@ -7,6 +7,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import type { BypassRequest } from '@/types/bypassRequest';
 
 type Props = {
@@ -17,10 +18,10 @@ type Props = {
 };
 
 const statusMap = {
-  PENDING: 'Pending Review',
-  APPROVED: 'Approved',
-  REJECTED: 'Rejected',
-};
+  PENDING: { label: 'Pending Review', variant: 'secondary' },
+  APPROVED: { label: 'Approved', variant: 'default' },
+  REJECTED: { label: 'Rejected', variant: 'destructive' },
+} as const;
 
 export default function BypassRequestTable({
   data,
@@ -44,45 +45,64 @@ export default function BypassRequestTable({
       </TableHeader>
 
       <TableBody>
-        {data.map((item) => (
-          <TableRow key={item.id}>
-            <TableCell>{item.stationRecord?.order?.id ?? '-'}</TableCell>
-            <TableCell>{item.worker?.name ?? '-'}</TableCell>
-            <TableCell>
-              {item.stationRecord?.station?.name ?? '-'}
-            </TableCell>
-            <TableCell>
-              {item.stationRecord?.previousQuantity ?? '-'}
-            </TableCell>
-            <TableCell>
-              {item.stationRecord?.submittedQuantity ?? '-'}
-            </TableCell>
-            <TableCell>{statusMap[item.status]}</TableCell>
-            <TableCell>
-              {new Date(item.createdAt).toLocaleString()}
-            </TableCell>
-            <TableCell>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  disabled={isLoading}
-                  onClick={() => onApprove(item.id)}
-                >
-                  Approve
-                </Button>
+        {data.map((item) => {
+          const status = statusMap[item.status];
 
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  disabled={isLoading}
-                  onClick={() => onReject(item.id)}
-                >
-                  Reject
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
+          return (
+            <TableRow key={item.id}>
+              <TableCell>
+                {item.stationRecord?.order?.id ?? '-'}
+              </TableCell>
+
+              <TableCell>
+                {item.worker?.name ?? '-'}
+              </TableCell>
+
+              <TableCell>
+                {item.stationRecord?.station?.name ?? '-'}
+              </TableCell>
+
+              <TableCell>
+                {item.stationRecord?.previousQuantity ?? '-'}
+              </TableCell>
+
+              <TableCell>
+                {item.stationRecord?.submittedQuantity ?? '-'}
+              </TableCell>
+
+              <TableCell>
+                <Badge variant={status.variant}>
+                  {status.label}
+                </Badge>
+              </TableCell>
+
+              <TableCell>
+                {new Date(item.createdAt).toLocaleString()}
+              </TableCell>
+
+              <TableCell>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    disabled={isLoading}
+                    onClick={() => onApprove(item.id)}
+                  >
+                    Approve
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    disabled={isLoading}
+                    onClick={() => onReject(item.id)}
+                  >
+                    Reject
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   );
