@@ -48,3 +48,58 @@ export type WorkerNotificationPayload = {
   orderStatus: string;
   occurredAt: string;
 };
+
+export type WorkerOrderDetailItem = {
+  laundryItemId: string;
+  itemName: string;
+  quantity: number;
+};
+
+export type WorkerOrderPaymentStatus = 'UNPAID' | 'PAID' | 'EXPIRED';
+
+export type WorkerOrderDetail = {
+  orderId: string;
+  stationRecordId: string;
+  station: WorkerStation;
+  previousStation: WorkerStation | null;
+  stationStatus: WorkerOrderStatus;
+  orderStatus: string;
+  paymentStatus: WorkerOrderPaymentStatus;
+  totalItems: number;
+  customerName?: string | null;
+  outletName?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  referenceItems: WorkerOrderDetailItem[];
+  stationItems: WorkerOrderDetailItem[];
+};
+
+export type WorkerOrderDetailResponse = {
+  status: string;
+  message: string;
+  data: WorkerOrderDetail;
+};
+
+export type WorkerOrderProcessItemPayload = {
+  laundryItemId: string;
+  quantity: number;
+};
+
+export type WorkerOrderProcessPayload = {
+  items: WorkerOrderProcessItemPayload[];
+};
+
+export type WorkerOrderProcessResult = {
+  orderId: string;
+  stationRecordId: string;
+  station: WorkerStation;
+  stationStatus: WorkerOrderStatus;
+  orderStatus: string;
+  completedAt: string;
+};
+
+export type WorkerOrderProcessResponse = {
+  status: string;
+  message: string;
+  data: WorkerOrderProcessResult;
+};

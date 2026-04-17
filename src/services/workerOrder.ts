@@ -1,7 +1,10 @@
 import { axiosInstance } from '@/lib/axiosInstance';
 import type {
+  WorkerOrderDetailResponse,
   WorkerOrderListParams,
   WorkerOrderListResponse,
+  WorkerOrderProcessPayload,
+  WorkerOrderProcessResponse,
 } from '@/types/worker-order';
 
 const sanitizeParams = (params: WorkerOrderListParams = {}) => ({
@@ -17,6 +20,28 @@ export async function getWorkerOrders(
   const response = await axiosInstance.get<WorkerOrderListResponse>('/api/v1/worker/orders', {
     params: sanitizeParams(params),
   });
+
+  return response.data;
+}
+
+export async function getWorkerOrderDetail(
+  id: string,
+): Promise<WorkerOrderDetailResponse> {
+  const response = await axiosInstance.get<WorkerOrderDetailResponse>(
+    `/api/v1/worker/orders/${id}`,
+  );
+
+  return response.data;
+}
+
+export async function processWorkerOrder(
+  id: string,
+  payload: WorkerOrderProcessPayload,
+): Promise<WorkerOrderProcessResponse> {
+  const response = await axiosInstance.post<WorkerOrderProcessResponse>(
+    `/api/v1/worker/orders/${id}/process`,
+    payload,
+  );
 
   return response.data;
 }
