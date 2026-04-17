@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
+
 import LandingPage from './pages/LandingPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import CustomerLoginPage from './pages/CustomerLoginPage';
@@ -8,26 +9,36 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import SetPasswordPage from './pages/SetPasswordPage';
 import EmailVerifiedPage from './pages/EmailVerifiedPage';
 import GoogleCallbackPage from './pages/GoogleCallbackPage';
-import { Toaster } from '@/components/ui/sonner';
+import ForbiddenPage from './pages/ForbiddenPage';
+
 import UserManagementPage from './pages/UserManagementPage';
 import OrderOverviewPage from './pages/OrderOverviewPage';
 import CreateOrderPage from './pages/CreateOrderPage';
 import AdminOrderDetailPage from './pages/AdminOrderDetailPage';
+import AdminPickupRequestsPage from './pages/AdminPickupRequestsPage';
+
 import OrderListPage from './pages/OrderListPage';
 import CustomerOrderDetailPage from './pages/CustomerOrderDetailPage';
-import AdminLayout from './layouts/AdminLayout';
-import CustomerLayout from './layouts/CustomerLayout';
+
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AddressManagementPage from './pages/AddressManagementPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminOutletsPage from './pages/AdminOutletsPage';
 
+import WorkerDashboardPage from '@/pages/WorkerDashboardPage';
+
+import AdminLayout from './layouts/AdminLayout';
+import CustomerLayout from './layouts/CustomerLayout';
+import WorkerLayout from './layouts/WorkerLayout';
+
+import { Toaster } from '@/components/ui/sonner';
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* PUBLIC ROUTES */}
+        {/* ================= PUBLIC ROUTES ================= */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/auth/login" element={<CustomerLoginPage />} />
@@ -36,24 +47,32 @@ export default function App() {
         <Route path="/auth/set-password" element={<SetPasswordPage />} />
         <Route path="/auth/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
+        <Route path="/forbidden" element={<ForbiddenPage />} />
 
-        {/* ADMIN ROUTES */}
+        {/* ================= ADMIN ROUTES ================= */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboardPage />} />
           <Route path="users" element={<UserManagementPage />} />
           <Route path="orders" element={<OrderOverviewPage />} />
           <Route path="orders/create" element={<CreateOrderPage />} />
           <Route path="orders/:id" element={<AdminOrderDetailPage />} />
+          <Route path="pickup-requests" element={<AdminPickupRequestsPage />} />
           <Route path="profile" element={<AdminProfilePage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
           <Route path="outlets" element={<AdminOutletsPage />} />
         </Route>
 
-        {/* CUSTOMER ROUTES */}
+        {/* ================= CUSTOMER ROUTES ================= */}
         <Route element={<CustomerLayout />}>
           <Route path="/addresses" element={<AddressManagementPage />} />
           <Route path="/orders" element={<OrderListPage />} />
           <Route path="/orders/:id" element={<CustomerOrderDetailPage />} />
+        </Route>
+
+        {/* ================= WORKER ROUTES ================= */}
+        <Route path="/worker" element={<WorkerLayout />}>
+          <Route index element={<WorkerDashboardPage />} />
+          <Route path="dashboard" element={<WorkerDashboardPage />} />
         </Route>
       </Routes>
 
