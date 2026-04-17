@@ -2,6 +2,7 @@ import {
   LayoutDashboard,
   Store,
   ClipboardList,
+  PackageSearch,
   Users,
   Settings,
   User,
@@ -32,10 +33,12 @@ import {
 } from '@/components/ui/sidebar';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import logoUrl from '@/assets/prime-care.png';
+import { getInitials } from '@/utils/string';
 
 const mainNavItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
   { title: 'Orders', url: '/admin/orders', icon: ClipboardList },
+  { title: 'Pickup Requests', url: '/admin/pickup-requests', icon: PackageSearch },
   { title: 'Outlets', url: '/admin/outlets', icon: Store },
   { title: 'Users', url: '/admin/users', icon: Users },
 ];
@@ -44,16 +47,6 @@ const accountNavItems = [
   { title: 'Settings', url: '/admin/settings', icon: Settings },
   { title: 'Profile', url: '/admin/profile', icon: User },
 ];
-
-function getInitials(name?: string | null): string {
-  if (!name) return '?';
-  return name
-    .split(' ')
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase();
-}
 
 export function AdminSidebar() {
   const { state } = useSidebar();
@@ -154,7 +147,7 @@ export function AdminSidebar() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-foreground truncate">
-                {profile?.name ?? '—'}
+                {profile?.name ?? '\u2014'}
               </p>
               <p className="text-[10px] text-muted-foreground truncate">
                 {roleLabel}

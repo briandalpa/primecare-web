@@ -9,11 +9,14 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import SetPasswordPage from './pages/SetPasswordPage';
 import EmailVerifiedPage from './pages/EmailVerifiedPage';
 import GoogleCallbackPage from './pages/GoogleCallbackPage';
+import ForbiddenPage from './pages/ForbiddenPage';
 
 import UserManagementPage from './pages/UserManagementPage';
 import OrderOverviewPage from './pages/OrderOverviewPage';
 import CreateOrderPage from './pages/CreateOrderPage';
 import AdminOrderDetailPage from './pages/AdminOrderDetailPage';
+import AdminPickupRequestsPage from './pages/AdminPickupRequestsPage';
+
 import OrderListPage from './pages/OrderListPage';
 import CustomerOrderDetailPage from './pages/CustomerOrderDetailPage';
 
@@ -29,12 +32,19 @@ import AdminBypassRequestPage from './pages/AdminBypassRequestPage';
 
 import { Toaster } from '@/components/ui/sonner';
 
+import WorkerDashboardPage from '@/pages/WorkerDashboardPage';
+
+import AdminLayout from './layouts/AdminLayout';
+import CustomerLayout from './layouts/CustomerLayout';
+import WorkerLayout from './layouts/WorkerLayout';
+
+import { Toaster } from '@/components/ui/sonner';
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-
-        {/* PUBLIC ROUTES */}
+        {/* ================= PUBLIC ROUTES ================= */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/auth/login" element={<CustomerLoginPage />} />
@@ -43,27 +53,34 @@ export default function App() {
         <Route path="/auth/set-password" element={<SetPasswordPage />} />
         <Route path="/auth/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
+        <Route path="/forbidden" element={<ForbiddenPage />} />
 
-        {/* ADMIN ROUTES */}
+        {/* ================= ADMIN ROUTES ================= */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboardPage />} />
           <Route path="users" element={<UserManagementPage />} />
           <Route path="orders" element={<OrderOverviewPage />} />
           <Route path="orders/create" element={<CreateOrderPage />} />
           <Route path="orders/:id" element={<AdminOrderDetailPage />} />
+          <Route path="pickup-requests" element={<AdminPickupRequestsPage />} />
           <Route path="profile" element={<AdminProfilePage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
           <Route path="outlets" element={<AdminOutletsPage />} />
           <Route path="bypass-requests" element={<AdminBypassRequestPage />} />
         </Route>
 
-        {/* CUSTOMER ROUTES */}
+        {/* ================= CUSTOMER ROUTES ================= */}
         <Route element={<CustomerLayout />}>
           <Route path="/addresses" element={<AddressManagementPage />} />
           <Route path="/orders" element={<OrderListPage />} />
           <Route path="/orders/:id" element={<CustomerOrderDetailPage />} />
         </Route>
 
+        {/* ================= WORKER ROUTES ================= */}
+        <Route path="/worker" element={<WorkerLayout />}>
+          <Route index element={<WorkerDashboardPage />} />
+          <Route path="dashboard" element={<WorkerDashboardPage />} />
+        </Route>
       </Routes>
 
       <Toaster />

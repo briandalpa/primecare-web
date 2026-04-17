@@ -31,6 +31,7 @@ function useBreadcrumbs(): BreadcrumbSegment[] {
       { label: 'Order Detail' },
     ];
   }
+  if (pathname === '/admin/pickup-requests') return [{ label: 'Pickup Requests' }];
   if (pathname === '/admin/outlets') return [{ label: 'Outlets' }];
   if (pathname === '/admin/users') return [{ label: 'Users' }];
   if (pathname === '/admin/profile') return [{ label: 'Profile' }];
