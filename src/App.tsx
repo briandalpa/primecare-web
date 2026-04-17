@@ -22,7 +22,7 @@ import AddressManagementPage from './pages/AddressManagementPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminOutletsPage from './pages/AdminOutletsPage';
-import AdminBypassRequestPage from "@/pages/AdminBypassRequestPage";
+import AdminBypassRequestPage from './pages/AdminBypassRequestPage';
 
 export default function App() {
   return (
@@ -48,7 +48,7 @@ export default function App() {
           <Route path="profile" element={<AdminProfilePage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
           <Route path="outlets" element={<AdminOutletsPage />} />
-          <Route path="/admin/bypass-requests" element={<AdminBypassRequestPage />} />
+          <Route path="bypass-requests" element={<AdminBypassRequestPage />} />
         </Route>
 
         {/* CUSTOMER ROUTES */}

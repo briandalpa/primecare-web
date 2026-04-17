@@ -16,6 +16,7 @@ export const useAdminBypassRequests = () => {
   return useQuery<BypassRequest[]>({
     queryKey: ['admin-bypass-requests'],
     queryFn: getAdminBypassRequests,
+    staleTime: 30_000,
   });
 };
 

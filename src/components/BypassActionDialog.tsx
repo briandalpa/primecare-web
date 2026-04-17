@@ -7,7 +7,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
+import { z } from 'zod';
 
 type Props = {
   open: boolean;
@@ -16,6 +18,15 @@ type Props = {
   title: string;
   isLoading?: boolean;
 };
+
+const actionSchema = z.object({
+  password: z
+    .string()
+    .min(1, 'Password is required'),
+  problemDescription: z
+    .string()
+    .min(1, 'Problem description is required'),
+});
 
 export default function BypassActionDialog({
   open,
@@ -26,16 +37,31 @@ export default function BypassActionDialog({
 }: Props) {
   const [password, setPassword] = useState('');
   const [problemDescription, setProblemDescription] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<
+    string | null
+  >(null);
+  const [problemError, setProblemError] = useState<
+    string | null
+  >(null);
 
   const handleSubmit = () => {
-    if (!password || !problemDescription) {
-      setError('All fields are required');
+    const parsed = actionSchema.safeParse({
+      password,
+      problemDescription,
+    });
+
+    if (!parsed.success) {
+      const fieldErrors = parsed.error.flatten().fieldErrors;
+      setPasswordError(fieldErrors.password?.[0] ?? null);
+      setProblemError(
+        fieldErrors.problemDescription?.[0] ?? null
+      );
       return;
     }
 
-    setError(null);
-    onSubmit({ password, problemDescription });
+    setPasswordError(null);
+    setProblemError(null);
+    onSubmit(parsed.data);
 
     setPassword('');
     setProblemDescription('');
@@ -54,17 +80,26 @@ export default function BypassActionDialog({
             type="password"
             placeholder="Admin password"
             value={password}
+            aria-invalid={!!passwordError}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {passwordError && (
+            <p className="text-sm text-destructive">
+              {passwordError}
+            </p>
+          )}
 
-          <Input
+          <Textarea
+            rows={4}
             placeholder="Problem description"
             value={problemDescription}
+            aria-invalid={!!problemError}
             onChange={(e) => setProblemDescription(e.target.value)}
           />
-
-          {error && (
-            <p className="text-sm text-destructive">{error}</p>
+          {problemError && (
+            <p className="text-sm text-destructive">
+              {problemError}
+            </p>
           )}
         </div>
 
