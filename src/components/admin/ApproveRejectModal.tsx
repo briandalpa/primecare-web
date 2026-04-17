@@ -11,6 +11,11 @@ import { Textarea } from '@/components/ui/textarea';
 import type { ActionType } from '@/types/bypassRequest';
 import type { ChangeEvent } from 'react';
 
+interface FieldErrors {
+  password?: string;
+  problemDescription?: string;
+}
+
 interface Props {
   open: boolean;
   actionType: ActionType | null;
@@ -18,6 +23,7 @@ interface Props {
   problemDescription: string;
   submitting: boolean;
   error: string | null;
+  fieldErrors: FieldErrors;
   onClose: () => void;
   onSubmit: () => void;
   onChangePassword: (value: string) => void;
@@ -31,6 +37,7 @@ export default function ApproveRejectModal({
   problemDescription,
   submitting,
   error,
+  fieldErrors,
   onClose,
   onSubmit,
   onChangePassword,
@@ -52,19 +59,31 @@ export default function ApproveRejectModal({
             type="password"
             placeholder="Enter admin password"
             value={password}
+            aria-invalid={!!fieldErrors.password}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               onChangePassword(e.target.value)
             }
           />
+          {fieldErrors.password && (
+            <p className="text-sm text-destructive">
+              {fieldErrors.password}
+            </p>
+          )}
 
           <Textarea
             rows={4}
             placeholder="Enter problem description"
             value={problemDescription}
+            aria-invalid={!!fieldErrors.problemDescription}
             onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
               onChangeProblem(e.target.value)
             }
           />
+          {fieldErrors.problemDescription && (
+            <p className="text-sm text-destructive">
+              {fieldErrors.problemDescription}
+            </p>
+          )}
 
           {error && (
             <p className="text-sm text-destructive">{error}</p>

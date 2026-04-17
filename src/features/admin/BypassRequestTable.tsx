@@ -1,5 +1,14 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import type { BypassRequest, ActionType } from '@/types/bypassRequest';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import type { ActionType, BypassRequest } from '@/types/bypassRequest';
 
 interface Props {
   data: BypassRequest[];
@@ -14,7 +23,7 @@ export default function BypassRequestTable({
 }: Props) {
   if (data.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground text-center py-4">
+      <p className="py-4 text-center text-sm text-muted-foreground">
         No pending bypass requests
       </p>
     );
@@ -22,47 +31,57 @@ export default function BypassRequestTable({
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b text-left">
-            <th className="pb-3">ID</th>
-            <th className="pb-3">Worker</th>
-            <th className="pb-3">Station</th>
-            <th className="pb-3">Problem</th>
-            <th className="pb-3">Status</th>
-            <th className="pb-3">Created At</th>
-            <th className="pb-3">Actions</th>
-          </tr>
-        </thead>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Order</TableHead>
+            <TableHead>Worker</TableHead>
+            <TableHead>Station</TableHead>
+            <TableHead>Expected Qty</TableHead>
+            <TableHead>Submitted Qty</TableHead>
+            <TableHead>Problem</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Created At</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
 
-        <tbody>
+        <TableBody>
           {data.map((item) => (
-            <tr key={item.id} className="border-b">
-              <td className="py-3 text-xs font-mono">{item.id}</td>
+            <TableRow key={item.id}>
+              <TableCell className="font-mono text-xs">
+                {item.stationRecord?.order?.id ?? '-'}
+              </TableCell>
 
-              <td className="py-3">
-                {item.worker?.name ?? '-'}
-              </td>
+              <TableCell>{item.worker?.name ?? '-'}</TableCell>
 
-              <td className="py-3">
-                {item.stationRecord?.id ?? '-'}
-              </td>
+              <TableCell>
+                {item.stationRecord?.station?.name ?? '-'}
+              </TableCell>
 
-              <td className="py-3">
-                {item.problemDescription ?? '—'}
-              </td>
+              <TableCell>
+                {item.stationRecord?.previousQuantity ?? '-'}
+              </TableCell>
 
-              <td className="py-3">
-                {item.status === 'PENDING'
-                  ? 'Pending Review'
-                  : item.status}
-              </td>
+              <TableCell>
+                {item.stationRecord?.submittedQuantity ?? '-'}
+              </TableCell>
 
-              <td className="py-3 text-muted-foreground">
+              <TableCell>{item.problemDescription ?? '—'}</TableCell>
+
+              <TableCell>
+                <Badge variant="secondary">
+                  {item.status === 'PENDING'
+                    ? 'Pending Review'
+                    : item.status}
+                </Badge>
+              </TableCell>
+
+              <TableCell className="text-muted-foreground">
                 {new Date(item.createdAt).toLocaleString()}
-              </td>
+              </TableCell>
 
-              <td className="py-3">
+              <TableCell>
                 <div className="flex gap-2">
                   <Button
                     size="sm"
@@ -81,11 +100,11 @@ export default function BypassRequestTable({
                     Reject
                   </Button>
                 </div>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

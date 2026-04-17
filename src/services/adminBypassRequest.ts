@@ -26,6 +26,10 @@ export const approveBypassRequest = async (
     payload
   );
 
+  if (!res.data.data) {
+    throw new Error('Invalid response format');
+  }
+
   return res.data.data;
 };
 
@@ -37,6 +41,10 @@ export const rejectBypassRequest = async (
     `/api/v1/admin/bypass-requests/${id}/reject`,
     payload
   );
+
+  if (!res.data.data) {
+    throw new Error('Invalid response format');
+  }
 
   return res.data.data;
 };

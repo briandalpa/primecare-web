@@ -13,10 +13,25 @@ import {
 import type { ActionType } from '@/types/bypassRequest';
 import { isAxiosError } from 'axios';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
 type ErrorResponse = {
   message?: string;
   errors?: string;
+};
+
+const actionSchema = z.object({
+  password: z
+    .string()
+    .min(1, 'Password is required'),
+  problemDescription: z
+    .string()
+    .min(1, 'Problem description is required'),
+});
+
+type FieldErrors = {
+  password?: string;
+  problemDescription?: string;
 };
 
 export default function AdminBypassRequestPage() {
@@ -31,6 +46,7 @@ export default function AdminBypassRequestPage() {
   const [password, setPassword] = useState('');
   const [problemDescription, setProblemDescription] = useState('');
   const [modalError, setModalError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
   const openModal = (id: string, type: ActionType) => {
     setSelectedId(id);
@@ -38,6 +54,7 @@ export default function AdminBypassRequestPage() {
     setPassword('');
     setProblemDescription('');
     setModalError(null);
+    setFieldErrors({});
   };
 
   const closeModal = () => {
@@ -46,27 +63,40 @@ export default function AdminBypassRequestPage() {
     setPassword('');
     setProblemDescription('');
     setModalError(null);
+    setFieldErrors({});
   };
 
   const handleSubmit = async () => {
     if (!selectedId || !actionType) return;
 
-    if (!password || !problemDescription) {
-      setModalError('All fields are required');
+    const parsed = actionSchema.safeParse({
+      password,
+      problemDescription,
+    });
+
+    if (!parsed.success) {
+      const formErrors = parsed.error.flatten().fieldErrors;
+      setFieldErrors({
+        password: formErrors.password?.[0],
+        problemDescription:
+          formErrors.problemDescription?.[0],
+      });
       return;
     }
+
+    setFieldErrors({});
 
     try {
       if (actionType === 'APPROVE') {
         await approveMutation.mutateAsync({
           id: selectedId,
-          payload: { password, problemDescription },
+          payload: parsed.data,
         });
         toast.success('Request approved');
       } else {
         await rejectMutation.mutateAsync({
           id: selectedId,
-          payload: { password, problemDescription },
+          payload: parsed.data,
         });
         toast.success('Request rejected');
       }
@@ -139,6 +169,7 @@ export default function AdminBypassRequestPage() {
           approveMutation.isPending || rejectMutation.isPending
         }
         error={modalError}
+        fieldErrors={fieldErrors}
         onClose={closeModal}
         onSubmit={handleSubmit}
         onChangePassword={setPassword}

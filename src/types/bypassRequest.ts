@@ -7,6 +7,7 @@ export interface BypassRequest {
   problemDescription: string | null;
   status: BypassStatus;
   createdAt: string;
+  updatedAt?: string;
 
   workerId: string;
   stationRecordId: string;
@@ -18,5 +19,14 @@ export interface BypassRequest {
 
   stationRecord?: {
     id: string;
+    previousQuantity?: number | null;
+    submittedQuantity?: number | null;
+    station?: {
+      id: string;
+      name: string;
+    };
+    order?: {
+      id: string;
+    };
   };
 }
