@@ -31,6 +31,19 @@ export const WORKER_COPY = {
     'One or more item counts do not match the previous station reference. Review the highlighted rows before continuing.',
   processOrderMismatchInline: 'This quantity does not match the reference item count.',
   processOrderBypassRequest: 'Request Bypass',
+  processOrderBypassDialogTitle: 'Request Bypass Approval',
+  processOrderBypassDialogDescription:
+    'Send the mismatch summary to the outlet admin for review before this order can continue.',
+  processOrderBypassSummaryTitle: 'Mismatch Summary',
+  processOrderBypassNotesLabel: 'Worker notes',
+  processOrderBypassNotesPlaceholder:
+    'Explain why the quantity does not match the previous station count.',
+  processOrderBypassConfirm: 'Send bypass request',
+  processOrderBypassSubmitting: 'Sending request...',
+  processOrderBypassCancel: 'Cancel',
+  processOrderBypassSuccess:
+    'Bypass request submitted. Awaiting admin approval.',
+  processOrderBypassFailure: 'Failed to submit bypass request.',
   processOrderSubmit: 'Submit station result',
   processOrderSubmitting: 'Submitting...',
   processOrderLoadError:

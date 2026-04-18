@@ -1,5 +1,7 @@
 import { axiosInstance } from '@/lib/axiosInstance';
 import type {
+  WorkerBypassRequestPayload,
+  WorkerBypassRequestResponse,
   WorkerOrderDetailResponse,
   WorkerOrderListParams,
   WorkerOrderListResponse,
@@ -40,6 +42,18 @@ export async function processWorkerOrder(
 ): Promise<WorkerOrderProcessResponse> {
   const response = await axiosInstance.post<WorkerOrderProcessResponse>(
     `/api/v1/worker/orders/${id}/process`,
+    payload,
+  );
+
+  return response.data;
+}
+
+export async function createWorkerBypassRequest(
+  id: string,
+  payload: WorkerBypassRequestPayload,
+): Promise<WorkerBypassRequestResponse> {
+  const response = await axiosInstance.post<WorkerBypassRequestResponse>(
+    `/api/v1/worker/orders/${id}/bypass-request`,
     payload,
   );
 

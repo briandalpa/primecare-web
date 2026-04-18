@@ -103,3 +103,20 @@ export type WorkerOrderProcessResponse = {
   message: string;
   data: WorkerOrderProcessResult;
 };
+
+export type WorkerBypassRequestPayload = {
+  items: WorkerOrderProcessItemPayload[];
+  notes?: string;
+};
+
+export type WorkerBypassRequestResult = {
+  id: string;
+  status: string;
+  createdAt: string;
+};
+
+export type WorkerBypassRequestResponse = {
+  status: string;
+  message: string;
+  data: WorkerBypassRequestResult;
+};
