@@ -8,8 +8,20 @@ import type {
 
 export const WORKER_COPY = {
   dashboardTitle: 'Worker Dashboard',
+  historyTitle: 'Worker History',
   dashboardDescription:
     'Review your station queue, monitor queue updates, and move to the next order without leaving the dashboard.',
+  historyDescription:
+    'Review completed station work, filter by date and station, and open item summaries for completed orders.',
+  historyAllStations: 'All stations',
+  historyCompletedAtLabel: 'Completed at',
+  historyEmpty: 'No completed worker history matches the current filters.',
+  historyLoadError:
+    'Worker history could not be loaded. Please retry after the backend service is available.',
+  historyOpenDetail: 'View details',
+  historyDetailTitle: 'Completed Order Detail',
+  historyDetailDescription:
+    'Review the completed station details and item summary for this order.',
   processOrderTitle: 'Process Order',
   processOrderDescription:
     'Review the previous station quantities, re-enter the current station quantities, and submit the result.',
@@ -96,12 +108,14 @@ export const WORKER_COPY = {
 
 export const WORKER_DOCUMENT_TITLE = {
   dashboard: 'PrimeCare | Worker Dashboard',
+  history: 'PrimeCare | Worker History',
   process: 'PrimeCare | Process Worker Order',
 } as const;
 
 export const WORKER_ROUTE = {
   base: '/worker',
   dashboard: '/worker/dashboard',
+  history: '/worker/history',
   orderProcess: '/worker/orders/:id/process',
   forbidden: '/forbidden',
   home: '/',
@@ -114,6 +128,13 @@ export const WORKER_DEFAULT_FILTERS: Required<WorkerOrderListParams> = {
   page: 1,
   limit: 10,
   status: 'ALL',
+  date: '',
+};
+
+export const WORKER_HISTORY_DEFAULT_FILTERS = {
+  page: 1,
+  limit: 10,
+  station: 'ALL' as const,
   date: '',
 };
 

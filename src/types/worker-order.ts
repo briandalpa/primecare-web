@@ -40,6 +40,24 @@ export type WorkerOrderListParams = {
   date?: string;
 };
 
+export type WorkerHistoryItem = WorkerOrder & {
+  completedAt: string;
+};
+
+export type WorkerHistoryResponse = {
+  status: string;
+  message: string;
+  data: WorkerHistoryItem[];
+  meta: WorkerOrderMeta;
+};
+
+export type WorkerHistoryParams = {
+  page?: number;
+  limit?: number;
+  station?: WorkerStation | 'ALL';
+  date?: string;
+};
+
 export type WorkerNotificationPayload = {
   event: WorkerNotificationEvent;
   orderId: string;

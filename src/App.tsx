@@ -27,6 +27,7 @@ import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminOutletsPage from './pages/AdminOutletsPage';
 
 import WorkerDashboardPage from '@/pages/WorkerDashboardPage';
+import WorkerHistoryPage from '@/pages/WorkerHistoryPage';
 import WorkerOrderProcessPage from '@/pages/WorkerOrderProcessPage';
 
 import AdminLayout from './layouts/AdminLayout';
@@ -74,6 +75,7 @@ export default function App() {
         <Route path="/worker" element={<WorkerLayout />}>
           <Route index element={<WorkerDashboardPage />} />
           <Route path="dashboard" element={<WorkerDashboardPage />} />
+          <Route path="history" element={<WorkerHistoryPage />} />
           <Route path="orders/:id/process" element={<WorkerOrderProcessPage />} />
         </Route>
       </Routes>
