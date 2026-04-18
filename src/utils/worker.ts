@@ -44,6 +44,13 @@ export const WORKER_COPY = {
   processOrderBypassSuccess:
     'Bypass request submitted. Awaiting admin approval.',
   processOrderBypassFailure: 'Failed to submit bypass request.',
+  processOrderBypassPendingTitle: 'Bypass request pending',
+  processOrderBypassPendingDescription:
+    'This order is waiting for outlet admin review. The process form will stay locked until the bypass request is resolved.',
+  processOrderBypassRejected:
+    'Bypass request was rejected. You can update the quantities and submit again.',
+  processOrderBypassApproved:
+    'Bypass request was approved. The order has moved to the next step.',
   processOrderSubmit: 'Submit station result',
   processOrderSubmitting: 'Submitting...',
   processOrderLoadError:
