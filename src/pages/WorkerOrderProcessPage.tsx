@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -48,6 +48,7 @@ export default function WorkerOrderProcessPage() {
   const orderDetail = useWorkerOrderDetail(id);
   const processOrder = useProcessWorkerOrder();
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -60,6 +61,8 @@ export default function WorkerOrderProcessPage() {
   useEffect(() => {
     document.title = WORKER_DOCUMENT_TITLE.process;
   }, []);
+
+  const watchedItems = useWatch({ control, name: 'items' });
 
   useEffect(() => {
     if (!orderDetail.data?.data) return;
@@ -118,6 +121,15 @@ export default function WorkerOrderProcessPage() {
   }
 
   const detail = orderDetail.data.data;
+  const mismatchByIndex = detail.referenceItems.map((item, index) => {
+    const quantity = watchedItems?.[index]?.quantity ?? '';
+    const hasValue = quantity !== '';
+    const numericQuantity = Number(quantity);
+    const isMismatch = hasValue && Number.isFinite(numericQuantity) && numericQuantity !== item.quantity;
+
+    return isMismatch;
+  });
+  const hasMismatch = mismatchByIndex.some(Boolean);
 
   return (
     <div className="space-y-6">
@@ -193,6 +205,17 @@ export default function WorkerOrderProcessPage() {
         </CardHeader>
         <CardContent>
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            {hasMismatch ? (
+              <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+                <p className="text-sm font-medium text-destructive">
+                  {WORKER_COPY.processOrderMismatchTitle}
+                </p>
+                <p className="mt-1 text-sm text-destructive">
+                  {WORKER_COPY.processOrderMismatchDescription}
+                </p>
+              </div>
+            ) : null}
+
             <FieldGroup>
               <Table>
                 <TableHeader>
@@ -204,7 +227,10 @@ export default function WorkerOrderProcessPage() {
                 </TableHeader>
                 <TableBody>
                   {detail.referenceItems.map((item, index) => (
-                    <TableRow key={item.laundryItemId}>
+                    <TableRow
+                      key={item.laundryItemId}
+                      className={mismatchByIndex[index] ? 'bg-destructive/5' : undefined}
+                    >
                       <TableCell>{item.itemName}</TableCell>
                       <TableCell>{item.quantity}</TableCell>
                       <TableCell className="space-y-2">
@@ -223,6 +249,11 @@ export default function WorkerOrderProcessPage() {
                             placeholder="0"
                             {...register(`items.${index}.quantity`)}
                           />
+                          {mismatchByIndex[index] ? (
+                            <p className="text-xs text-destructive">
+                              {WORKER_COPY.processOrderMismatchInline}
+                            </p>
+                          ) : null}
                           <FieldError errors={[errors.items?.[index]?.quantity]} />
                         </Field>
                       </TableCell>
@@ -232,11 +263,18 @@ export default function WorkerOrderProcessPage() {
               </Table>
             </FieldGroup>
 
-            <Button type="submit" disabled={processOrder.isPending}>
-              {processOrder.isPending
-                ? WORKER_COPY.processOrderSubmitting
-                : WORKER_COPY.processOrderSubmit}
-            </Button>
+            <div className="flex flex-wrap gap-3">
+              {hasMismatch ? (
+                <Button type="button" variant="outline" disabled>
+                  {WORKER_COPY.processOrderBypassRequest}
+                </Button>
+              ) : null}
+              <Button type="submit" disabled={processOrder.isPending || hasMismatch}>
+                {processOrder.isPending
+                  ? WORKER_COPY.processOrderSubmitting
+                  : WORKER_COPY.processOrderSubmit}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>

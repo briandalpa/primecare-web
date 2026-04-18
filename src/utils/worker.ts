@@ -26,6 +26,11 @@ export const WORKER_COPY = {
   processOrderItemLabel: 'Laundry item',
   processOrderReferenceQuantity: 'Reference qty',
   processOrderInputQuantity: 'Your qty',
+  processOrderMismatchTitle: 'Quantity mismatch detected',
+  processOrderMismatchDescription:
+    'One or more item counts do not match the previous station reference. Review the highlighted rows before continuing.',
+  processOrderMismatchInline: 'This quantity does not match the reference item count.',
+  processOrderBypassRequest: 'Request Bypass',
   processOrderSubmit: 'Submit station result',
   processOrderSubmitting: 'Submitting...',
   processOrderLoadError:
