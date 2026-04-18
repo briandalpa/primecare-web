@@ -5,19 +5,11 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Card, CardContent } from '@/components/ui/card';
+import { WorkerOrderProcessFormCard } from '@/features/worker/WorkerOrderProcessFormCard';
+import { WorkerOrderProcessSkeleton } from '@/features/worker/WorkerOrderProcessSkeleton';
+import { WorkerOrderProcessSummaryCard } from '@/features/worker/WorkerOrderProcessSummaryCard';
+import { WorkerOrderReferenceCard } from '@/features/worker/WorkerOrderReferenceCard';
 import { useWorkerOrderDetail } from '@/hooks/useWorkerOrderDetail';
 import { useProcessWorkerOrder } from '@/hooks/useProcessWorkerOrder';
 import {
@@ -28,19 +20,7 @@ import {
   WORKER_COPY,
   WORKER_DOCUMENT_TITLE,
   WORKER_ROUTE,
-  formatWorkerDateTime,
-  getWorkerStatusLabel,
 } from '@/utils/worker';
-
-function WorkerOrderProcessSkeleton() {
-  return (
-    <div className="space-y-6">
-      <Skeleton className="h-9 w-40" />
-      <Skeleton className="h-40 w-full" />
-      <Skeleton className="h-72 w-full" />
-    </div>
-  );
-}
 
 export default function WorkerOrderProcessPage() {
   const { id = '' } = useParams<{ id: string }>();
@@ -140,144 +120,17 @@ export default function WorkerOrderProcessPage() {
         </Link>
       </Button>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{WORKER_COPY.processOrderTitle}</CardTitle>
-          <CardDescription>{WORKER_COPY.processOrderDescription}</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-3 text-sm text-muted-foreground md:grid-cols-2 xl:grid-cols-4">
-          <p>
-            {WORKER_COPY.processOrderOrderIdLabel}: <span className="font-medium text-foreground">{detail.orderId}</span>
-          </p>
-          <p>
-            {WORKER_COPY.processOrderStationLabel}: <span className="font-medium text-foreground">{detail.station}</span>
-          </p>
-          <p>
-            {WORKER_COPY.processOrderPreviousStationLabel}: <span className="font-medium text-foreground">{detail.previousStation ?? WORKER_COPY.unavailable}</span>
-          </p>
-          <p>
-            {WORKER_COPY.processOrderPaymentStatusLabel}: <span className="font-medium text-foreground">{detail.paymentStatus}</span>
-          </p>
-          <p>{WORKER_COPY.queueCustomer}: <span className="font-medium text-foreground">{detail.customerName ?? WORKER_COPY.unavailable}</span></p>
-          <p>{WORKER_COPY.queueOutlet}: <span className="font-medium text-foreground">{detail.outletName ?? WORKER_COPY.unavailable}</span></p>
-          <p>{WORKER_COPY.queueTotalItems}: <span className="font-medium text-foreground">{detail.totalItems}</span></p>
-          <div className="flex items-center gap-2">
-            <span>{WORKER_COPY.statusLabel}:</span>
-            <Badge variant="secondary">{getWorkerStatusLabel(detail.stationStatus)}</Badge>
-          </div>
-          <p className="md:col-span-2 xl:col-span-4">
-            Updated <span className="font-medium text-foreground">{formatWorkerDateTime(detail.updatedAt)}</span>
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{WORKER_COPY.processOrderReferenceTitle}</CardTitle>
-          <CardDescription>
-            {WORKER_COPY.processOrderReferenceDescription}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{WORKER_COPY.processOrderItemLabel}</TableHead>
-                <TableHead>{WORKER_COPY.processOrderReferenceQuantity}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {detail.referenceItems.map((item) => (
-                <TableRow key={item.laundryItemId}>
-                  <TableCell>{item.itemName}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{WORKER_COPY.processOrderFormTitle}</CardTitle>
-          <CardDescription>{WORKER_COPY.processOrderFormDescription}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            {hasMismatch ? (
-              <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-4">
-                <p className="text-sm font-medium text-destructive">
-                  {WORKER_COPY.processOrderMismatchTitle}
-                </p>
-                <p className="mt-1 text-sm text-destructive">
-                  {WORKER_COPY.processOrderMismatchDescription}
-                </p>
-              </div>
-            ) : null}
-
-            <FieldGroup>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{WORKER_COPY.processOrderItemLabel}</TableHead>
-                    <TableHead>{WORKER_COPY.processOrderReferenceQuantity}</TableHead>
-                    <TableHead>{WORKER_COPY.processOrderInputQuantity}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {detail.referenceItems.map((item, index) => (
-                    <TableRow
-                      key={item.laundryItemId}
-                      className={mismatchByIndex[index] ? 'bg-destructive/5' : undefined}
-                    >
-                      <TableCell>{item.itemName}</TableCell>
-                      <TableCell>{item.quantity}</TableCell>
-                      <TableCell className="space-y-2">
-                        <input
-                          type="hidden"
-                          {...register(`items.${index}.laundryItemId`)}
-                          defaultValue={item.laundryItemId}
-                        />
-                        <Field data-invalid={!!errors.items?.[index]?.quantity}>
-                          <FieldLabel className="sr-only" htmlFor={`items.${index}.quantity`}>
-                            {item.itemName}
-                          </FieldLabel>
-                          <Input
-                            id={`items.${index}.quantity`}
-                            inputMode="numeric"
-                            placeholder="0"
-                            {...register(`items.${index}.quantity`)}
-                          />
-                          {mismatchByIndex[index] ? (
-                            <p className="text-xs text-destructive">
-                              {WORKER_COPY.processOrderMismatchInline}
-                            </p>
-                          ) : null}
-                          <FieldError errors={[errors.items?.[index]?.quantity]} />
-                        </Field>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </FieldGroup>
-
-            <div className="flex flex-wrap gap-3">
-              {hasMismatch ? (
-                <Button type="button" variant="outline" disabled>
-                  {WORKER_COPY.processOrderBypassRequest}
-                </Button>
-              ) : null}
-              <Button type="submit" disabled={processOrder.isPending || hasMismatch}>
-                {processOrder.isPending
-                  ? WORKER_COPY.processOrderSubmitting
-                  : WORKER_COPY.processOrderSubmit}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      <WorkerOrderProcessSummaryCard detail={detail} />
+      <WorkerOrderReferenceCard items={detail.referenceItems} />
+      <WorkerOrderProcessFormCard
+        errors={errors}
+        hasMismatch={hasMismatch}
+        isSubmitting={processOrder.isPending}
+        items={detail.referenceItems}
+        mismatchByIndex={mismatchByIndex}
+        onSubmit={handleSubmit(onSubmit)}
+        register={register}
+      />
     </div>
   );
 }
