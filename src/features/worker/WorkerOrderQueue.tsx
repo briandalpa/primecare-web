@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { WorkerQueuePagination } from '@/features/worker/WorkerQueuePagination';
@@ -6,6 +8,7 @@ import {
   WORKER_COPY,
   WORKER_STATUS_BADGE_VARIANT,
   formatWorkerDateTime,
+  getWorkerOrderProcessRoute,
   getWorkerStatusLabel,
 } from '@/utils/worker';
 import type { WorkerOrderListResponse, WorkerOrderStatus } from '@/types/worker-order';
@@ -89,6 +92,11 @@ function WorkerOrderCard({
           <p>{WORKER_COPY.queueCustomer}: {order.customerName ?? WORKER_COPY.unavailable}</p>
           <p>{WORKER_COPY.queueOutlet}: {order.outletName ?? WORKER_COPY.unavailable}</p>
         </div>
+        <Button asChild className="w-full sm:w-auto">
+          <Link to={getWorkerOrderProcessRoute(order.orderId)}>
+            {WORKER_COPY.processOrderTitle}
+          </Link>
+        </Button>
       </CardContent>
     </Card>
   );

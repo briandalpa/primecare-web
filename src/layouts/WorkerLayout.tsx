@@ -26,6 +26,13 @@ function useBreadcrumbs(): BreadcrumbSegment[] {
     return [{ label: WORKER_COPY.dashboardTitle }];
   }
 
+  if (pathname.startsWith('/worker/orders/') && pathname.endsWith('/process')) {
+    return [
+      { label: WORKER_COPY.dashboardTitle, href: WORKER_ROUTE.dashboard },
+      { label: WORKER_COPY.processOrderTitle },
+    ];
+  }
+
   return [{ label: WORKER_COPY.workerRoleLabel }];
 }
 

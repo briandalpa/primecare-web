@@ -10,6 +10,30 @@ export const WORKER_COPY = {
   dashboardTitle: 'Worker Dashboard',
   dashboardDescription:
     'Review your station queue, monitor queue updates, and move to the next order without leaving the dashboard.',
+  processOrderTitle: 'Process Order',
+  processOrderDescription:
+    'Review the previous station quantities, re-enter the current station quantities, and submit the result.',
+  processOrderReferenceTitle: 'Reference Items',
+  processOrderReferenceDescription:
+    'These quantities come from the previous completed station and are used as your comparison source.',
+  processOrderFormTitle: 'Re-enter Quantities',
+  processOrderFormDescription:
+    'Enter the quantity you count for each laundry item before submitting this station result.',
+  processOrderOrderIdLabel: 'Order ID',
+  processOrderStationLabel: 'Station',
+  processOrderPreviousStationLabel: 'Previous station',
+  processOrderPaymentStatusLabel: 'Payment',
+  processOrderItemLabel: 'Laundry item',
+  processOrderReferenceQuantity: 'Reference qty',
+  processOrderInputQuantity: 'Your qty',
+  processOrderSubmit: 'Submit station result',
+  processOrderSubmitting: 'Submitting...',
+  processOrderLoadError:
+    'Worker order detail could not be loaded. Please retry after the backend service is available.',
+  processOrderNotFound: 'Worker order detail is not available for this station.',
+  processOrderSuccess: 'Worker order processed successfully',
+  processOrderFailure: 'Failed to process worker order',
+  processOrderBack: 'Back to dashboard',
   stationQueueTitle: 'Station Queue',
   stationQueueDescription: 'Orders currently visible for your station.',
   queueUpdatesTitle: 'Queue Updates',
@@ -47,11 +71,13 @@ export const WORKER_COPY = {
 
 export const WORKER_DOCUMENT_TITLE = {
   dashboard: 'PrimeCare | Worker Dashboard',
+  process: 'PrimeCare | Process Worker Order',
 } as const;
 
 export const WORKER_ROUTE = {
   base: '/worker',
   dashboard: '/worker/dashboard',
+  orderProcess: '/worker/orders/:id/process',
   forbidden: '/forbidden',
   home: '/',
 } as const;
@@ -107,6 +133,10 @@ export function getWorkerStationLabel(station?: string | null) {
 
 export function getWorkerStatusLabel(status: WorkerOrderStatus) {
   return WORKER_STATUS_LABEL[status];
+}
+
+export function getWorkerOrderProcessRoute(orderId: string) {
+  return `/worker/orders/${orderId}/process`;
 }
 
 export function formatWorkerDateTime(date: string) {
