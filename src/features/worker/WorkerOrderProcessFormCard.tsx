@@ -18,9 +18,11 @@ import { WORKER_COPY } from '@/utils/worker';
 type WorkerOrderProcessFormCardProps = {
   errors: FieldErrors<WorkerProcessOrderFormValues>;
   hasMismatch: boolean;
+  isBypassSubmitting: boolean;
   isSubmitting: boolean;
   items: WorkerOrderDetailItem[];
   mismatchByIndex: boolean[];
+  onRequestBypass: () => void;
   onSubmit: React.FormEventHandler<HTMLFormElement>;
   register: UseFormRegister<WorkerProcessOrderFormValues>;
 };
@@ -28,9 +30,11 @@ type WorkerOrderProcessFormCardProps = {
 export function WorkerOrderProcessFormCard({
   errors,
   hasMismatch,
+  isBypassSubmitting,
   isSubmitting,
   items,
   mismatchByIndex,
+  onRequestBypass,
   onSubmit,
   register,
 }: WorkerOrderProcessFormCardProps) {
@@ -102,7 +106,12 @@ export function WorkerOrderProcessFormCard({
 
           <div className="flex flex-wrap gap-3">
             {hasMismatch ? (
-              <Button type="button" variant="outline" disabled>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onRequestBypass}
+                disabled={isBypassSubmitting}
+              >
                 {WORKER_COPY.processOrderBypassRequest}
               </Button>
             ) : null}

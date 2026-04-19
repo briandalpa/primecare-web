@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -6,16 +6,19 @@ import { toast } from 'sonner';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { WorkerBypassRequestDialog } from '@/features/worker/WorkerBypassRequestDialog';
 import { WorkerOrderProcessFormCard } from '@/features/worker/WorkerOrderProcessFormCard';
 import { WorkerOrderProcessSkeleton } from '@/features/worker/WorkerOrderProcessSkeleton';
 import { WorkerOrderProcessSummaryCard } from '@/features/worker/WorkerOrderProcessSummaryCard';
 import { WorkerOrderReferenceCard } from '@/features/worker/WorkerOrderReferenceCard';
+import { useCreateWorkerBypassRequest } from '@/hooks/useCreateWorkerBypassRequest';
 import { useWorkerOrderDetail } from '@/hooks/useWorkerOrderDetail';
 import { useProcessWorkerOrder } from '@/hooks/useProcessWorkerOrder';
 import {
   workerProcessOrderSchema,
   type WorkerProcessOrderFormValues,
 } from '@/features/worker/workerProcessOrderSchema';
+import type { WorkerBypassRequestFormValues } from '@/features/worker/workerBypassRequestSchema';
 import {
   WORKER_COPY,
   WORKER_DOCUMENT_TITLE,
@@ -24,7 +27,9 @@ import {
 
 export default function WorkerOrderProcessPage() {
   const { id = '' } = useParams<{ id: string }>();
+  const [bypassDialogOpen, setBypassDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const bypassRequest = useCreateWorkerBypassRequest();
   const orderDetail = useWorkerOrderDetail(id);
   const processOrder = useProcessWorkerOrder();
   const {
@@ -105,11 +110,45 @@ export default function WorkerOrderProcessPage() {
     const quantity = watchedItems?.[index]?.quantity ?? '';
     const hasValue = quantity !== '';
     const numericQuantity = Number(quantity);
-    const isMismatch = hasValue && Number.isFinite(numericQuantity) && numericQuantity !== item.quantity;
-
-    return isMismatch;
+    return hasValue && Number.isFinite(numericQuantity) && numericQuantity !== item.quantity;
   });
   const hasMismatch = mismatchByIndex.some(Boolean);
+  const mismatchItems = detail.referenceItems
+    .map((item, index) => ({
+      itemName: item.itemName,
+      laundryItemId: item.laundryItemId,
+      referenceQuantity: item.quantity,
+      submittedQuantity: Number(watchedItems?.[index]?.quantity ?? 0),
+      isMismatch: mismatchByIndex[index],
+    }))
+    .filter((item) => item.isMismatch);
+
+  const submitBypassRequest = (values: WorkerBypassRequestFormValues) => {
+    handleSubmit((formValues) => {
+      bypassRequest.mutate(
+        {
+          id,
+          payload: {
+            items: formValues.items.map((item) => ({
+              laundryItemId: item.laundryItemId,
+              quantity: Number(item.quantity),
+            })),
+            notes: values.notes,
+          },
+        },
+        {
+          onSuccess: () => {
+            setBypassDialogOpen(false);
+            toast.success(WORKER_COPY.processOrderBypassSuccess);
+            navigate(WORKER_ROUTE.dashboard);
+          },
+          onError: () => {
+            toast.error(WORKER_COPY.processOrderBypassFailure);
+          },
+        },
+      );
+    })();
+  };
 
   return (
     <div className="space-y-6">
@@ -125,11 +164,20 @@ export default function WorkerOrderProcessPage() {
       <WorkerOrderProcessFormCard
         errors={errors}
         hasMismatch={hasMismatch}
+        isBypassSubmitting={bypassRequest.isPending}
         isSubmitting={processOrder.isPending}
         items={detail.referenceItems}
         mismatchByIndex={mismatchByIndex}
+        onRequestBypass={() => setBypassDialogOpen(true)}
         onSubmit={handleSubmit(onSubmit)}
         register={register}
+      />
+      <WorkerBypassRequestDialog
+        isSubmitting={bypassRequest.isPending}
+        items={mismatchItems}
+        open={bypassDialogOpen}
+        onOpenChange={setBypassDialogOpen}
+        onSubmit={submitBypassRequest}
       />
     </div>
   );
