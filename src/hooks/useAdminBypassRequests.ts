@@ -1,33 +1,34 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  getAdminBypassRequests,
   approveBypassRequest,
+  getAdminBypassRequests,
   rejectBypassRequest,
-} from "@/services/adminBypassRequest";
-import type { BypassRequest } from "@/types/bypassRequest";
+} from '@/services/adminBypassRequest';
+import type { BypassRequest } from '@/types/bypassRequest';
+
+type MutationPayload = {
+  id: string;
+  password: string;
+  problemDescription: string;
+};
 
 export const useAdminBypassRequests = () => {
   return useQuery<BypassRequest[]>({
-    queryKey: ["admin-bypass-requests"],
+    queryKey: ['admin-bypass-requests'],
     queryFn: getAdminBypassRequests,
-    staleTime: 30_000, // reviewer note
+    staleTime: 30_000,
   });
 };
 
 export const useApproveBypassRequest = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: ({
-      id,
-      payload,
-    }: {
-      id: string;
-      payload: { password: string; problemDescription: string };
-    }) => approveBypassRequest(id, payload),
-
+  return useMutation<BypassRequest, Error, MutationPayload>({
+    mutationFn: approveBypassRequest,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-bypass-requests"] });
+      queryClient.invalidateQueries({
+        queryKey: ['admin-bypass-requests'],
+      });
     },
   });
 };
@@ -35,17 +36,12 @@ export const useApproveBypassRequest = () => {
 export const useRejectBypassRequest = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: ({
-      id,
-      payload,
-    }: {
-      id: string;
-      payload: { password: string; problemDescription: string };
-    }) => rejectBypassRequest(id, payload),
-
+  return useMutation<BypassRequest, Error, MutationPayload>({
+    mutationFn: rejectBypassRequest,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-bypass-requests"] });
+      queryClient.invalidateQueries({
+        queryKey: ['admin-bypass-requests'],
+      });
     },
   });
 };

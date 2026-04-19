@@ -30,12 +30,8 @@ import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminOutletsPage from './pages/AdminOutletsPage';
 import AdminBypassRequestPage from './pages/AdminBypassRequestPage';
 
-import { Toaster } from '@/components/ui/sonner';
-
 import WorkerDashboardPage from '@/pages/WorkerDashboardPage';
 
-import AdminLayout from './layouts/AdminLayout';
-import CustomerLayout from './layouts/CustomerLayout';
 import WorkerLayout from './layouts/WorkerLayout';
 
 import { Toaster } from '@/components/ui/sonner';

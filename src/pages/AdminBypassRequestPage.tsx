@@ -1,126 +1,57 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import PageHeader from '@/components/PageHeader';
+import BypassActionDialog from '@/components/BypassActionDialog';
+import BypassRequestTable from '@/components/BypassRequestTable';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ApproveRejectModal from '@/components/admin/ApproveRejectModal';
-import BypassRequestTable from '@/features/admin/BypassRequestTable';
-
 import {
   useAdminBypassRequests,
   useApproveBypassRequest,
   useRejectBypassRequest,
 } from '@/hooks/useAdminBypassRequests';
 
-import type { ActionType } from '@/types/bypassRequest';
-import { isAxiosError } from 'axios';
-import { toast } from 'sonner';
-import { z } from 'zod';
-
-type ErrorResponse = {
-  message?: string;
-  errors?: string;
-};
-
-const actionSchema = z.object({
-  password: z
-    .string()
-    .min(1, 'Password is required'),
-  problemDescription: z
-    .string()
-    .min(1, 'Problem description is required'),
-});
-
-type FieldErrors = {
-  password?: string;
-  problemDescription?: string;
-};
-
 export default function AdminBypassRequestPage() {
-  const { data, isLoading, isError } = useAdminBypassRequests();
-
+  const { data, isError, isLoading, refetch } = useAdminBypassRequests();
   const approveMutation = useApproveBypassRequest();
   const rejectMutation = useRejectBypassRequest();
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [actionType, setActionType] = useState<ActionType | null>(null);
+  const [actionType, setActionType] = useState<'approve' | 'reject' | null>(null);
 
-  const [password, setPassword] = useState('');
-  const [problemDescription, setProblemDescription] = useState('');
-  const [modalError, setModalError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-
-  const openModal = (id: string, type: ActionType) => {
-    setSelectedId(id);
-    setActionType(type);
-    setPassword('');
-    setProblemDescription('');
-    setModalError(null);
-    setFieldErrors({});
-  };
-
-  const closeModal = () => {
-    setSelectedId(null);
-    setActionType(null);
-    setPassword('');
-    setProblemDescription('');
-    setModalError(null);
-    setFieldErrors({});
-  };
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (payload: {
+    password: string;
+    problemDescription: string;
+  }) => {
     if (!selectedId || !actionType) return;
 
-    const parsed = actionSchema.safeParse({
-      password,
-      problemDescription,
-    });
-
-    if (!parsed.success) {
-      const formErrors = parsed.error.flatten().fieldErrors;
-      setFieldErrors({
-        password: formErrors.password?.[0],
-        problemDescription:
-          formErrors.problemDescription?.[0],
-      });
-      return;
-    }
-
-    setFieldErrors({});
-
     try {
-      if (actionType === 'APPROVE') {
+      if (actionType === 'approve') {
         await approveMutation.mutateAsync({
           id: selectedId,
-          payload: parsed.data,
+          ...payload,
         });
         toast.success('Request approved');
       } else {
         await rejectMutation.mutateAsync({
           id: selectedId,
-          payload: parsed.data,
+          ...payload,
         });
         toast.success('Request rejected');
       }
 
-      closeModal();
-    } catch (err: unknown) {
-      if (isAxiosError(err)) {
-        if (err.response?.status === 401) {
-          setModalError('Incorrect password');
-          return;
+      setActionType(null);
+      setSelectedId(null);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.message.toLowerCase().includes('password')) {
+          toast.error('Wrong password');
+        } else {
+          toast.error(error.message);
         }
-
-        const errorData = err.response?.data as ErrorResponse | undefined;
-
-        const msg =
-          errorData?.message ||
-          errorData?.errors ||
-          'Request failed';
-
-        setModalError(msg);
-        return;
+      } else {
+        toast.error('Unexpected error occurred');
       }
-
-      setModalError('Unexpected error');
     }
   };
 
@@ -130,29 +61,45 @@ export default function AdminBypassRequestPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
-            Pending Requests
-          </CardTitle>
+          <CardTitle>Pending Requests</CardTitle>
         </CardHeader>
 
         <CardContent>
           {isLoading && (
-            <p className="text-sm text-muted-foreground text-center py-4">
+            <p className="text-center text-sm text-muted-foreground">
               Loading...
             </p>
           )}
 
           {isError && (
-            <p className="text-sm text-destructive text-center py-4">
-              Failed to load data
-            </p>
+            <div className="space-y-2 text-center">
+              <p className="text-sm text-destructive">
+                Failed to load data
+              </p>
+              <Button size="sm" onClick={() => refetch()}>
+                Retry
+              </Button>
+            </div>
           )}
 
-          {!isLoading && data && (
+          {!isLoading && data?.length === 0 && (
+            <div className="py-6 text-center text-sm text-muted-foreground">
+              No pending bypass requests
+            </div>
+          )}
+
+          {data && data.length > 0 && (
             <BypassRequestTable
               data={data}
-              onAction={openModal}
-              isLoadingAction={
+              onApprove={(id) => {
+                setSelectedId(id);
+                setActionType('approve');
+              }}
+              onReject={(id) => {
+                setSelectedId(id);
+                setActionType('reject');
+              }}
+              isLoading={
                 approveMutation.isPending || rejectMutation.isPending
               }
             />
@@ -160,20 +107,12 @@ export default function AdminBypassRequestPage() {
         </CardContent>
       </Card>
 
-      <ApproveRejectModal
-        open={!!selectedId}
-        actionType={actionType}
-        password={password}
-        problemDescription={problemDescription}
-        submitting={
-          approveMutation.isPending || rejectMutation.isPending
-        }
-        error={modalError}
-        fieldErrors={fieldErrors}
-        onClose={closeModal}
+      <BypassActionDialog
+        open={!!actionType}
+        onClose={() => setActionType(null)}
         onSubmit={handleSubmit}
-        onChangePassword={setPassword}
-        onChangeProblem={setProblemDescription}
+        title={actionType === 'approve' ? 'Approve Request' : 'Reject Request'}
+        isLoading={approveMutation.isPending || rejectMutation.isPending}
       />
     </div>
   );
