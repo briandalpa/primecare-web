@@ -1,5 +1,6 @@
 import {
   BellRing,
+  History,
   LayoutDashboard,
   LogOut,
   MoreHorizontal,
@@ -35,6 +36,11 @@ const workerNavItems = [
     title: WORKER_COPY.dashboardTitle,
     url: WORKER_ROUTE.dashboard,
     icon: LayoutDashboard,
+  },
+  {
+    title: WORKER_COPY.historyTitle,
+    url: WORKER_ROUTE.history,
+    icon: History,
   },
 ];
 

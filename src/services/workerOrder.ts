@@ -2,6 +2,8 @@ import { axiosInstance } from '@/lib/axiosInstance';
 import type {
   WorkerBypassRequestPayload,
   WorkerBypassRequestResponse,
+  WorkerHistoryParams,
+  WorkerHistoryResponse,
   WorkerOrderDetailResponse,
   WorkerOrderListParams,
   WorkerOrderListResponse,
@@ -13,6 +15,13 @@ const sanitizeParams = (params: WorkerOrderListParams = {}) => ({
   page: params.page ?? 1,
   limit: params.limit ?? 10,
   ...(params.status && params.status !== 'ALL' ? { status: params.status } : {}),
+  ...(params.date ? { date: params.date } : {}),
+});
+
+const sanitizeHistoryParams = (params: WorkerHistoryParams = {}) => ({
+  page: params.page ?? 1,
+  limit: params.limit ?? 10,
+  ...(params.station && params.station !== 'ALL' ? { station: params.station } : {}),
   ...(params.date ? { date: params.date } : {}),
 });
 
@@ -31,6 +40,19 @@ export async function getWorkerOrderDetail(
 ): Promise<WorkerOrderDetailResponse> {
   const response = await axiosInstance.get<WorkerOrderDetailResponse>(
     `/api/v1/worker/orders/${id}`,
+  );
+
+  return response.data;
+}
+
+export async function getWorkerHistory(
+  params: WorkerHistoryParams = {},
+): Promise<WorkerHistoryResponse> {
+  const response = await axiosInstance.get<WorkerHistoryResponse>(
+    '/api/v1/worker/history',
+    {
+      params: sanitizeHistoryParams(params),
+    },
   );
 
   return response.data;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -30,7 +30,11 @@ export default function WorkerOrderProcessPage() {
   const [bypassDialogOpen, setBypassDialogOpen] = useState(false);
   const navigate = useNavigate();
   const bypassRequest = useCreateWorkerBypassRequest();
-  const orderDetail = useWorkerOrderDetail(id);
+  const orderDetail = useWorkerOrderDetail(id, {
+    refetchInterval: (query) => (
+      query.state.data?.data?.stationStatus === 'BYPASS_REQUESTED' ? 3000 : false
+    ),
+  });
   const processOrder = useProcessWorkerOrder();
   const {
     control,
@@ -42,6 +46,7 @@ export default function WorkerOrderProcessPage() {
     resolver: zodResolver(workerProcessOrderSchema),
     defaultValues: { items: [] },
   });
+  const previousStationStatusRef = useRef<string | null>(null);
 
   useEffect(() => {
     document.title = WORKER_DOCUMENT_TITLE.process;
@@ -64,6 +69,28 @@ export default function WorkerOrderProcessPage() {
       })),
     });
   }, [orderDetail.data, reset]);
+
+  useEffect(() => {
+    const detail = orderDetail.data?.data;
+
+    if (!detail) return;
+
+    const previousStatus = previousStationStatusRef.current;
+    const currentStatus = detail.stationStatus;
+
+    if (previousStatus === 'BYPASS_REQUESTED' && currentStatus !== previousStatus) {
+      if (currentStatus === 'IN_PROGRESS') {
+        toast.success(WORKER_COPY.processOrderBypassRejected);
+      }
+
+      if (currentStatus === 'COMPLETED') {
+        toast.success(WORKER_COPY.processOrderBypassApproved);
+        navigate(WORKER_ROUTE.dashboard);
+      }
+    }
+
+    previousStationStatusRef.current = currentStatus;
+  }, [navigate, orderDetail.data]);
 
   const onSubmit = (values: WorkerProcessOrderFormValues) => {
     processOrder.mutate(
@@ -106,6 +133,7 @@ export default function WorkerOrderProcessPage() {
   }
 
   const detail = orderDetail.data.data;
+  const isAwaitingBypassApproval = detail.stationStatus === 'BYPASS_REQUESTED';
   const mismatchByIndex = detail.referenceItems.map((item, index) => {
     const quantity = watchedItems?.[index]?.quantity ?? '';
     const hasValue = quantity !== '';
@@ -140,7 +168,6 @@ export default function WorkerOrderProcessPage() {
           onSuccess: () => {
             setBypassDialogOpen(false);
             toast.success(WORKER_COPY.processOrderBypassSuccess);
-            navigate(WORKER_ROUTE.dashboard);
           },
           onError: () => {
             toast.error(WORKER_COPY.processOrderBypassFailure);
@@ -161,9 +188,22 @@ export default function WorkerOrderProcessPage() {
 
       <WorkerOrderProcessSummaryCard detail={detail} />
       <WorkerOrderReferenceCard items={detail.referenceItems} />
+      {isAwaitingBypassApproval ? (
+        <Card>
+          <CardContent className="space-y-2 p-6">
+            <p className="text-sm font-medium text-foreground">
+              {WORKER_COPY.processOrderBypassPendingTitle}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {WORKER_COPY.processOrderBypassPendingDescription}
+            </p>
+          </CardContent>
+        </Card>
+      ) : null}
       <WorkerOrderProcessFormCard
         errors={errors}
         hasMismatch={hasMismatch}
+        isAwaitingBypassApproval={isAwaitingBypassApproval}
         isBypassSubmitting={bypassRequest.isPending}
         isSubmitting={processOrder.isPending}
         items={detail.referenceItems}
@@ -175,7 +215,7 @@ export default function WorkerOrderProcessPage() {
       <WorkerBypassRequestDialog
         isSubmitting={bypassRequest.isPending}
         items={mismatchItems}
-        open={bypassDialogOpen}
+        open={bypassDialogOpen && !isAwaitingBypassApproval}
         onOpenChange={setBypassDialogOpen}
         onSubmit={submitBypassRequest}
       />

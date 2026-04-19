@@ -18,6 +18,7 @@ import { WORKER_COPY } from '@/utils/worker';
 type WorkerOrderProcessFormCardProps = {
   errors: FieldErrors<WorkerProcessOrderFormValues>;
   hasMismatch: boolean;
+  isAwaitingBypassApproval: boolean;
   isBypassSubmitting: boolean;
   isSubmitting: boolean;
   items: WorkerOrderDetailItem[];
@@ -30,6 +31,7 @@ type WorkerOrderProcessFormCardProps = {
 export function WorkerOrderProcessFormCard({
   errors,
   hasMismatch,
+  isAwaitingBypassApproval,
   isBypassSubmitting,
   isSubmitting,
   items,
@@ -38,6 +40,8 @@ export function WorkerOrderProcessFormCard({
   onSubmit,
   register,
 }: WorkerOrderProcessFormCardProps) {
+  const isFormLocked = isSubmitting || hasMismatch || isAwaitingBypassApproval;
+
   return (
     <Card>
       <CardHeader>
@@ -110,12 +114,12 @@ export function WorkerOrderProcessFormCard({
                 type="button"
                 variant="outline"
                 onClick={onRequestBypass}
-                disabled={isBypassSubmitting}
+                disabled={isBypassSubmitting || isAwaitingBypassApproval}
               >
                 {WORKER_COPY.processOrderBypassRequest}
               </Button>
             ) : null}
-            <Button type="submit" disabled={isSubmitting || hasMismatch}>
+            <Button type="submit" disabled={isFormLocked}>
               {isSubmitting
                 ? WORKER_COPY.processOrderSubmitting
                 : WORKER_COPY.processOrderSubmit}

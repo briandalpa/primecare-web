@@ -31,6 +31,7 @@ import AdminOutletsPage from './pages/AdminOutletsPage';
 import AdminBypassRequestPage from './pages/AdminBypassRequestPage';
 
 import WorkerDashboardPage from '@/pages/WorkerDashboardPage';
+import WorkerHistoryPage from '@/pages/WorkerHistoryPage';
 import WorkerOrderProcessPage from '@/pages/WorkerOrderProcessPage';
 
 import WorkerLayout from './layouts/WorkerLayout';
@@ -77,6 +78,7 @@ export default function App() {
         <Route path="/worker" element={<WorkerLayout />}>
           <Route index element={<WorkerDashboardPage />} />
           <Route path="dashboard" element={<WorkerDashboardPage />} />
+          <Route path="history" element={<WorkerHistoryPage />} />
           <Route path="orders/:id/process" element={<WorkerOrderProcessPage />} />
         </Route>
       </Routes>
