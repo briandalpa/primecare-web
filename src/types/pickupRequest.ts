@@ -13,13 +13,23 @@ export type PickupRequestOutlet = {
   longitude: number
 }
 
+export type PickupStatus = 'PENDING' | 'DRIVER_ASSIGNED' | 'PICKED_UP' | 'CANCELLED'
+
 export type PickupRequestResponse = {
   id: string
   customerId: string
   addressId: string
   outletId: string
   scheduledAt: string
-  status: 'PENDING'
+  status: PickupStatus
   createdAt: string
   outlet: PickupRequestOutlet
+}
+
+export type CustomerPickupRequest = {
+  id: string
+  outletName: string
+  scheduledAt: string
+  status: PickupStatus
+  createdAt: string
 }

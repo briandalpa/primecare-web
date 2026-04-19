@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'sonner'
 import { useAddresses } from '@/hooks/useAddresses'
@@ -7,6 +6,7 @@ import { useCreatePickupRequest } from '@/hooks/usePickupRequest'
 import ProtectedButton from '@/features/auth/ProtectedButton'
 import PickupAddressSelector from '@/features/customer/PickupAddressSelector'
 import PickupScheduleSelector from '@/features/customer/PickupScheduleSelector'
+import PickupRequestList from '@/features/customer/PickupRequestList'
 import { TIME_SLOTS } from '@/utils/pickupSlots'
 import PickupConfirmDialog from '@/features/customer/PickupConfirmDialog'
 
@@ -26,7 +26,6 @@ function toPickupErrorMessage(err: unknown): string {
 }
 
 export default function CreatePickupPage() {
-  const navigate = useNavigate()
   const { data: addresses = [] } = useAddresses()
   const mutation = useCreatePickupRequest()
 
@@ -54,14 +53,13 @@ export default function CreatePickupPage() {
       })
       setConfirmOpen(false)
       toast.success(`Pickup scheduled! ${result.outlet.name} will handle your order.`)
-      navigate('/orders')
     } catch (err: unknown) {
       toast.error(toPickupErrorMessage(err))
     }
   }
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-5xl">
       <div className="mb-8">
         <h1 className="text-2xl font-bold font-heading text-foreground">
           Schedule a Pickup
@@ -70,25 +68,30 @@ export default function CreatePickupPage() {
           Choose your address, pick a time, and we'll handle the rest
         </p>
       </div>
-      <PickupAddressSelector
-        addresses={addresses}
-        selectedId={effectiveAddressId}
-        onSelect={setSelectedAddressId}
-      />
-      <PickupScheduleSelector
-        date={date}
-        setDate={setDate}
-        timeSlot={timeSlot}
-        setTimeSlot={setTimeSlot}
-      />
-      <ProtectedButton
-        size="lg"
-        className="w-full rounded-full text-base font-semibold"
-        disabled={!isValid}
-        onClick={() => isValid && setConfirmOpen(true)}
-      >
-        Review & Confirm Pickup
-      </ProtectedButton>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div>
+          <PickupAddressSelector
+            addresses={addresses}
+            selectedId={effectiveAddressId}
+            onSelect={setSelectedAddressId}
+          />
+          <PickupScheduleSelector
+            date={date}
+            setDate={setDate}
+            timeSlot={timeSlot}
+            setTimeSlot={setTimeSlot}
+          />
+          <ProtectedButton
+            size="lg"
+            className="w-full rounded-full text-base font-semibold"
+            disabled={!isValid}
+            onClick={() => isValid && setConfirmOpen(true)}
+          >
+            Review & Confirm Pickup
+          </ProtectedButton>
+        </div>
+        <PickupRequestList />
+      </div>
       <PickupConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
