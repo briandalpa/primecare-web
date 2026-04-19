@@ -60,7 +60,7 @@ export default function CustomerLayout() {
 
   if (sessionPending || rolePending) return null;
   if (!session) return <Navigate to="/auth/login" replace />;
-  if (effectiveRole !== 'CUSTOMER') return <Navigate to="/403" replace />;
+  if (effectiveRole !== 'CUSTOMER') return <Navigate to="/forbidden" replace />;
 
   return (
     <SidebarProvider>
