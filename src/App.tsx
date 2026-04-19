@@ -20,17 +20,19 @@ import AdminPickupRequestsPage from './pages/AdminPickupRequestsPage';
 import OrderListPage from './pages/OrderListPage';
 import CustomerOrderDetailPage from './pages/CustomerOrderDetailPage';
 
+import AdminLayout from './layouts/AdminLayout';
+import CustomerLayout from './layouts/CustomerLayout';
+
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AddressManagementPage from './pages/AddressManagementPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminOutletsPage from './pages/AdminOutletsPage';
+import AdminBypassRequestPage from './pages/AdminBypassRequestPage';
 
 import WorkerDashboardPage from '@/pages/WorkerDashboardPage';
 import WorkerOrderProcessPage from '@/pages/WorkerOrderProcessPage';
 
-import AdminLayout from './layouts/AdminLayout';
-import CustomerLayout from './layouts/CustomerLayout';
 import WorkerLayout from './layouts/WorkerLayout';
 
 import { Toaster } from '@/components/ui/sonner';
@@ -61,6 +63,7 @@ export default function App() {
           <Route path="profile" element={<AdminProfilePage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
           <Route path="outlets" element={<AdminOutletsPage />} />
+          <Route path="bypass-requests" element={<AdminBypassRequestPage />} />
         </Route>
 
         {/* ================= CUSTOMER ROUTES ================= */}
