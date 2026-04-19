@@ -20,6 +20,9 @@ import AdminPickupRequestsPage from './pages/AdminPickupRequestsPage';
 import OrderListPage from './pages/OrderListPage';
 import CustomerOrderDetailPage from './pages/CustomerOrderDetailPage';
 
+import AdminLayout from './layouts/AdminLayout';
+import CustomerLayout from './layouts/CustomerLayout';
+
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import AddressManagementPage from './pages/AddressManagementPage';
 import AdminProfilePage from './pages/AdminProfilePage';
@@ -29,8 +32,6 @@ import AdminBypassRequestPage from './pages/AdminBypassRequestPage';
 
 import WorkerDashboardPage from '@/pages/WorkerDashboardPage';
 
-import AdminLayout from './layouts/AdminLayout';
-import CustomerLayout from './layouts/CustomerLayout';
 import WorkerLayout from './layouts/WorkerLayout';
 
 import { Toaster } from '@/components/ui/sonner';

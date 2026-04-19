@@ -1,19 +1,18 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import PageHeader from '@/components/PageHeader';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import BypassActionDialog from '@/components/BypassActionDialog';
+import BypassRequestTable from '@/components/BypassRequestTable';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   useAdminBypassRequests,
   useApproveBypassRequest,
   useRejectBypassRequest,
 } from '@/hooks/useAdminBypassRequests';
-import { toast } from 'sonner';
-import BypassActionDialog from '@/components/BypassActionDialog';
-import BypassRequestTable from '@/components/BypassRequestTable';
 
 export default function AdminBypassRequestPage() {
-  const { data, isLoading, isError, refetch } = useAdminBypassRequests();
-
+  const { data, isError, isLoading, refetch } = useAdminBypassRequests();
   const approveMutation = useApproveBypassRequest();
   const rejectMutation = useRejectBypassRequest();
 
@@ -40,12 +39,15 @@ export default function AdminBypassRequestPage() {
         });
         toast.success('Request rejected');
       }
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        if (err.message.toLowerCase().includes('password')) {
+
+      setActionType(null);
+      setSelectedId(null);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.message.toLowerCase().includes('password')) {
           toast.error('Wrong password');
         } else {
-          toast.error(err.message);
+          toast.error(error.message);
         }
       } else {
         toast.error('Unexpected error occurred');
@@ -64,13 +66,13 @@ export default function AdminBypassRequestPage() {
 
         <CardContent>
           {isLoading && (
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-center text-sm text-muted-foreground">
               Loading...
             </p>
           )}
 
           {isError && (
-            <div className="text-center space-y-2">
+            <div className="space-y-2 text-center">
               <p className="text-sm text-destructive">
                 Failed to load data
               </p>
@@ -81,7 +83,7 @@ export default function AdminBypassRequestPage() {
           )}
 
           {!isLoading && data?.length === 0 && (
-            <div className="text-center py-6 text-muted-foreground text-sm">
+            <div className="py-6 text-center text-sm text-muted-foreground">
               No pending bypass requests
             </div>
           )}
@@ -109,14 +111,8 @@ export default function AdminBypassRequestPage() {
         open={!!actionType}
         onClose={() => setActionType(null)}
         onSubmit={handleSubmit}
-        title={
-          actionType === 'approve'
-            ? 'Approve Request'
-            : 'Reject Request'
-        }
-        isLoading={
-          approveMutation.isPending || rejectMutation.isPending
-        }
+        title={actionType === 'approve' ? 'Approve Request' : 'Reject Request'}
+        isLoading={approveMutation.isPending || rejectMutation.isPending}
       />
     </div>
   );
