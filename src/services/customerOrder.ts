@@ -16,6 +16,6 @@ export const getCustomerOrderDetail = async (
 }
 
 export const confirmOrderReceipt = async (id: string) => {
-  const res = await axiosInstance.post(`/api/v1/orders/${id}/confirm`)
+  const res = await axiosInstance.patch(`/api/v1/orders/${id}/confirm`)
   return res.data
 }

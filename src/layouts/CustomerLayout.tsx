@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { Navigate, Outlet, useLocation, Link } from 'react-router-dom';
 import { useSession } from '@/lib/auth-client';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,27 +15,52 @@ import { CustomerSidebar } from '@/features/customer/CustomerSidebar';
 
 type BreadcrumbSegment = { label: string; href?: string };
 
+type BreadcrumbRule = {
+  match: (p: string) => boolean;
+  segments: (p: string) => BreadcrumbSegment[];
+};
+
+const BREADCRUMB_RULES: BreadcrumbRule[] = [
+  { match: (p) => p === '/addresses', segments: () => [{ label: 'My Addresses' }] },
+  { match: (p) => p === '/orders', segments: () => [{ label: 'My Orders' }] },
+  { match: (p) => p === '/profile', segments: () => [{ label: 'Profile' }] },
+  { match: (p) => p === '/pickup/create', segments: () => [{ label: 'Schedule Pickup' }] },
+  {
+    match: (p) => p.endsWith('/pay'),
+    segments: (p) => [
+      { label: 'My Orders', href: '/orders' },
+      { label: 'Order Detail', href: p.replace('/pay', '') },
+      { label: 'Payment' },
+    ],
+  },
+  {
+    match: (p) => p.endsWith('/payment-success'),
+    segments: () => [{ label: 'My Orders', href: '/orders' }, { label: 'Payment Successful' }],
+  },
+  {
+    match: (p) => p.endsWith('/payment-failure'),
+    segments: () => [{ label: 'My Orders', href: '/orders' }, { label: 'Payment Failed' }],
+  },
+  {
+    match: (p) => p.startsWith('/orders/'),
+    segments: () => [{ label: 'My Orders', href: '/orders' }, { label: 'Order Detail' }],
+  },
+];
+
 function useBreadcrumbs(): BreadcrumbSegment[] {
   const { pathname } = useLocation();
-  if (pathname === '/addresses') return [{ label: 'My Addresses' }];
-  if (pathname === '/orders') return [{ label: 'My Orders' }];
-  if (pathname.startsWith('/orders/')) {
-    return [
-      { label: 'My Orders', href: '/orders' },
-      { label: 'Order Detail' },
-    ];
-  }
-  if (pathname === '/profile') return [{ label: 'Profile' }];
-  if (pathname === '/pickup/create') return [{ label: 'Schedule Pickup' }];
-  return [{ label: 'Dashboard' }];
+  const rule = BREADCRUMB_RULES.find((r) => r.match(pathname));
+  return rule ? rule.segments(pathname) : [{ label: 'Dashboard' }];
 }
 
 export default function CustomerLayout() {
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending: sessionPending } = useSession();
+  const { effectiveRole, isPending: rolePending } = useCurrentUser();
   const segments = useBreadcrumbs();
 
-  if (isPending) return null;
+  if (sessionPending || rolePending) return null;
   if (!session) return <Navigate to="/auth/login" replace />;
+  if (effectiveRole !== 'CUSTOMER') return <Navigate to="/forbidden" replace />;
 
   return (
     <SidebarProvider>
@@ -53,7 +79,11 @@ export default function CustomerLayout() {
                         <BreadcrumbPage>{seg.label}</BreadcrumbPage>
                       ) : (
                         <BreadcrumbLink asChild>
-                          <Link to={seg.href!}>{seg.label}</Link>
+                          {seg.href ? (
+                            <Link to={seg.href}>{seg.label}</Link>
+                          ) : (
+                            <span>{seg.label}</span>
+                          )}
                         </BreadcrumbLink>
                       )}
                     </BreadcrumbItem>

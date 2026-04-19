@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
+import GeolocationProvider from '@/features/geolocation/GeolocationProvider';
 
 import LandingPage from './pages/LandingPage';
 import AdminLoginPage from './pages/AdminLoginPage';
@@ -37,9 +38,15 @@ import WorkerOrderProcessPage from '@/pages/WorkerOrderProcessPage';
 import WorkerLayout from './layouts/WorkerLayout';
 
 import { Toaster } from '@/components/ui/sonner';
+import CreatePickupPage from './pages/CreatePickupPage';
+import PaymentPage from './pages/PaymentPage';
+import PaymentSuccessPage from './pages/PaymentSuccessPage';
+import PaymentFailurePage from './pages/PaymentFailurePage';
+import NotFoundPage from './pages/NotFoundPage';
 
 export default function App() {
   return (
+    <GeolocationProvider>
     <BrowserRouter>
       <Routes>
         {/* ================= PUBLIC ROUTES ================= */}
@@ -72,6 +79,10 @@ export default function App() {
           <Route path="/addresses" element={<AddressManagementPage />} />
           <Route path="/orders" element={<OrderListPage />} />
           <Route path="/orders/:id" element={<CustomerOrderDetailPage />} />
+          <Route path="/pickup/create" element={<CreatePickupPage />} />
+          <Route path="/orders/:id/pay" element={<PaymentPage />} />
+          <Route path="/orders/:id/payment-success" element={<PaymentSuccessPage />} />
+          <Route path="/orders/:id/payment-failure" element={<PaymentFailurePage />} />
         </Route>
 
         {/* ================= WORKER ROUTES ================= */}
@@ -81,9 +92,12 @@ export default function App() {
           <Route path="history" element={<WorkerHistoryPage />} />
           <Route path="orders/:id/process" element={<WorkerOrderProcessPage />} />
         </Route>
+
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
       <Toaster />
     </BrowserRouter>
+    </GeolocationProvider>
   );
 }

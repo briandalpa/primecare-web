@@ -1,4 +1,4 @@
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -9,7 +9,8 @@ import type { PickupRequest } from '@/types/order';
 
 export function useCreateOrderForm() {
   const navigate = useNavigate();
-  const { data: pickupData, isPending: loadingPickups } = useAdminPickupRequests();
+  const { data: pickupData, isPending: loadingPickups } =
+    useAdminPickupRequests();
   const pickups: PickupRequest[] = pickupData?.data ?? [];
   const { mutate, isPending } = useCreateAdminOrder();
 
@@ -23,15 +24,20 @@ export function useCreateOrderForm() {
     },
   });
 
-  const { register, handleSubmit, control, watch, trigger, formState: { errors } } = form;
-  // Dynamic item rows backed by react-hook-form's useFieldArray — append/remove
-  // keep the array in sync with the form state without manual index management.
+  const {
+    register,
+    handleSubmit,
+    control,
+    trigger,
+    formState: { errors },
+  } = form;
   const { fields, append, remove } = useFieldArray({ control, name: 'items' });
 
-  // Derived total: recalculates reactively whenever weight or price/kg changes.
-  const totalPrice = (watch('totalWeightKg') || 0) * (watch('pricePerKg') || 0);
-  // Resolve the full pickup request object so the form can display customer details.
-  const selectedPickup = pickups.find((p) => p.id === watch('pickupRequestId'));
+  const totalWeightKg = useWatch({ control, name: 'totalWeightKg' }) || 0;
+  const pricePerKg = useWatch({ control, name: 'pricePerKg' }) || 0;
+  const totalPrice = totalWeightKg * pricePerKg;
+  const pickupRequestId = useWatch({ control, name: 'pickupRequestId' });
+  const selectedPickup = pickups.find((p) => p.id === pickupRequestId);
 
   const onConfirm = (values: FormValues) => {
     mutate(values, {

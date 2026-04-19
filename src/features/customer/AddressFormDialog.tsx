@@ -1,11 +1,17 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useCallback, useEffect, useRef } from 'react';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import type { Address } from '@/types/address';
 import { useCreateAddress, useUpdateAddress } from '@/hooks/useAddresses';
-import { useProvinces, useCities, useGeocode } from '@/hooks/useRegions';
+import { useProvinces, useGeocode } from '@/hooks/useRegions';
+import { toTitleCase } from '@/utils/string';
+import { useAddressFormSync } from '@/hooks/useAddressFormSync';
+import {
+  UseLocationButton,
+  type LocatedPayload,
+} from '@/features/customer/UseLocationButton';
 import {
   Dialog,
   DialogContent,
@@ -33,8 +39,16 @@ const addressSchema = z.object({
   street: z.string().trim().min(1, 'Street is required').max(255),
   city: z.string().trim().min(1, 'City is required'),
   province: z.string().trim().min(1, 'Province is required'),
-  latitude: z.number().refine(n => n !== 0, { message: 'Location could not be determined. Please select a city.' }),
-  longitude: z.number().refine(n => n !== 0, { message: 'Location could not be determined. Please select a city.' }),
+  latitude: z
+    .number()
+    .refine((n) => n !== 0, {
+      message: 'Location could not be determined. Please select a city.',
+    }),
+  longitude: z
+    .number()
+    .refine((n) => n !== 0, {
+      message: 'Location could not be determined. Please select a city.',
+    }),
 });
 
 type FormValues = z.infer<typeof addressSchema>;
@@ -54,36 +68,48 @@ type Props = {
   editingAddress: Address | null;
 };
 
-export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props) {
+export function AddressFormDialog({
+  open,
+  onOpenChange,
+  editingAddress,
+}: Props) {
   const create = useCreateAddress();
   const update = useUpdateAddress();
   const mutationPending = create.isPending || update.isPending;
 
-  const [selectedProvinceId, setSelectedProvinceId] = useState<number | null>(null);
-  const hasReset = useRef(false);
-
   const { data: provinces = [], isLoading: provincesLoading } = useProvinces();
-  const { data: cities = [], isLoading: citiesLoading } = useCities(selectedProvinceId);
-
-  const sortedProvinces = useMemo(
-    () => [...provinces].sort((a, b) => a.name.localeCompare(b.name)),
-    [provinces],
-  );
-  const sortedCities = useMemo(
-    () => [...cities].sort((a, b) => a.name.localeCompare(b.name)),
-    [cities],
-  );
-
-  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    control,
+    trigger,
+    formState: { errors },
+  } = useForm<FormValues>({
     resolver: zodResolver(addressSchema),
     defaultValues,
   });
 
-  const watchedCity = watch('city');
-  const watchedProvince = watch('province');
+  const watchedCity = useWatch({ control, name: 'city' });
+  const watchedProvince = useWatch({ control, name: 'province' });
 
-  const { data: geocodeData, isFetching: geocodeFetching } = useGeocode(watchedCity, watchedProvince);
+  const { selectedProvinceId, sortedProvinces, sortedCities, citiesLoading } =
+    useAddressFormSync({
+      open,
+      editingAddress,
+      provinces,
+      control,
+      reset,
+    });
+
+  const { data: geocodeData, isFetching: geocodeFetching } = useGeocode(
+    watchedCity,
+    watchedProvince,
+  );
   const isPending = mutationPending || geocodeFetching;
+
+  const pendingCityRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (geocodeData) {
@@ -92,35 +118,38 @@ export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props)
     }
   }, [geocodeData, setValue]);
 
-  // Effect 1: reset form once per open session
   useEffect(() => {
-    if (!open) {
-      hasReset.current = false;
-      return;
-    }
-    if (hasReset.current) return;
-    if (editingAddress) {
-      reset({
-        label: editingAddress.label,
-        street: editingAddress.street,
-        city: editingAddress.city,
-        province: editingAddress.province,
-        latitude: editingAddress.latitude,
-        longitude: editingAddress.longitude,
-      });
-    } else {
-      reset(defaultValues);
-      setSelectedProvinceId(null);
-    }
-    hasReset.current = true;
-  }, [open, editingAddress, reset]);
+    if (!open) pendingCityRef.current = null;
+  }, [open]);
 
-  // Effect 2: resolve province ID whenever provinces load (runs independently of hasReset)
   useEffect(() => {
-    if (!open || !editingAddress || !provinces.length) return;
-    const matched = provinces.find(p => p.name === editingAddress.province);
-    setSelectedProvinceId(matched?.id ?? null);
-  }, [open, editingAddress, provinces]);
+    if (!pendingCityRef.current || citiesLoading || !sortedCities.length)
+      return;
+    const match = sortedCities.find((c) => c.name === pendingCityRef.current);
+    if (match) {
+      setValue('city', match.name);
+      void trigger(['city']);
+    }
+    pendingCityRef.current = null;
+  }, [sortedCities, citiesLoading, setValue, trigger]);
+
+  const handleLocated = useCallback(
+    ({ coords, geocode }: LocatedPayload) => {
+      setValue('latitude', coords.latitude);
+      setValue('longitude', coords.longitude);
+      if (!geocode) {
+        toast.error(
+          "We couldn't identify your area — please select province and city manually.",
+        );
+        return;
+      }
+      setValue('province', toTitleCase(geocode.province));
+      pendingCityRef.current = toTitleCase(geocode.city);
+      if (geocode.streetAddress) setValue('street', geocode.streetAddress);
+      void trigger(['province', 'street', 'latitude', 'longitude']);
+    },
+    [setValue, trigger],
+  );
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -146,15 +175,24 @@ export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props)
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <UseLocationButton onLocated={handleLocated} disabled={isPending} />
           <FieldGroup className="mb-4">
             <Field>
               <FieldLabel htmlFor="label">Label</FieldLabel>
-              <Input id="label" placeholder="Home, Work, etc." {...register('label')} />
+              <Input
+                id="label"
+                placeholder="Home, Work, etc."
+                {...register('label')}
+              />
               <FieldError errors={[errors.label]} />
             </Field>
             <Field>
               <FieldLabel htmlFor="street">Street Address</FieldLabel>
-              <Input id="street" placeholder="Jl. Mawar No. 12" {...register('street')} />
+              <Input
+                id="street"
+                placeholder="Jl. Mawar No. 12"
+                {...register('street')}
+              />
               <FieldError errors={[errors.street]} />
             </Field>
             <div className="grid grid-cols-2 gap-4">
@@ -164,18 +202,22 @@ export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props)
                   disabled={provincesLoading}
                   value={watchedProvince}
                   onValueChange={(name) => {
-                    const province = provinces.find(p => p.name === name);
                     setValue('province', name);
                     setValue('city', '');
-                    setSelectedProvinceId(province?.id ?? null);
                   }}
                 >
                   <SelectTrigger className="capitalize">
-                    <SelectValue placeholder={provincesLoading ? 'Loading...' : 'Select province'} />
+                    <SelectValue
+                      placeholder={
+                        provincesLoading ? 'Loading...' : 'Select province'
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    {sortedProvinces.map(p => (
-                      <SelectItem key={p.id} value={p.name}>{p.name}</SelectItem>
+                    {sortedProvinces.map((p) => (
+                      <SelectItem key={p.id} value={p.name}>
+                        {p.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -189,14 +231,21 @@ export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props)
                   onValueChange={(name) => setValue('city', name)}
                 >
                   <SelectTrigger className="capitalize">
-                    <SelectValue placeholder={
-                      !selectedProvinceId ? 'Select province first' :
-                      citiesLoading ? 'Loading...' : 'Select city'
-                    } />
+                    <SelectValue
+                      placeholder={
+                        !selectedProvinceId
+                          ? 'Select province first'
+                          : citiesLoading
+                          ? 'Loading...'
+                          : 'Select city'
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    {sortedCities.map(c => (
-                      <SelectItem key={c.id} value={c.name}>{c.name}</SelectItem>
+                    {sortedCities.map((c) => (
+                      <SelectItem key={c.id} value={c.name}>
+                        {c.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -205,10 +254,18 @@ export function AddressFormDialog({ open, onOpenChange, editingAddress }: Props)
             </div>
           </FieldGroup>
           <div className="flex justify-end gap-3">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
-            <Button type="submit" className="rounded-full px-6" disabled={isPending}>
+            <Button
+              type="submit"
+              className="rounded-full px-6"
+              disabled={isPending}
+            >
               {editingAddress ? 'Save Changes' : 'Add Address'}
             </Button>
           </div>

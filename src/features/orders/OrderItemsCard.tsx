@@ -7,9 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { OrderItem } from '@/types/order';
+type DisplayItem = { id: string; name: string; quantity: number }
 
-export default function OrderItemsCard({ items }: { items?: OrderItem[] }) {
+export default function OrderItemsCard({ items }: { items?: DisplayItem[] }) {
   if (!items?.length) return null;
   return (
     <Card>
@@ -27,7 +27,7 @@ export default function OrderItemsCard({ items }: { items?: OrderItem[] }) {
           <TableBody>
             {items.map((item) => (
               <TableRow key={item.id}>
-                <TableCell>{item.laundryItem?.name}</TableCell>
+                <TableCell>{item.name}</TableCell>
                 <TableCell className="text-center">{item.quantity}</TableCell>
               </TableRow>
             ))}
