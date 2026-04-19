@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateUser } from '@/hooks/useCreateUser';
@@ -21,6 +22,7 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
@@ -67,13 +69,23 @@ const CreateForm = ({
   });
 
   const roleValue = useWatch({ control, name: 'role' });
-  const { mutate, isPending } = useCreateUser(() => {
-    onSuccess();
+  const submitLockRef = useRef(false);
+  const { mutateAsync, isPending } = useCreateUser(async () => {
+    await onSuccess();
     onClose();
   });
 
-  const onSubmit = (data: CreateUserFormValues) =>
-    mutate({ ...data, outletId: data.outletId || undefined });
+  const onSubmit = async (data: CreateUserFormValues) => {
+    if (submitLockRef.current || isPending) return;
+
+    submitLockRef.current = true;
+
+    try {
+      await mutateAsync({ ...data, outletId: data.outletId || undefined });
+    } finally {
+      submitLockRef.current = false;
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -197,16 +209,26 @@ const EditForm = ({
   const roleValue = useWatch({ control, name: 'role' });
   const isActiveValue = useWatch({ control, name: 'isActive' });
   const workerTypeValue = useWatch({ control, name: 'workerType' });
-  const { mutate, isPending } = useUpdateUser(() => {
-    onSuccess();
+  const submitLockRef = useRef(false);
+  const { mutateAsync, isPending } = useUpdateUser(async () => {
+    await onSuccess();
     onClose();
   });
 
-  const onSubmit = (data: UpdateUserFormValues) =>
-    mutate({
-      userId: user.id,
-      payload: { ...data, outletId: data.outletId || undefined },
-    });
+  const onSubmit = async (data: UpdateUserFormValues) => {
+    if (submitLockRef.current || isPending) return;
+
+    submitLockRef.current = true;
+
+    try {
+      await mutateAsync({
+        userId: user.id,
+        payload: { ...data, outletId: data.outletId || undefined },
+      });
+    } finally {
+      submitLockRef.current = false;
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -323,6 +345,11 @@ export const UserFormModal = ({
         <DialogTitle>
           {mode === 'create' ? 'Create User' : 'Edit User'}
         </DialogTitle>
+        <DialogDescription>
+          {mode === 'create'
+            ? 'Add a staff account and send an invite email.'
+            : 'Update the selected staff account.'}
+        </DialogDescription>
       </DialogHeader>
       {mode === 'create' ? (
         <CreateForm onClose={onClose} onSuccess={onSuccess} />

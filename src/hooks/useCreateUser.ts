@@ -1,17 +1,22 @@
 import { useMutation } from '@tanstack/react-query'
+import { isAxiosError } from 'axios'
 import { toast } from 'sonner'
 import { createUser } from '@/services/adminUser'
 import type { CreateUserPayload } from '@/types/user'
 
-export const useCreateUser = (onSuccess: () => void) => {
+export const useCreateUser = (onSuccess: () => Promise<void> | void) => {
   return useMutation({
     mutationFn: (payload: CreateUserPayload) => createUser(payload),
-    onSuccess: () => {
+    onSuccess: async () => {
+      await onSuccess()
       toast.success('User created successfully')
-      onSuccess()
     },
-    onError: () => {
-      toast.error('Failed to create user')
+    onError: (error) => {
+      const message = isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined
+
+      toast.error(message || 'Failed to create user')
     },
   })
 }
