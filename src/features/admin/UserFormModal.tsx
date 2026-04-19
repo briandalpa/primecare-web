@@ -3,6 +3,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateUser } from '@/hooks/useCreateUser';
 import { useUpdateUser } from '@/hooks/useUpdateUser';
+import { useAdminOutlets } from '@/hooks/useAdminOutlets';
 import {
   createUserSchema,
   updateUserSchema,
@@ -65,15 +66,21 @@ const CreateForm = ({
     formState: { errors },
   } = useForm<CreateUserFormValues>({
     resolver: zodResolver(createUserSchema),
-    defaultValues: { name: '', email: '', role: 'WORKER', outletId: '', workerType: undefined },
+    defaultValues: { name: '', email: '', role: 'WORKER', outletId: undefined, workerType: undefined },
   });
 
   const roleValue = useWatch({ control, name: 'role' });
+  const needsOutlet = roleValue === 'WORKER' || roleValue === 'DRIVER';
   const submitLockRef = useRef(false);
   const { mutateAsync, isPending } = useCreateUser(async () => {
     await onSuccess();
     onClose();
   });
+
+  const { data: outletsData, isLoading: outletsLoading } = useAdminOutlets(
+    needsOutlet ? { isActive: true, limit: 100 } : { isActive: true, limit: 100 },
+  );
+  const outlets = outletsData?.data ?? [];
 
   const onSubmit = async (data: CreateUserFormValues) => {
     if (submitLockRef.current || isPending) return;
@@ -111,9 +118,10 @@ const CreateForm = ({
           <FieldLabel>Role</FieldLabel>
           <Select
             value={roleValue}
-            onValueChange={(val) =>
-              setValue('role', val as CreateUserFormValues['role'])
-            }
+            onValueChange={(val) => {
+              setValue('role', val as CreateUserFormValues['role']);
+              setValue('outletId', undefined);
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select role" />
@@ -152,14 +160,27 @@ const CreateForm = ({
           </Field>
         )}
 
-        <Field>
-          <FieldLabel htmlFor="outletId">Outlet ID (optional)</FieldLabel>
-          <Input
-            id="outletId"
-            placeholder="Outlet ID"
-            {...register('outletId')}
-          />
-        </Field>
+        {needsOutlet && (
+          <Field data-invalid={!!errors.outletId}>
+            <FieldLabel>Outlet</FieldLabel>
+            <Select
+              onValueChange={(val) => setValue('outletId', val)}
+              disabled={outletsLoading}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={outletsLoading ? 'Loading outlets…' : 'Select outlet'} />
+              </SelectTrigger>
+              <SelectContent>
+                {outlets.map((outlet) => (
+                  <SelectItem key={outlet.id} value={outlet.id}>
+                    {outlet.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FieldError errors={[errors.outletId]} />
+          </Field>
+        )}
       </FieldGroup>
 
       <div className="flex justify-end gap-2">
@@ -191,7 +212,6 @@ const EditForm = ({
   onSuccess: () => void;
 }) => {
   const {
-    register,
     handleSubmit,
     setValue,
     control,
@@ -200,20 +220,28 @@ const EditForm = ({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
       role: user.role as UpdateUserFormValues['role'],
-      outletId: user.outlet?.id ?? '',
+      outletId: user.outlet?.id ?? undefined,
       isActive: true,
       workerType: (user.workerType as UpdateUserFormValues['workerType']) ?? undefined,
     },
   });
 
   const roleValue = useWatch({ control, name: 'role' });
+  const outletIdValue = useWatch({ control, name: 'outletId' });
   const isActiveValue = useWatch({ control, name: 'isActive' });
   const workerTypeValue = useWatch({ control, name: 'workerType' });
+  const needsOutlet = roleValue === 'WORKER' || roleValue === 'DRIVER';
   const submitLockRef = useRef(false);
   const { mutateAsync, isPending } = useUpdateUser(async () => {
     await onSuccess();
     onClose();
   });
+
+  const { data: outletsData, isLoading: outletsLoading } = useAdminOutlets({
+    isActive: true,
+    limit: 100,
+  });
+  const outlets = outletsData?.data ?? [];
 
   const onSubmit = async (data: UpdateUserFormValues) => {
     if (submitLockRef.current || isPending) return;
@@ -237,9 +265,10 @@ const EditForm = ({
           <FieldLabel>Role</FieldLabel>
           <Select
             value={roleValue ?? ''}
-            onValueChange={(val) =>
-              setValue('role', val as UpdateUserFormValues['role'])
-            }
+            onValueChange={(val) => {
+              setValue('role', val as UpdateUserFormValues['role']);
+              setValue('outletId', undefined);
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select role" />
@@ -279,14 +308,28 @@ const EditForm = ({
           </Field>
         )}
 
-        <Field>
-          <FieldLabel htmlFor="outletId">Outlet ID (optional)</FieldLabel>
-          <Input
-            id="outletId"
-            placeholder="Outlet ID"
-            {...register('outletId')}
-          />
-        </Field>
+        {needsOutlet && (
+          <Field data-invalid={!!errors.outletId}>
+            <FieldLabel>Outlet</FieldLabel>
+            <Select
+              value={outletIdValue ?? ''}
+              onValueChange={(val) => setValue('outletId', val)}
+              disabled={outletsLoading}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={outletsLoading ? 'Loading outlets…' : 'Select outlet'} />
+              </SelectTrigger>
+              <SelectContent>
+                {outlets.map((outlet) => (
+                  <SelectItem key={outlet.id} value={outlet.id}>
+                    {outlet.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FieldError errors={[errors.outletId]} />
+          </Field>
+        )}
 
         <Field orientation="horizontal">
           <Checkbox

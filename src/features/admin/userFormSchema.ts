@@ -7,7 +7,7 @@ export const createUserSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.email('Invalid email address').max(64, 'Email too long'),
   role: z.enum(staffRoles, { error: 'Please select a role' }),
-  outletId: z.string().optional(),
+  outletId: z.string().uuid('Invalid outlet').optional(),
   workerType: z.enum(workerTypes).optional(),
 }).superRefine((data, ctx) => {
   if ((data.role === 'WORKER' || data.role === 'DRIVER') && !data.outletId) {
@@ -20,7 +20,7 @@ export const createUserSchema = z.object({
 
 export const updateUserSchema = z.object({
   role: z.enum(staffRoles).optional(),
-  outletId: z.string().optional(),
+  outletId: z.string().uuid('Invalid outlet').optional(),
   isActive: z.boolean().optional(),
   workerType: z.enum(workerTypes).optional(),
 }).superRefine((data, ctx) => {
