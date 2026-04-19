@@ -29,6 +29,7 @@ import AdminProfilePage from './pages/AdminProfilePage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
 import AdminOutletsPage from './pages/AdminOutletsPage';
 import AdminBypassRequestPage from './pages/AdminBypassRequestPage';
+import AdminOutletFormPage from './pages/AdminOutletFormPage';
 
 import WorkerDashboardPage from '@/pages/WorkerDashboardPage';
 import WorkerHistoryPage from '@/pages/WorkerHistoryPage';
@@ -64,6 +65,8 @@ export default function App() {
           <Route path="profile" element={<AdminProfilePage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
           <Route path="outlets" element={<AdminOutletsPage />} />
+          <Route path="outlets/new" element={<AdminOutletFormPage />} />
+          <Route path="outlets/:id/edit" element={<AdminOutletFormPage />} />
           <Route path="bypass-requests" element={<AdminBypassRequestPage />} />
         </Route>
 

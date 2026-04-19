@@ -33,6 +33,12 @@ function useBreadcrumbs(): BreadcrumbSegment[] {
   }
   if (pathname === '/admin/pickup-requests') return [{ label: 'Pickup Requests' }];
   if (pathname === '/admin/outlets') return [{ label: 'Outlets' }];
+  if (pathname === '/admin/outlets/new') {
+    return [{ label: 'Outlets', href: '/admin/outlets' }, { label: 'Create Outlet' }];
+  }
+  if (pathname.startsWith('/admin/outlets/') && pathname.endsWith('/edit')) {
+    return [{ label: 'Outlets', href: '/admin/outlets' }, { label: 'Edit Outlet' }];
+  }
   if (pathname === '/admin/users') return [{ label: 'Users' }];
   if (pathname === '/admin/profile') return [{ label: 'Profile' }];
   if (pathname === '/admin/settings') return [{ label: 'Settings' }];
