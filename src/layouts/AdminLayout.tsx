@@ -33,6 +33,7 @@ function useBreadcrumbs(): BreadcrumbSegment[] {
   }
   if (pathname === '/admin/pickup-requests') return [{ label: 'Pickup Requests' }];
   if (pathname === '/admin/outlets') return [{ label: 'Outlets' }];
+  if (pathname === '/admin/shifts') return [{ label: 'Shifts' }];
   if (pathname === '/admin/outlets/new') {
     return [{ label: 'Outlets', href: '/admin/outlets' }, { label: 'Create Outlet' }];
   }
