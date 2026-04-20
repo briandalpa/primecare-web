@@ -15,6 +15,7 @@
 
 # production
 /build
+dist/
 
 # misc
 .DS_Store
@@ -22,6 +23,12 @@
 
 # editor folders
 .vscode/
+CLAUDE.md
+.claude/
+.claude-plugin/
+.superpowers/
+.agents/
+skills-lock.json
 
 # debug
 npm-debug.log*
@@ -30,7 +37,7 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env*
+.env
 
 # vercel
 .vercel

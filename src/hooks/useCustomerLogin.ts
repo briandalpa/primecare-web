@@ -1,0 +1,68 @@
+import { useState } from 'react';
+import type { FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { authClient } from '@/lib/auth-client';
+import { getMyProfile } from '@/services/user';
+import { getDashboardRoute } from '@/utils/auth';
+import {
+  loginSchema,
+  type LoginFormValues,
+  type LoginFormErrors,
+} from '@/features/auth/loginSchema';
+
+export function useCustomerLogin() {
+  const navigate = useNavigate();
+  const [values, setValues] = useState<LoginFormValues>({
+    email: '',
+    password: '',
+  });
+  const [errors, setErrors] = useState<LoginFormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  function handleChange(field: keyof LoginFormValues, value: string) {
+    setValues((v) => ({ ...v, [field]: value }));
+  }
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const result = loginSchema.safeParse(values);
+    if (!result.success) {
+      const fieldErrors: LoginFormErrors = {};
+      for (const issue of result.error.issues) {
+        const key = issue.path[0] as keyof LoginFormValues;
+        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+      }
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
+    setIsSubmitting(true);
+
+    try {
+      const signInResult = await authClient.signIn.email(result.data);
+      if (signInResult.error) {
+        toast.error('Login failed', {
+          description: signInResult.error.message,
+        });
+        return;
+      }
+
+      const profile = await getMyProfile();
+      const role = profile?.staff?.role ?? 'CUSTOMER';
+      toast.success('Login success!', {
+        description:
+          `Welcome, ${profile?.name ?? ''}!`.trim() || 'Welcome back!',
+      });
+      navigate(getDashboardRoute(role), { replace: true });
+    } catch {
+      toast.error('Something went wrong. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return { values, errors, isSubmitting, handleChange, handleSubmit };
+}
