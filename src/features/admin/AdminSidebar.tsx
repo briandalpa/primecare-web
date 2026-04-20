@@ -3,6 +3,7 @@ import {
   Store,
   ClipboardList,
   PackageSearch,
+  CalendarRange,
   Users,
   Settings,
   User,
@@ -40,6 +41,7 @@ const mainNavItems = [
   { title: 'Orders', url: '/admin/orders', icon: ClipboardList },
   { title: 'Pickup Requests', url: '/admin/pickup-requests', icon: PackageSearch },
   { title: 'Outlets', url: '/admin/outlets', icon: Store },
+  { title: 'Shifts', url: '/admin/shifts', icon: CalendarRange },
   { title: 'Users', url: '/admin/users', icon: Users },
 ];
 
