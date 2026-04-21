@@ -13,7 +13,7 @@ type MutationPayload = {
 
 export const getAdminBypassRequests = async (): Promise<BypassRequest[]> => {
   const res = await axiosInstance.get<ApiResponse<BypassRequest[]>>(
-    '/api/v1/admin/bypass-requests?status=PENDING'
+    '/api/v1/bypass-requests?status=PENDING'
   );
 
   if (!Array.isArray(res.data.data)) {
@@ -27,7 +27,7 @@ export const approveBypassRequest = async (
   payload: MutationPayload
 ): Promise<BypassRequest> => {
   const res = await axiosInstance.patch<ApiResponse<BypassRequest>>(
-    `/api/v1/admin/bypass-requests/${payload.id}/approve`,
+    `/api/v1/bypass-requests/${payload.id}/approve`,
     {
       password: payload.password,
       problemDescription: payload.problemDescription,
@@ -45,7 +45,7 @@ export const rejectBypassRequest = async (
   payload: MutationPayload
 ): Promise<BypassRequest> => {
   const res = await axiosInstance.patch<ApiResponse<BypassRequest>>(
-    `/api/v1/admin/bypass-requests/${payload.id}/reject`,
+    `/api/v1/bypass-requests/${payload.id}/reject`,
     {
       password: payload.password,
       problemDescription: payload.problemDescription,
