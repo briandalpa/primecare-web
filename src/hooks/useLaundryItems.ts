@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getLaundryItems } from '@/services/adminLaundryItem'
+import { getLaundryItems } from '@/services/laundryItem'
 
 export const useLaundryItems = () => {
   return useQuery({
