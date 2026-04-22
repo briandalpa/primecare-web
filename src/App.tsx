@@ -48,6 +48,9 @@ import PaymentPage from './pages/PaymentPage';
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentFailurePage from './pages/PaymentFailurePage';
 import NotFoundPage from './pages/NotFoundPage';
+import CustomerComplaintListPage from './pages/CustomerComplaintListPage';
+import CustomerComplaintDetailPage from './pages/CustomerComplaintDetailPage';
+import AdminComplaintManagementPage from './pages/AdminComplaintManagementPage';
 
 export default function App() {
   return (
@@ -80,6 +83,7 @@ export default function App() {
           <Route path="outlets/:id/edit" element={<AdminOutletFormPage />} />
           <Route path="shifts" element={<AdminShiftsPage />} />
           <Route path="bypass-requests" element={<AdminBypassRequestPage />} />
+          <Route path="complaints" element={<AdminComplaintManagementPage />} />
         </Route>
 
         {/* ================= CUSTOMER ROUTES ================= */}
@@ -91,6 +95,8 @@ export default function App() {
           <Route path="/orders/:id/pay" element={<PaymentPage />} />
           <Route path="/orders/:id/payment-success" element={<PaymentSuccessPage />} />
           <Route path="/orders/:id/payment-failure" element={<PaymentFailurePage />} />
+          <Route path="/complaints" element={<CustomerComplaintListPage />} />
+          <Route path="/complaints/:id" element={<CustomerComplaintDetailPage />} />
         </Route>
 
         {/* ================= WORKER ROUTES ================= */}

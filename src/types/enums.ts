@@ -20,3 +20,9 @@ export enum PaymentStatus {
   EXPIRED = 'EXPIRED',
 }
 
+export enum ComplaintStatus {
+  OPEN = 'OPEN',
+  IN_REVIEW = 'IN_REVIEW',
+  RESOLVED = 'RESOLVED',
+}
+
