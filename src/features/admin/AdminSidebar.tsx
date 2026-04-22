@@ -9,6 +9,7 @@ import {
   User,
   MoreHorizontal,
   LogOut,
+  MessageSquareWarning,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -43,6 +44,7 @@ const mainNavItems = [
   { title: 'Outlets', url: '/admin/outlets', icon: Store },
   { title: 'Shifts', url: '/admin/shifts', icon: CalendarRange },
   { title: 'Users', url: '/admin/users', icon: Users },
+  { title: 'Complaints', url: '/admin/complaints', icon: MessageSquareWarning },
 ];
 
 const accountNavItems = [
