@@ -6,6 +6,7 @@ import {
   User,
   LogOut,
   MoreHorizontal,
+  MessageSquareWarning,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { signOut } from '@/lib/auth-client';
@@ -39,6 +40,7 @@ const mainItems = [
   { title: 'My Orders', url: '/orders', icon: Package },
   { title: 'Schedule Pickup', url: '/pickup/create', icon: Plus },
   { title: 'My Addresses', url: '/addresses', icon: MapPin },
+  { title: 'My Complaints', url: '/complaints', icon: MessageSquareWarning },
   { title: 'Profile', url: '/profile', icon: User },
 ];
 
