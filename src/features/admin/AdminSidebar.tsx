@@ -45,7 +45,7 @@ const mainNavItems = [
   { title: 'Bypass Requests', url: '/admin/bypass-requests', icon: ShieldAlert },
   { title: 'Outlets', url: '/admin/outlets', icon: Store },
   { title: 'Shifts', url: '/admin/shifts', icon: CalendarRange },
-  { title: 'Users', url: '/admin/users', icon: Users },
+  { title: 'Employee', url: '/admin/users', icon: Users },
   { title: 'Complaints', url: '/admin/complaints', icon: MessageSquareWarning },
 ];
 
