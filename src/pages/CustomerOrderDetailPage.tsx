@@ -87,6 +87,8 @@ export default function CustomerOrderDetailPage() {
             totalWeightKg={order.totalWeightKg}
             pricePerKg={order.pricePerKg}
             totalPrice={order.totalPrice}
+            deliveryFee={order.deliveryFee}
+            deliveryDistanceKm={order.deliveryDistanceKm}
           />
           <Actions
             order={order}
