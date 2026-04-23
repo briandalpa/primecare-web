@@ -7,7 +7,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-type DisplayItem = { id: string; name: string; quantity: number }
+type DisplayItem = {
+  id: string;
+  name: string;
+  quantity: number;
+  unitPrice?: number | null;
+  lineTotal?: number | null;
+  isManualPriced?: boolean;
+}
 
 export default function OrderItemsCard({ items }: { items?: DisplayItem[] }) {
   if (!items?.length) return null;
@@ -22,13 +29,22 @@ export default function OrderItemsCard({ items }: { items?: DisplayItem[] }) {
             <TableRow>
               <TableHead>Item</TableHead>
               <TableHead className="text-center">Qty</TableHead>
+              <TableHead className="text-right">Price</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {items.map((item) => (
               <TableRow key={item.id}>
-                <TableCell>{item.name}</TableCell>
+                <TableCell>
+                  {item.name}
+                  {item.isManualPriced && (
+                    <span className="ml-2 text-xs text-muted-foreground">(manual)</span>
+                  )}
+                </TableCell>
                 <TableCell className="text-center">{item.quantity}</TableCell>
+                <TableCell className="text-right">
+                  {item.lineTotal != null ? `Rp ${item.lineTotal.toLocaleString('id-ID')}` : '-'}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

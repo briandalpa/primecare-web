@@ -143,13 +143,22 @@ export default function PaymentPage() {
               <TableRow>
                 <TableHead>Item</TableHead>
                 <TableHead className="text-right">Qty</TableHead>
+                <TableHead className="text-right">Price</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {order.items.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell>{item.itemName}</TableCell>
+                  <TableCell>
+                    {item.itemName}
+                    {item.isManualPriced && (
+                      <span className="ml-2 text-xs text-muted-foreground">(manual)</span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">{item.quantity}</TableCell>
+                  <TableCell className="text-right">
+                    {item.lineTotal != null ? `Rp ${item.lineTotal.toLocaleString('id-ID')}` : '-'}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -168,6 +177,14 @@ export default function PaymentPage() {
               <span className="text-muted-foreground">Laundry</span>
               <span>Rp {(order.totalWeightKg * order.pricePerKg).toLocaleString('id-ID')}</span>
             </div>
+            {order.totalPrice - order.deliveryFee - (order.totalWeightKg * order.pricePerKg) > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Manual items</span>
+                <span>
+                  Rp {(order.totalPrice - order.deliveryFee - (order.totalWeightKg * order.pricePerKg)).toLocaleString('id-ID')}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">
                 {order.deliveryDistanceKm > 0

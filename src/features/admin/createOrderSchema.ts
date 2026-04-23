@@ -12,6 +12,15 @@ export const schema = z.object({
       }),
     )
     .min(1, 'At least one item required'),
+  manualItems: z
+    .array(
+      z.object({
+        name: z.string().trim().min(2, 'Min 2 characters').max(80, 'Max 80 characters'),
+        quantity: z.coerce.number().int().min(1, 'Min 1'),
+        unitPrice: z.coerce.number().min(1, 'Required'),
+      }),
+    )
+    .default([]),
 });
 
 export type FormValues = z.infer<typeof schema>;
