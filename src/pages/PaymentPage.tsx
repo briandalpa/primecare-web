@@ -164,6 +164,22 @@ export default function PaymentPage() {
               <span className="text-muted-foreground">Price per kg</span>
               <span>Rp {order.pricePerKg.toLocaleString('id-ID')}</span>
             </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Laundry</span>
+              <span>Rp {(order.totalWeightKg * order.pricePerKg).toLocaleString('id-ID')}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">
+                {order.deliveryDistanceKm > 0
+                  ? `Delivery (${order.deliveryDistanceKm.toFixed(1)} km)`
+                  : 'Delivery'}
+              </span>
+              <span className={order.deliveryFee === 0 ? 'text-green-600 font-medium' : ''}>
+                {order.deliveryFee === 0
+                  ? 'Free'
+                  : `Rp ${order.deliveryFee.toLocaleString('id-ID')}`}
+              </span>
+            </div>
             <div className="flex justify-between font-semibold text-foreground border-t pt-2">
               <span>Total</span>
               <span>Rp {order.totalPrice.toLocaleString('id-ID')}</span>

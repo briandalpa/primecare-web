@@ -50,8 +50,8 @@ export default function ComplaintDetail() {
         <ArrowLeft className="h-4 w-4 mr-1" /> Back to Complaints
       </Button>
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-foreground">
             Complaint #{complaint.id.slice(0, 8)}
           </h1>
@@ -68,7 +68,7 @@ export default function ComplaintDetail() {
         </div>
         <Badge
           variant="outline"
-          className={cn('text-xs w-fit', COMPLAINT_STATUS_COLOR[complaint.status])}
+          className={cn('text-xs w-fit shrink-0', COMPLAINT_STATUS_COLOR[complaint.status])}
         >
           {COMPLAINT_STATUS_LABEL[complaint.status]}
         </Badge>
