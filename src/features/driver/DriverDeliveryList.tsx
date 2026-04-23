@@ -51,6 +51,9 @@ export function DriverDeliveryList({ page, onPageChange }: Props) {
           <CardContent className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-0.5">
               <p className="text-sm font-medium">{item.customer.name ?? DRIVER_COPY.unavailable}</p>
+              {item.customer.phone && (
+                <p className="text-xs text-muted-foreground">{item.customer.phone}</p>
+              )}
               <p className="text-xs text-muted-foreground">
                 {item.deliveryAddress.label} — {item.deliveryAddress.street}, {item.deliveryAddress.city}
               </p>
@@ -64,7 +67,7 @@ export function DriverDeliveryList({ page, onPageChange }: Props) {
             <Button
               size="sm"
               disabled={accept.isPending}
-              onClick={() => accept.mutate(item.id)}
+              onClick={() => accept.mutate(item)}
             >
               {accept.isPending ? DRIVER_COPY.accepting : DRIVER_COPY.acceptButton}
             </Button>

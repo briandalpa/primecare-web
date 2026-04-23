@@ -6,7 +6,7 @@ import type {
   PaginatedDeliveryHistoryResponse,
 } from '@/types/delivery';
 
-type ListParams = { page: number; limit: number };
+type ListParams = { page: number; limit: number; status: 'PENDING' };
 type HistoryParams = { page: number; limit: number; fromDate?: string; toDate?: string };
 
 export const getAvailableDeliveries = async (
