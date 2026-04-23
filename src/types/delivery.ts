@@ -62,10 +62,20 @@ export type PaginatedDeliveryHistoryResponse = {
   meta: PaginationMeta;
 };
 
-export type DriverActiveTask = {
-  type: 'pickup' | 'delivery';
+export type DriverPickupTask = {
+  type: 'pickup';
   id: string;
 };
+
+export type DriverDeliveryTask = {
+  type: 'delivery';
+  id: string;
+  customerName: string | null;
+  customerPhone: string | null;
+  address: AddressInfo;
+};
+
+export type DriverActiveTask = DriverPickupTask | DriverDeliveryTask;
 
 export type DriverPickupAddressInfo = {
   label: string;
