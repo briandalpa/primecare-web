@@ -49,6 +49,8 @@ export default function AdminOrderDetailPage() {
             totalWeightKg={order.totalWeightKg}
             pricePerKg={order.pricePerKg}
             totalPrice={order.totalPrice}
+            deliveryFee={order.deliveryFee}
+            deliveryDistanceKm={order.deliveryDistanceKm}
           />
           <StationRecordsCard order={order} />
         </div>

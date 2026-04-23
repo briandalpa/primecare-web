@@ -18,7 +18,7 @@ export default function OrderSummaryCard({ total, pickup }: Props) {
           </p>
         )}
         <div className="flex justify-between font-semibold text-foreground border-t pt-2">
-          <span>Total</span>
+          <span>Laundry subtotal</span>
           <span>Rp {total.toLocaleString('id-ID')}</span>
         </div>
       </CardContent>
