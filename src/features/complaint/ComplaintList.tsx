@@ -98,9 +98,9 @@ export default function ComplaintList() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Order</TableHead>
-                  <TableHead>Description</TableHead>
+                  <TableHead className="hidden sm:table-cell">Description</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Filed</TableHead>
+                  <TableHead className="hidden sm:table-cell">Filed</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -113,8 +113,11 @@ export default function ComplaintList() {
                       >
                         #{c.orderId.slice(0, 8)}
                       </Link>
+                      <p className="sm:hidden text-xs text-muted-foreground truncate max-w-[160px] mt-0.5">
+                        {c.description}
+                      </p>
                     </TableCell>
-                    <TableCell className="max-w-md truncate text-sm text-muted-foreground">
+                    <TableCell className="hidden sm:table-cell max-w-md truncate text-sm text-muted-foreground">
                       {c.description}
                     </TableCell>
                     <TableCell>
@@ -125,7 +128,7 @@ export default function ComplaintList() {
                         {COMPLAINT_STATUS_LABEL[c.status]}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
+                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                       {format(new Date(c.createdAt), 'dd MMM yyyy')}
                     </TableCell>
                   </TableRow>
