@@ -5,6 +5,8 @@ export type AdminOrder = {
   totalWeightKg: number;
   pricePerKg: number;
   totalPrice: number;
+  deliveryFee: number;
+  deliveryDistanceKm: number;
   paymentStatus: PaymentStatus;
   status: OrderStatus;
   confirmedAt: string | null;
@@ -72,6 +74,7 @@ export type CustomerOrder = {
   outletName: string;
   customerName: string;
   totalPrice: number;
+  deliveryFee: number;
   paymentStatus: PaymentStatus;
   status: OrderStatus;
   createdAt: string;
@@ -92,6 +95,8 @@ export type CustomerOrderDetail = {
   totalWeightKg: number;
   pricePerKg: number;
   totalPrice: number;
+  deliveryFee: number;
+  deliveryDistanceKm: number;
   paymentStatus: PaymentStatus;
   status: OrderStatus;
   confirmedAt: string | null;

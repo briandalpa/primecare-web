@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useCustomerOrderDetail } from '@/hooks/useCustomerOrderDetail';
 import { useConfirmOrderReceipt } from '@/hooks/useConfirmOrderReceipt';
+import { useComplaintByOrderId } from '@/hooks/useComplaintByOrderId';
 import { OrderStatus, PaymentStatus } from '@/types/enums';
 import {
   ORDER_STATUS_LABEL,
@@ -29,17 +30,19 @@ import {
 } from '@/utils/orderStatus';
 import { cn } from '@/lib/utils';
 import type { CustomerOrderDetail as OrderDetailType } from '@/types/order';
+import type { Complaint } from '@/types/complaint';
 import StatusTimeline from '@/features/orders/StatusTimeline';
+import StatusTimelineDrawer from '@/features/orders/StatusTimelineDrawer';
 import OrderItemsCard from '@/features/orders/OrderItemsCard';
 import OrderPriceCard from '@/features/orders/OrderPriceCard';
 import { FileComplaintDialog } from '@/features/complaint/FileComplaintDialog';
-import { useComplaintByOrderId } from '@/hooks/useComplaintByOrderId';
 
 export default function CustomerOrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data, isPending, isError } = useCustomerOrderDetail(id ?? '');
   const confirmMutation = useConfirmOrderReceipt(id ?? '');
+  const { complaint } = useComplaintByOrderId(id ?? '');
 
   if (isPending) {
     return <p className="text-center text-muted-foreground py-8">Loading...</p>;
@@ -49,11 +52,7 @@ export default function CustomerOrderDetailPage() {
     return (
       <div className="text-center py-8">
         <p className="text-muted-foreground">Order not found.</p>
-        <Button
-          variant="link"
-          className="mt-4"
-          onClick={() => navigate('/orders')}
-        >
+        <Button variant="link" className="mt-4" onClick={() => navigate('/orders')}>
           Back to Orders
         </Button>
       </div>
@@ -64,36 +63,55 @@ export default function CustomerOrderDetailPage() {
 
   return (
     <div className="max-w-4xl">
-      <Button
-        variant="ghost"
-        size="sm"
-        className="mb-4"
-        onClick={() => navigate('/orders')}
-      >
+      <Button variant="ghost" size="sm" className="mb-4" onClick={() => navigate('/orders')}>
         <ArrowLeft className="h-4 w-4 mr-1" /> Back to Orders
       </Button>
       <Header order={order} />
+
+      {/* Mobile: payment CTA at top */}
+      <div className="md:hidden mb-4">
+        <PaymentActions order={order} />
+      </div>
+
       <div className="grid md:grid-cols-3 gap-6">
-        <StatusTimeline status={order.status} />
+        {/* Desktop: full timeline in left column */}
+        <div className="hidden md:block">
+          <StatusTimeline status={order.status} />
+        </div>
+
         <div className="md:col-span-2 space-y-6">
           <OrderItemsCard
-            items={order.items.map((i) => ({
-              id: i.id,
-              name: i.itemName,
-              quantity: i.quantity,
-            }))}
+            items={order.items.map((i) => ({ id: i.id, name: i.itemName, quantity: i.quantity }))}
           />
           <OrderPriceCard
             totalWeightKg={order.totalWeightKg}
             pricePerKg={order.pricePerKg}
             totalPrice={order.totalPrice}
+            deliveryFee={order.deliveryFee}
+            deliveryDistanceKm={order.deliveryDistanceKm}
           />
-          <Actions
-            order={order}
-            onConfirm={() => confirmMutation.mutate()}
-            confirming={confirmMutation.isPending}
-          />
+          {/* Desktop: actions inside grid column */}
+          <div className="hidden md:block">
+            <Actions
+              order={order}
+              complaint={complaint}
+              onConfirm={() => confirmMutation.mutate()}
+              confirming={confirmMutation.isPending}
+            />
+          </div>
         </div>
+      </div>
+
+      {/* Mobile: compact timeline + non-payment actions at bottom */}
+      <div className="md:hidden mt-6 space-y-4">
+        <StatusTimelineDrawer status={order.status} />
+        <Actions
+          order={order}
+          complaint={complaint}
+          onConfirm={() => confirmMutation.mutate()}
+          confirming={confirmMutation.isPending}
+          hideMobilePayment
+        />
       </div>
     </div>
   );
@@ -108,19 +126,13 @@ function Header({ order }: { order: OrderDetailType }) {
           Placed {format(new Date(order.createdAt), 'dd MMM yyyy, HH:mm')}
         </p>
       </div>
-      <div className="flex gap-2">
-        <Badge
-          variant="outline"
-          className={cn('text-xs', ORDER_STATUS_COLOR[order.status])}
-        >
+      <div className="flex gap-2 flex-wrap">
+        <Badge variant="outline" className={cn('text-xs', ORDER_STATUS_COLOR[order.status])}>
           {ORDER_STATUS_LABEL[order.status] ?? order.status}
         </Badge>
         <Badge
           variant="outline"
-          className={cn(
-            'text-xs capitalize',
-            PAYMENT_BADGE[order.paymentStatus],
-          )}
+          className={cn('text-xs capitalize', PAYMENT_BADGE[order.paymentStatus])}
         >
           {order.paymentStatus}
         </Badge>
@@ -142,21 +154,21 @@ function PaymentActions({ order }: { order: OrderDetailType }) {
         order.payment.status === PaymentStatus.EXPIRED ||
         order.payment.status === PaymentStatus.UNPAID) && (
         <Link to={`/orders/${order.id}/pay`}>
-          <Button>
+          <Button className="w-full md:w-auto">
             <CreditCard className="h-4 w-4 mr-2" /> Pay Now
           </Button>
         </Link>
       )}
       {order.payment?.status === PaymentStatus.PENDING && (
         <Link to={`/orders/${order.id}/pay`}>
-          <Button variant="outline">
+          <Button variant="outline" className="w-full md:w-auto">
             <CreditCard className="h-4 w-4 mr-2" /> Complete Payment
           </Button>
         </Link>
       )}
       {order.payment?.status === PaymentStatus.FAILED && (
         <Link to={`/orders/${order.id}/pay`}>
-          <Button variant="destructive">
+          <Button variant="destructive" className="w-full md:w-auto">
             <CreditCard className="h-4 w-4 mr-2" /> Retry Payment
           </Button>
         </Link>
@@ -165,13 +177,7 @@ function PaymentActions({ order }: { order: OrderDetailType }) {
   );
 }
 
-function ConfirmReceiptDialog({
-  onConfirm,
-  confirming,
-}: {
-  onConfirm: () => void;
-  confirming: boolean;
-}) {
+function ConfirmReceiptDialog({ onConfirm, confirming }: { onConfirm: () => void; confirming: boolean }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -199,23 +205,29 @@ function ConfirmReceiptDialog({
 
 function Actions({
   order,
+  complaint,
   onConfirm,
   confirming,
+  hideMobilePayment = false,
 }: {
   order: OrderDetailType;
+  complaint: Complaint | null | undefined;
   onConfirm: () => void;
   confirming: boolean;
+  hideMobilePayment?: boolean;
 }) {
-  const { complaint } = useComplaintByOrderId(order.id);
-  const isDelivered =
-    order.status === OrderStatus.LAUNDRY_DELIVERED_TO_CUSTOMER;
+  const isDelivered = order.status === OrderStatus.LAUNDRY_DELIVERED_TO_CUSTOMER;
+  const hasActions =
+    (!hideMobilePayment && order.status === OrderStatus.WAITING_FOR_PAYMENT) ||
+    isDelivered ||
+    !!complaint;
+
+  if (!hasActions) return null;
 
   return (
     <div className="flex gap-3 flex-wrap">
-      <PaymentActions order={order} />
-      {isDelivered && (
-        <ConfirmReceiptDialog onConfirm={onConfirm} confirming={confirming} />
-      )}
+      {!hideMobilePayment && <PaymentActions order={order} />}
+      {isDelivered && <ConfirmReceiptDialog onConfirm={onConfirm} confirming={confirming} />}
       {isDelivered && !complaint && <FileComplaintDialog orderId={order.id} />}
       {complaint && (
         <Link to={`/complaints/${complaint.id}`}>
