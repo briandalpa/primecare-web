@@ -24,12 +24,11 @@ import {
   type CreateShiftSchemaInput,
   type CreateShiftSchemaValues,
 } from './createShiftSchema';
-
-const createDefaultStartedAt = () => {
-  const date = new Date();
-  const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-  return local.toISOString().slice(0, 16);
-};
+import {
+  getCurrentShiftStartTime,
+  getDefaultShiftDate,
+  SHIFT_TIME_OPTIONS,
+} from './shiftTimeOptions';
 
 type CreateShiftDialogProps = {
   isPending: boolean;
@@ -56,12 +55,19 @@ export function CreateShiftDialog({
     resolver: zodResolver(createShiftSchema),
     defaultValues: {
       staffId: '',
-      startedAt: createDefaultStartedAt(),
+      shiftDate: getDefaultShiftDate(),
+      shiftStartTime: getCurrentShiftStartTime(),
     },
   });
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) reset({ staffId: '', startedAt: createDefaultStartedAt() });
+    if (!nextOpen) {
+      reset({
+        staffId: '',
+        shiftDate: getDefaultShiftDate(),
+        shiftStartTime: getCurrentShiftStartTime(),
+      });
+    }
     onOpenChange(nextOpen);
   };
 
@@ -100,10 +106,33 @@ export function CreateShiftDialog({
               <FieldError errors={[errors.staffId]} />
             </Field>
 
-            <Field data-invalid={!!errors.startedAt}>
-              <FieldLabel htmlFor="startedAt">Start Time</FieldLabel>
-              <Input id="startedAt" type="datetime-local" {...register('startedAt')} />
-              <FieldError errors={[errors.startedAt]} />
+            <Field data-invalid={!!errors.shiftDate}>
+              <FieldLabel htmlFor="shiftDate">Shift Date</FieldLabel>
+              <Input id="shiftDate" type="date" {...register('shiftDate')} />
+              <FieldError errors={[errors.shiftDate]} />
+            </Field>
+
+            <Field data-invalid={!!errors.shiftStartTime}>
+              <FieldLabel htmlFor="shiftStartTime">Shift Time</FieldLabel>
+              <Controller
+                control={control}
+                name="shiftStartTime"
+                render={({ field }) => (
+                  <Select value={field.value || undefined} onValueChange={field.onChange}>
+                    <SelectTrigger id="shiftStartTime" className="w-full">
+                      <SelectValue placeholder="Select shift time" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SHIFT_TIME_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <FieldError errors={[errors.shiftStartTime]} />
             </Field>
           </FieldGroup>
 
