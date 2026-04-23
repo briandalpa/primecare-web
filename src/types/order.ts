@@ -29,6 +29,9 @@ export type AdminOrderDetail = AdminOrder & {
 export type OrderItem = {
   id: string;
   quantity: number;
+  unitPrice: number | null;
+  lineTotal: number | null;
+  isManualPriced: boolean;
   laundryItem: { id: string; name: string; slug: string };
 };
 
@@ -61,6 +64,7 @@ export type CreateOrderPayload = {
   pricePerKg: number;
   totalWeightKg: number;
   items: { laundryItemId: string; quantity: number }[];
+  manualItems?: { name: string; quantity: number; unitPrice: number }[];
 };
 
 export type LaundryItem = {
@@ -85,6 +89,9 @@ export type CustomerOrderItem = {
   laundryItemId: string;
   itemName: string;
   quantity: number;
+  unitPrice: number | null;
+  lineTotal: number | null;
+  isManualPriced: boolean;
 };
 
 export type CustomerOrderDetail = {

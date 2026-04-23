@@ -10,6 +10,7 @@ interface Props {
 
 export default function OrderPriceCard({ totalWeightKg, pricePerKg, totalPrice, deliveryFee, deliveryDistanceKm }: Props) {
   const laundrySubtotal = totalWeightKg * pricePerKg;
+  const manualSubtotal = Math.max(totalPrice - deliveryFee - laundrySubtotal, 0);
   const deliveryLabel = deliveryDistanceKm != null && deliveryDistanceKm > 0
     ? `Delivery (${deliveryDistanceKm.toFixed(1)} km)`
     : 'Delivery';
@@ -29,6 +30,12 @@ export default function OrderPriceCard({ totalWeightKg, pricePerKg, totalPrice, 
           <span className="text-muted-foreground">Laundry</span>
           <span>Rp {laundrySubtotal.toLocaleString('id-ID')}</span>
         </div>
+        {manualSubtotal > 0 && (
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Manual items</span>
+            <span>Rp {manualSubtotal.toLocaleString('id-ID')}</span>
+          </div>
+        )}
         <div className="flex justify-between">
           <span className="text-muted-foreground">{deliveryLabel}</span>
           <span className={deliveryFee === 0 ? 'text-green-600 font-medium' : ''}>
