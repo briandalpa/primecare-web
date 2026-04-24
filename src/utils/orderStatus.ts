@@ -44,6 +44,33 @@ export const PAYMENT_BADGE: Record<PaymentStatus, string> = {
   [PaymentStatus.EXPIRED]: 'bg-muted text-muted-foreground border-border',
 };
 
+const ORDER_PROGRESS_PCT: Record<OrderStatus, number> = {
+  [OrderStatus.WAITING_FOR_PICKUP_DRIVER]: 5,
+  [OrderStatus.LAUNDRY_EN_ROUTE_TO_OUTLET]: 20,
+  [OrderStatus.LAUNDRY_ARRIVED_AT_OUTLET]: 30,
+  [OrderStatus.LAUNDRY_BEING_WASHED]: 42,
+  [OrderStatus.LAUNDRY_BEING_IRONED]: 52,
+  [OrderStatus.LAUNDRY_BEING_PACKED]: 60,
+  [OrderStatus.WAITING_FOR_PAYMENT]: 65,
+  [OrderStatus.LAUNDRY_READY_FOR_DELIVERY]: 75,
+  [OrderStatus.LAUNDRY_OUT_FOR_DELIVERY]: 88,
+  [OrderStatus.LAUNDRY_DELIVERED_TO_CUSTOMER]: 100,
+  [OrderStatus.COMPLETED]: 100,
+};
+
+export function getOrderProgressPct(status: OrderStatus): number {
+  return ORDER_PROGRESS_PCT[status] ?? 0;
+}
+
+export function getOrderStageLabel(
+  status: OrderStatus,
+): 'Pickup' | 'Processing' | 'Delivery' {
+  const pct = getOrderProgressPct(status);
+  if (pct <= 30) return 'Pickup';
+  if (pct <= 65) return 'Processing';
+  return 'Delivery';
+}
+
 const STATUS_ORDER = Object.values(OrderStatus);
 
 export function getStatusSteps(current: OrderStatus) {
@@ -51,7 +78,7 @@ export function getStatusSteps(current: OrderStatus) {
   return STATUS_ORDER.map((status, i) => ({
     status,
     label: ORDER_STATUS_LABEL[status],
-    completed: i < currentIndex,
+    completed: i <= currentIndex,
     active: i === currentIndex,
   }));
 }
