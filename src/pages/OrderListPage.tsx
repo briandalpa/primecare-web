@@ -21,21 +21,49 @@ function useOrderFilters() {
   const [fromDate, setFromDate] = useState<Date | undefined>();
   const [toDate, setToDate] = useState<Date | undefined>();
 
-  function resetPage() { setPage(1); }
+  function resetPage() {
+    setPage(1);
+  }
 
   const status = tab === 'completed' ? OrderStatus.COMPLETED : undefined;
   const excludeCompleted = tab === 'active' ? true : undefined;
   const hasDateFilter = !!fromDate || !!toDate;
 
-  return { tab, setTab, search, setSearch, page, setPage,
-           fromDate, setFromDate, toDate, setToDate,
-           resetPage, status, excludeCompleted, hasDateFilter };
+  return {
+    tab,
+    setTab,
+    search,
+    setSearch,
+    page,
+    setPage,
+    fromDate,
+    setFromDate,
+    toDate,
+    setToDate,
+    resetPage,
+    status,
+    excludeCompleted,
+    hasDateFilter,
+  };
 }
 
 export default function OrderListPage() {
-  const { tab, setTab, search, setSearch, page, setPage,
-          fromDate, setFromDate, toDate, setToDate,
-          resetPage, status, excludeCompleted, hasDateFilter } = useOrderFilters();
+  const {
+    tab,
+    setTab,
+    search,
+    setSearch,
+    page,
+    setPage,
+    fromDate,
+    setFromDate,
+    toDate,
+    setToDate,
+    resetPage,
+    status,
+    excludeCompleted,
+    hasDateFilter,
+  } = useOrderFilters();
 
   const { data, isPending } = useCustomerOrders({
     page,
@@ -60,25 +88,38 @@ export default function OrderListPage() {
           <Input
             placeholder="Search by order ID..."
             value={search}
-            onChange={(e) => { setSearch(e.target.value); resetPage(); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              resetPage();
+            }}
             className="pl-9"
           />
         </div>
         <DatePickerButton
           value={fromDate}
-          onChange={(d) => { setFromDate(d); resetPage(); }}
+          onChange={(d) => {
+            setFromDate(d);
+            resetPage();
+          }}
           placeholder="From date"
         />
         <DatePickerButton
           value={toDate}
-          onChange={(d) => { setToDate(d); resetPage(); }}
+          onChange={(d) => {
+            setToDate(d);
+            resetPage();
+          }}
           placeholder="To date"
         />
         {hasDateFilter && (
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => { setFromDate(undefined); setToDate(undefined); resetPage(); }}
+            onClick={() => {
+              setFromDate(undefined);
+              setToDate(undefined);
+              resetPage();
+            }}
             aria-label="Clear date filter"
           >
             <X className="h-4 w-4" />
@@ -86,7 +127,13 @@ export default function OrderListPage() {
         )}
       </div>
 
-      <Tabs value={tab} onValueChange={(v) => { setTab(v as 'active' | 'completed'); resetPage(); }}>
+      <Tabs
+        value={tab}
+        onValueChange={(v) => {
+          setTab(v as 'active' | 'completed');
+          resetPage();
+        }}
+      >
         <TabsList className="mb-4">
           <TabsTrigger value="active">Active</TabsTrigger>
           <TabsTrigger value="completed">Completed</TabsTrigger>
@@ -106,28 +153,40 @@ export default function OrderListPage() {
                 {orders.map((order) => (
                   <Link key={order.id} to={`/orders/${order.id}`}>
                     <Card className="hover:shadow-md transition-shadow cursor-pointer">
-                      <CardContent className="px-6 flex items-center justify-between gap-4">
+                      <CardContent className="px-6 flex items-start justify-between gap-4">
+                        {/* LEFT */}
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold text-foreground">
-                              {order.id.slice(0, 8)}
-                            </span>
-                            <Badge
-                              variant="outline"
-                              className={cn('text-xs', ORDER_STATUS_COLOR[order.status])}
-                            >
-                              {ORDER_STATUS_LABEL[order.status]}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground truncate">{order.outletName}</p>
+                          <p className="font-semibold text-foreground">
+                            {order.id.slice(0, 8)}
+                          </p>
+
+                          <p className="text-sm text-muted-foreground truncate">
+                            {order.outletName}
+                          </p>
+
                           <p className="text-xs text-muted-foreground mt-1">
-                            {format(new Date(order.createdAt), 'dd MMM yyyy, HH:mm')}
+                            {format(
+                              new Date(order.createdAt),
+                              'dd MMM yyyy, HH:mm',
+                            )}
                           </p>
                         </div>
-                        <div className="text-right shrink-0">
+
+                        {/* RIGHT */}
+                        <div className="text-right shrink-0 flex flex-col items-end gap-1">
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              'text-xs',
+                              ORDER_STATUS_COLOR[order.status],
+                            )}
+                          >
+                            {ORDER_STATUS_LABEL[order.status]}
+                          </Badge>
                           <p className="font-semibold text-foreground">
                             Rp {(order.totalPrice ?? 0).toLocaleString('id-ID')}
                           </p>
+
                           <span className="text-xs text-primary">View</span>
                         </div>
                       </CardContent>
@@ -136,7 +195,11 @@ export default function OrderListPage() {
                 ))}
               </div>
               {meta && meta.totalPages > 1 && (
-                <OrderPagination page={page} totalPages={meta.totalPages} onPageChange={setPage} />
+                <OrderPagination
+                  page={page}
+                  totalPages={meta.totalPages}
+                  onPageChange={setPage}
+                />
               )}
             </>
           )}
