@@ -18,6 +18,7 @@ export type AddressInfo = {
   street: string;
   city: string;
   province: string;
+  phone: string | null;
 };
 
 export type DeliveryListItem = {
@@ -65,6 +66,9 @@ export type PaginatedDeliveryHistoryResponse = {
 export type DriverPickupTask = {
   type: 'pickup';
   id: string;
+  customerName: string | null;
+  customerPhone: string | null;
+  address: DriverPickupAddressInfo;
 };
 
 export type DriverDeliveryTask = {
@@ -104,6 +108,7 @@ export type DriverPickupListItem = {
     province: string;
     latitude: number;
     longitude: number;
+    phone: string | null;
   };
   customer: DriverPickupCustomerInfo;
 };
