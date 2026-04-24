@@ -14,7 +14,7 @@ export function useAcceptDelivery() {
         type: 'delivery',
         id: data.id,
         customerName: item.customer.name,
-        customerPhone: item.customer.phone,
+        customerPhone: item.deliveryAddress.phone ?? item.customer.phone,
         address: item.deliveryAddress,
       };
       localStorage.setItem(DRIVER_TASK_STORAGE_KEY, JSON.stringify(activeTask));
