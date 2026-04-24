@@ -4,6 +4,7 @@ import type {
   DeliveryAcceptResponse,
   DeliveryCompleteResponse,
   PaginatedDeliveryHistoryResponse,
+  DriverOrderSummary,
 } from '@/types/delivery';
 
 type ListParams = { page: number; limit: number; status: 'PENDING' };
@@ -29,6 +30,13 @@ export const acceptDelivery = async (id: string): Promise<DeliveryAcceptResponse
 export const completeDelivery = async (id: string): Promise<DeliveryCompleteResponse> => {
   const res = await axiosInstance.patch<{ data: DeliveryCompleteResponse }>(
     `/api/v1/deliveries/${id}/complete`,
+  );
+  return res.data.data;
+};
+
+export const getDriverDeliveryOrder = async (deliveryId: string): Promise<DriverOrderSummary> => {
+  const res = await axiosInstance.get<{ data: DriverOrderSummary }>(
+    `/api/v1/deliveries/${deliveryId}/order`,
   );
   return res.data.data;
 };
