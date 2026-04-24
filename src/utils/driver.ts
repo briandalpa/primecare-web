@@ -12,8 +12,8 @@ export const DRIVER_COPY = {
   activeTaskCompleting: 'Completing...',
   activeTaskCompleteSuccess: 'Task completed successfully.',
   activeTaskCompleteError: 'Failed to complete task. Please try again.',
-  pickupTabLabel: 'Pickup Requests',
-  deliveryTabLabel: 'Delivery Requests',
+  pickupTabLabel: 'Pickup',
+  deliveryTabLabel: 'Delivery',
   pickupEmptyState: 'No available pickup requests for your outlet.',
   deliveryEmptyState: 'No available delivery requests for your outlet.',
   pickupLoadError: 'Pickup requests could not be loaded. Please refresh.',
@@ -32,8 +32,10 @@ export const DRIVER_COPY = {
     'Review your completed pickups and deliveries. Filter by date.',
   historyPickupTab: 'Pickup History',
   historyDeliveryTab: 'Delivery History',
-  historyPickupEmpty: 'No completed pickup history matches the current filters.',
-  historyDeliveryEmpty: 'No completed delivery history matches the current filters.',
+  historyPickupEmpty:
+    'No completed pickup history matches the current filters.',
+  historyDeliveryEmpty:
+    'No completed delivery history matches the current filters.',
   historyPickupError: 'Pickup history could not be loaded. Please retry.',
   historyDeliveryError: 'Delivery history could not be loaded. Please retry.',
   historyCompletedAtLabel: 'Completed at',
@@ -59,7 +61,9 @@ export const DRIVER_DOCUMENT_TITLE = {
 export const DRIVER_ROUTE = {
   base: '/driver',
   dashboard: '/driver/dashboard',
+  active: '/driver/active',
   history: '/driver/history',
+  profile: '/driver/profile',
   forbidden: '/forbidden',
   home: '/',
 } as const;
