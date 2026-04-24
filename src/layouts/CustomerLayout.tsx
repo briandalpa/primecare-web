@@ -21,6 +21,7 @@ type BreadcrumbRule = {
 };
 
 const BREADCRUMB_RULES: BreadcrumbRule[] = [
+  { match: (p) => p === '/home', segments: () => [{ label: 'Dashboard' }] },
   { match: (p) => p === '/addresses', segments: () => [{ label: 'My Addresses' }] },
   { match: (p) => p === '/orders', segments: () => [{ label: 'My Orders' }] },
   { match: (p) => p === '/profile', segments: () => [{ label: 'Profile' }] },
