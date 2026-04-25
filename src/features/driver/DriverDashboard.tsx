@@ -10,31 +10,19 @@ import { useUnassignedPickupRequests } from '@/hooks/useUnassignedPickupRequests
 import { useAvailableDeliveries } from '@/hooks/useAvailableDeliveries';
 import { useAcceptPickupRequest } from '@/hooks/useAcceptPickupRequest';
 import { useAcceptDelivery } from '@/hooks/useAcceptDelivery';
-import {
-  DRIVER_COPY,
-  DRIVER_TASK_STORAGE_KEY,
-  formatDriverDateTime,
-} from '@/utils/driver';
+import { DRIVER_COPY, formatDriverDateTime } from '@/utils/driver';
+import { useDriverActiveTask } from '@/hooks/useDriverActiveTask';
 import type {
   DriverActiveTask,
   DriverPickupListItem,
   DeliveryListItem,
 } from '@/types/delivery';
 
-function readActiveTask(): DriverActiveTask | null {
-  try {
-    const raw = localStorage.getItem(DRIVER_TASK_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as DriverActiveTask) : null;
-  } catch {
-    return null;
-  }
-}
-
 export default function DriverDashboard() {
   const { data: session } = useSession();
   const [pickupPage, setPickupPage] = useState(1);
   const [deliveryPage, setDeliveryPage] = useState(1);
-  const activeTask = readActiveTask();
+  const { data: activeTask } = useDriverActiveTask();
 
   const {
     data: pickups,
@@ -55,7 +43,7 @@ export default function DriverDashboard() {
       {activeTask && <NextStopCard task={activeTask} />}
       <Tabs defaultValue="pickup">
         <TabsList className="grid grid-cols-2 w-full sm:w-auto sm:inline-flex bg-secondary">
-          <TabsTrigger value="pickup" className="gap-1.5">
+          <TabsTrigger value="pickup" className="gap-1.5 cursor-pointer">
             {DRIVER_COPY.pickupTabLabel}
             {!!pickups?.meta.total && (
               <Badge
@@ -66,7 +54,7 @@ export default function DriverDashboard() {
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="delivery" className="gap-1.5">
+          <TabsTrigger value="delivery" className="gap-1.5 cursor-pointer">
             {DRIVER_COPY.deliveryTabLabel}
             {!!deliveries?.meta.total && (
               <Badge

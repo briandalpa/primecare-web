@@ -25,25 +25,16 @@ import { MapPin, Phone, User, Package } from 'lucide-react';
 import { useCompletePickupRequest } from '@/hooks/useCompletePickupRequest';
 import { useCompleteDelivery } from '@/hooks/useCompleteDelivery';
 import { useDriverDeliveryOrder } from '@/hooks/useDriverDeliveryOrder';
-import {
-  DRIVER_COPY,
-  DRIVER_ROUTE,
-  DRIVER_TASK_STORAGE_KEY,
-} from '@/utils/driver';
-import type { DriverActiveTask, DriverOrderSummary } from '@/types/delivery';
-
-function readActiveTask(): DriverActiveTask | null {
-  try {
-    const raw = localStorage.getItem(DRIVER_TASK_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as DriverActiveTask) : null;
-  } catch {
-    return null;
-  }
-}
+import { useDriverActiveTask } from '@/hooks/useDriverActiveTask';
+import { DRIVER_COPY, DRIVER_ROUTE } from '@/utils/driver';
+import { PAYMENT_BADGE } from '@/utils/orderStatus';
+import { cn } from '@/lib/utils';
+import { PaymentStatus } from '@/types/enums';
+import type { DriverOrderSummary } from '@/types/delivery';
 
 export default function DriverActiveOrder() {
   const navigate = useNavigate();
-  const task = readActiveTask();
+  const { data: task } = useDriverActiveTask();
   const completePickup = useCompletePickupRequest();
   const completeDelivery = useCompleteDelivery();
   const { data: orderSummary, isLoading: summaryLoading } =
@@ -150,7 +141,17 @@ function ItemsCard({ order }: { order: DriverOrderSummary }) {
   return (
     <Card>
       <CardHeader className="-mb-4">
-        <CardTitle className="text-base">Order Summary</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base">Order Summary</CardTitle>
+          {order.paymentStatus === PaymentStatus.PAID && (
+            <Badge
+              variant="outline"
+              className={cn('text-xs capitalize', PAYMENT_BADGE[PaymentStatus.PAID])}
+            >
+              {order.paymentStatus}
+            </Badge>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
@@ -158,7 +159,6 @@ function ItemsCard({ order }: { order: DriverOrderSummary }) {
             <TableRow>
               <TableHead>Item</TableHead>
               <TableHead className="text-center">Qty</TableHead>
-              <TableHead className="text-right">Subtotal</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -166,9 +166,6 @@ function ItemsCard({ order }: { order: DriverOrderSummary }) {
               <TableRow key={i}>
                 <TableCell className="font-medium">{item.name}</TableCell>
                 <TableCell className="text-center">{item.quantity}</TableCell>
-                <TableCell className="text-right">
-                  Rp {(item.quantity * item.unitPrice).toLocaleString('id-ID')}
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -176,7 +173,7 @@ function ItemsCard({ order }: { order: DriverOrderSummary }) {
         <div className="border-t mt-3 pt-3 space-y-1 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Subtotal</span>
-            <span>Rp {order.totalPrice.toLocaleString('id-ID')}</span>
+            <span>Rp {order.subTotal.toLocaleString('id-ID')}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Delivery Fee</span>
@@ -185,8 +182,7 @@ function ItemsCard({ order }: { order: DriverOrderSummary }) {
           <div className="flex justify-between font-semibold">
             <span>Total</span>
             <span>
-              Rp{' '}
-              {(order.totalPrice + order.deliveryFee).toLocaleString('id-ID')}
+              Rp {(order.subTotal + order.deliveryFee).toLocaleString('id-ID')}
             </span>
           </div>
         </div>

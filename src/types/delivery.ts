@@ -153,6 +153,8 @@ export type DriverOrderItem = {
 
 export type DriverOrderSummary = {
   items: DriverOrderItem[];
+  subTotal: number;
   totalPrice: number;
   deliveryFee: number;
+  paymentStatus: 'PAID' | 'UNPAID';
 };

@@ -68,8 +68,6 @@ export const DRIVER_ROUTE = {
   home: '/',
 } as const;
 
-export const DRIVER_TASK_STORAGE_KEY = 'driver_active_task';
-
 export const DRIVER_HISTORY_DEFAULT_FILTERS = {
   page: 1,
   limit: 10,

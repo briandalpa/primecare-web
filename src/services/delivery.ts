@@ -5,6 +5,7 @@ import type {
   DeliveryCompleteResponse,
   PaginatedDeliveryHistoryResponse,
   DriverOrderSummary,
+  DriverActiveTask,
 } from '@/types/delivery';
 
 type ListParams = { page: number; limit: number; status: 'PENDING' };
@@ -38,6 +39,11 @@ export const getDriverDeliveryOrder = async (deliveryId: string): Promise<Driver
   const res = await axiosInstance.get<{ data: DriverOrderSummary }>(
     `/api/v1/deliveries/${deliveryId}/order`,
   );
+  return res.data.data;
+};
+
+export const getDriverActiveTask = async (): Promise<DriverActiveTask | null> => {
+  const res = await axiosInstance.get<{ data: DriverActiveTask | null }>('/api/v1/drivers/me/active-task');
   return res.data.data;
 };
 
