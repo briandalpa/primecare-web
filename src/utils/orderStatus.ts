@@ -78,7 +78,7 @@ export function getStatusSteps(current: OrderStatus) {
   return STATUS_ORDER.map((status, i) => ({
     status,
     label: ORDER_STATUS_LABEL[status],
-    completed: i <= currentIndex,
+    completed: i < currentIndex,
     active: i === currentIndex,
   }));
 }
