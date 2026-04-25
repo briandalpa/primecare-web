@@ -134,9 +134,13 @@ export default function OrderListPage() {
           resetPage();
         }}
       >
-        <TabsList className="mb-4">
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="completed">Completed</TabsTrigger>
+        <TabsList className="mb-4 bg-secondary w-full">
+          <TabsTrigger className="cursor-pointer" value="active">
+            Active
+          </TabsTrigger>
+          <TabsTrigger className="cursor-pointer" value="completed">
+            Completed
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value={tab}>
