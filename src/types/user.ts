@@ -67,6 +67,7 @@ export type StaffRole = 'OUTLET_ADMIN' | 'WORKER' | 'DRIVER'
 export type CreateUserPayload = {
   name: string
   email: string
+  password: string
   role: StaffRole
   outletId?: string
   workerType?: string
