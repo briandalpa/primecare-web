@@ -285,7 +285,9 @@ function DeliveryRequestCard({
           <div className="h-8 w-8 rounded-lg bg-muted text-muted-foreground flex items-center justify-center shrink-0">
             <MapPin className="h-4 w-4" />
           </div>
-          <span className="text-foreground leading-tight pt-1">{address}</span>
+          <span className="text-foreground leading-tight pt-1.5">
+            {address}
+          </span>
         </div>
         <div className="flex items-center gap-2.5 text-sm">
           <div className="h-8 w-8 rounded-lg bg-muted text-muted-foreground flex items-center justify-center shrink-0">
