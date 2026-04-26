@@ -41,9 +41,9 @@ import WorkerOrderProcessPage from '@/pages/WorkerOrderProcessPage';
 import WorkerLayout from './layouts/WorkerLayout';
 import DriverLayout from './layouts/DriverLayout';
 import DriverDashboardPage from './pages/DriverDashboardPage';
-import DriverHistory from './features/driver/DriverHistory';
-import DriverActiveOrder from './features/driver/DriverActiveOrder';
-import DriverProfile from './features/driver/DriverProfile';
+import DriverHistoryPage from './pages/DriverHistoryPage';
+import DriverActiveOrderPage from './pages/DriverActiveOrderPage';
+import DriverProfilePage from './pages/DriverProfilePage';
 
 import { Toaster } from '@/components/ui/sonner';
 import CreatePickupPage from './pages/CreatePickupPage';
@@ -115,9 +115,9 @@ export default function App() {
         <Route path="/driver" element={<DriverLayout />}>
           <Route index element={<DriverDashboardPage />} />
           <Route path="dashboard" element={<DriverDashboardPage />} />
-          <Route path="active" element={<DriverActiveOrder />} />
-          <Route path="history" element={<DriverHistory />} />
-          <Route path="profile" element={<DriverProfile />} />
+          <Route path="active" element={<DriverActiveOrderPage />} />
+          <Route path="history" element={<DriverHistoryPage />} />
+          <Route path="profile" element={<DriverProfilePage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
