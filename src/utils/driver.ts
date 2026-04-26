@@ -30,6 +30,7 @@ export const DRIVER_COPY = {
   orderIdLabel: 'Order ID',
   historyDescription:
     'Review your completed pickups and deliveries. Filter by date.',
+  historyAllTab: 'All History',
   historyPickupTab: 'Pickup History',
   historyDeliveryTab: 'Delivery History',
   historyPickupEmpty:
