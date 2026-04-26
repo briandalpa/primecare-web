@@ -6,7 +6,6 @@ const workerTypes = ['WASHING', 'IRONING', 'PACKING'] as const;
 export const createUserSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.email('Invalid email address').max(64, 'Email too long'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
   role: z.enum(staffRoles, { error: 'Please select a role' }),
   outletId: z.string().uuid('Invalid outlet').optional(),
   workerType: z.enum(workerTypes).optional(),
