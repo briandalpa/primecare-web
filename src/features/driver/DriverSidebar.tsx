@@ -22,7 +22,7 @@ import {
 import { signOut } from '@/lib/auth-client';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { getInitials } from '@/utils/string';
-import { DRIVER_COPY, DRIVER_ROUTE } from '@/utils/driver';
+import { DRIVER_UI_TEXT, DRIVER_ROUTE } from '@/utils/driver';
 import logoUrl from '@/assets/prime-care.png';
 
 const driverNavItems = [
@@ -97,7 +97,7 @@ function DriverSidebarFooter({ collapsed, profileName, onLogout }: DriverSidebar
         <p className="truncate text-xs font-semibold text-foreground">{profileName ?? '-'}</p>
         <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
           <Truck className="h-3 w-3" />
-          <span>{DRIVER_COPY.driverRoleLabel}</span>
+          <span>{DRIVER_UI_TEXT.driverRoleLabel}</span>
         </div>
       </div>
       <DropdownMenu>

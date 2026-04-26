@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 
-export const DRIVER_COPY = {
+export const DRIVER_UI_TEXT = {
   dashboardTitle: 'Driver Dashboard',
   historyTitle: 'Driver History',
   dashboardDescription:
@@ -57,6 +57,8 @@ export const DRIVER_COPY = {
 export const DRIVER_DOCUMENT_TITLE = {
   dashboard: 'PrimeCare | Driver Dashboard',
   history: 'PrimeCare | Driver History',
+  active: 'PrimeCare | Active Order',
+  profile: 'PrimeCare | Driver Profile',
 } as const;
 
 export const DRIVER_ROUTE = {
