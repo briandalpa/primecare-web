@@ -1,14 +1,21 @@
 import { z } from 'zod';
 
+const SHIFT_START_TIMES = {
+  SHIFT_1: '07:00',
+  SHIFT_2: '13:00',
+  SHIFT_3: '15:00',
+} as const;
+
 export const createShiftSchema = z.object({
   staffId: z.uuid('Select a worker'),
-  startedAt: z
-    .string()
-    .min(1, 'Start time is required')
-    .refine((value) => !Number.isNaN(new Date(value).getTime()), {
-      message: 'Start time is invalid',
-    })
-    .transform((value) => new Date(value).toISOString()),
+  shiftDate: z.string().min(1, 'Shift date is required'),
+  shiftSlot: z.enum(['SHIFT_1', 'SHIFT_2', 'SHIFT_3'], 'Select a shift time'),
+}).transform((value) => {
+  const startedAt = new Date(`${value.shiftDate}T${SHIFT_START_TIMES[value.shiftSlot]}`);
+  return {
+    staffId: value.staffId,
+    startedAt: startedAt.toISOString(),
+  };
 });
 
 export type CreateShiftSchemaInput = z.input<typeof createShiftSchema>;

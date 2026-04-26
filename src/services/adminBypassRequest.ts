@@ -1,4 +1,5 @@
 import { axiosInstance } from '@/lib/axiosInstance';
+import { isAxiosError } from 'axios';
 import type { BypassRequest } from '@/types/bypassRequest';
 
 type ApiResponse<T> = {
@@ -11,16 +12,26 @@ type MutationPayload = {
   problemDescription: string;
 };
 
+const getErrorMessage = (error: unknown) => {
+  if (!isAxiosError(error)) return 'Failed to load data';
+  const message = error.response?.data?.message;
+  return typeof message === 'string' ? message : error.message;
+};
+
 export const getAdminBypassRequests = async (): Promise<BypassRequest[]> => {
-  const res = await axiosInstance.get<ApiResponse<BypassRequest[]>>(
-    '/api/v1/bypass-requests?status=PENDING'
-  );
+  try {
+    const res = await axiosInstance.get<ApiResponse<BypassRequest[]>>(
+      '/api/v1/bypass-requests?status=PENDING'
+    );
 
-  if (!Array.isArray(res.data.data)) {
-    throw new Error('Invalid response format');
+    if (!Array.isArray(res.data.data)) {
+      throw new Error('Invalid response format');
+    }
+
+    return res.data.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
   }
-
-  return res.data.data;
 };
 
 export const approveBypassRequest = async (

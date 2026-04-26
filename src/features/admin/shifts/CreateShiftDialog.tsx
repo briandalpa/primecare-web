@@ -25,10 +25,24 @@ import {
   type CreateShiftSchemaValues,
 } from './createShiftSchema';
 
-const createDefaultStartedAt = () => {
+const SHIFT_OPTIONS = [
+  { value: 'SHIFT_1', label: 'Shift 1 (07.00 - 15.00)' },
+  { value: 'SHIFT_2', label: 'Shift 2 (13.00 - 21.00)' },
+  { value: 'SHIFT_3', label: 'Shift 3 (15.00 - 23.00)' },
+] as const;
+
+const createDefaultShiftDate = () => {
   const date = new Date();
   const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-  return local.toISOString().slice(0, 16);
+  return local.toISOString().slice(0, 10);
+};
+
+const createDefaultValues = (): CreateShiftSchemaInput => {
+  return {
+    staffId: '',
+    shiftDate: createDefaultShiftDate(),
+    shiftSlot: 'SHIFT_1',
+  };
 };
 
 type CreateShiftDialogProps = {
@@ -54,14 +68,11 @@ export function CreateShiftDialog({
     formState: { errors },
   } = useForm<CreateShiftSchemaInput, undefined, CreateShiftSchemaValues>({
     resolver: zodResolver(createShiftSchema),
-    defaultValues: {
-      staffId: '',
-      startedAt: createDefaultStartedAt(),
-    },
+    defaultValues: createDefaultValues(),
   });
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) reset({ staffId: '', startedAt: createDefaultStartedAt() });
+    if (!nextOpen) reset(createDefaultValues());
     onOpenChange(nextOpen);
   };
 
@@ -100,10 +111,33 @@ export function CreateShiftDialog({
               <FieldError errors={[errors.staffId]} />
             </Field>
 
-            <Field data-invalid={!!errors.startedAt}>
-              <FieldLabel htmlFor="startedAt">Start Time</FieldLabel>
-              <Input id="startedAt" type="datetime-local" {...register('startedAt')} />
-              <FieldError errors={[errors.startedAt]} />
+            <Field data-invalid={!!errors.shiftDate}>
+              <FieldLabel htmlFor="shiftDate">Shift Date</FieldLabel>
+              <Input id="shiftDate" type="date" {...register('shiftDate')} />
+              <FieldError errors={[errors.shiftDate]} />
+            </Field>
+
+            <Field data-invalid={!!errors.shiftSlot}>
+              <FieldLabel htmlFor="shiftSlot">Shift Time</FieldLabel>
+              <Controller
+                control={control}
+                name="shiftSlot"
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="shiftSlot" className="w-full">
+                      <SelectValue placeholder="Select shift time" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SHIFT_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              <FieldError errors={[errors.shiftSlot]} />
             </Field>
           </FieldGroup>
 

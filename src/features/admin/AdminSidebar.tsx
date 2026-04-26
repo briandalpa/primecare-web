@@ -83,14 +83,20 @@ export function AdminSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <div className="flex items-center gap-2.5 px-1 py-2 mb-4">
-            <img
-              src={logoUrl}
-              alt="PrimeCare"
-              className="h-7 w-7 rounded-lg object-contain shrink-0"
-            />
-            {!collapsed && (
-              <span className="text-md font-bold text-primary">PrimeCare</span>
-            )}
+            <NavLink
+              to="/"
+              className="flex items-center gap-2.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label="PrimeCare homepage"
+            >
+              <img
+                src={logoUrl}
+                alt="PrimeCare"
+                className="h-7 w-7 rounded-lg object-contain shrink-0"
+              />
+              {!collapsed && (
+                <span className="text-md font-bold text-primary">PrimeCare</span>
+              )}
+            </NavLink>
           </div>
           <SidebarGroupContent>
             <SidebarMenu>
