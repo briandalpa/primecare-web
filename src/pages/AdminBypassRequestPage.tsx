@@ -12,7 +12,7 @@ import {
 } from '@/hooks/useAdminBypassRequests';
 
 export default function AdminBypassRequestPage() {
-  const { data, isError, isLoading, refetch } = useAdminBypassRequests();
+  const { data, error, isError, isLoading, refetch } = useAdminBypassRequests();
   const approveMutation = useApproveBypassRequest();
   const rejectMutation = useRejectBypassRequest();
 
@@ -74,7 +74,7 @@ export default function AdminBypassRequestPage() {
           {isError && (
             <div className="space-y-2 text-center">
               <p className="text-sm text-destructive">
-                Failed to load data
+                {error?.message || 'Failed to load data'}
               </p>
               <Button size="sm" onClick={() => refetch()}>
                 Retry

@@ -81,7 +81,14 @@ export default function CustomerOrderDetailPage() {
 
         <div className="md:col-span-2 space-y-6">
           <OrderItemsCard
-            items={order.items.map((i) => ({ id: i.id, name: i.itemName, quantity: i.quantity }))}
+            items={order.items.map((i) => ({
+              id: i.id,
+              name: i.itemName,
+              quantity: i.quantity,
+              unitPrice: i.unitPrice,
+              lineTotal: i.lineTotal,
+              isManualPriced: i.isManualPriced,
+            }))}
           />
           <OrderPriceCard
             totalWeightKg={order.totalWeightKg}

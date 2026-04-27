@@ -38,6 +38,12 @@ type CreateShiftDialogProps = {
   onSubmit: (values: CreateShiftSchemaValues) => void;
 };
 
+const createDefaultValues = (): CreateShiftSchemaInput => ({
+  staffId: '',
+  shiftDate: getDefaultShiftDate(),
+  shiftStartTime: getCurrentShiftStartTime(),
+});
+
 export function CreateShiftDialog({
   isPending,
   open,
@@ -53,21 +59,11 @@ export function CreateShiftDialog({
     formState: { errors },
   } = useForm<CreateShiftSchemaInput, undefined, CreateShiftSchemaValues>({
     resolver: zodResolver(createShiftSchema),
-    defaultValues: {
-      staffId: '',
-      shiftDate: getDefaultShiftDate(),
-      shiftStartTime: getCurrentShiftStartTime(),
-    },
+    defaultValues: createDefaultValues(),
   });
 
   const handleOpenChange = (nextOpen: boolean) => {
-    if (!nextOpen) {
-      reset({
-        staffId: '',
-        shiftDate: getDefaultShiftDate(),
-        shiftStartTime: getCurrentShiftStartTime(),
-      });
-    }
+    if (!nextOpen) reset(createDefaultValues());
     onOpenChange(nextOpen);
   };
 

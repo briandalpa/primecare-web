@@ -39,16 +39,17 @@ const addressSchema = z.object({
   street: z.string().trim().min(1, 'Street is required').max(255),
   city: z.string().trim().min(1, 'City is required'),
   province: z.string().trim().min(1, 'Province is required'),
-  latitude: z
-    .number()
-    .refine((n) => n !== 0, {
-      message: 'Location could not be determined. Please select a city.',
-    }),
-  longitude: z
-    .number()
-    .refine((n) => n !== 0, {
-      message: 'Location could not be determined. Please select a city.',
-    }),
+  phone: z
+    .string()
+    .trim()
+    .min(5, 'Phone number is required')
+    .max(20, 'Phone number is too long'),
+  latitude: z.number().refine((n) => n !== 0, {
+    message: 'Location could not be determined. Please select a city.',
+  }),
+  longitude: z.number().refine((n) => n !== 0, {
+    message: 'Location could not be determined. Please select a city.',
+  }),
 });
 
 type FormValues = z.infer<typeof addressSchema>;
@@ -58,6 +59,7 @@ const defaultValues: FormValues = {
   street: '',
   city: '',
   province: '',
+  phone: '',
   latitude: 0,
   longitude: 0,
 };
@@ -194,6 +196,16 @@ export function AddressFormDialog({
                 {...register('street')}
               />
               <FieldError errors={[errors.street]} />
+            </Field>
+            <Field>
+              <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="+62 812 3456 7890"
+                {...register('phone')}
+              />
+              <FieldError errors={[errors.phone]} />
             </Field>
             <div className="grid grid-cols-2 gap-4">
               <Field>
