@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -14,15 +14,12 @@ type DisplayItem = {
   unitPrice?: number | null;
   lineTotal?: number | null;
   isManualPriced?: boolean;
-}
+};
 
 export default function OrderItemsCard({ items }: { items?: DisplayItem[] }) {
   if (!items?.length) return null;
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base">Items</CardTitle>
-      </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
@@ -38,12 +35,16 @@ export default function OrderItemsCard({ items }: { items?: DisplayItem[] }) {
                 <TableCell>
                   {item.name}
                   {item.isManualPriced && (
-                    <span className="ml-2 text-xs text-muted-foreground">(manual)</span>
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      (manual)
+                    </span>
                   )}
                 </TableCell>
                 <TableCell className="text-center">{item.quantity}</TableCell>
                 <TableCell className="text-right">
-                  {item.lineTotal != null ? `Rp ${item.lineTotal.toLocaleString('id-ID')}` : '-'}
+                  {item.lineTotal != null
+                    ? `Rp ${item.lineTotal.toLocaleString('id-ID')}`
+                    : '-'}
                 </TableCell>
               </TableRow>
             ))}

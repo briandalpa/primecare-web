@@ -1,6 +1,6 @@
-import { CalendarIcon, MapPin, Truck } from 'lucide-react'
-import { format } from 'date-fns'
-import { Loader2 } from 'lucide-react'
+import { CalendarIcon, MapPin, Truck } from 'lucide-react';
+import { format } from 'date-fns';
+import { Loader2 } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,19 +10,19 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Separator } from '@/components/ui/separator'
-import type { Address } from '@/types/address'
+} from '@/components/ui/alert-dialog';
+import { Separator } from '@/components/ui/separator';
+import type { Address } from '@/types/address';
 
 type Props = {
-  open: boolean
-  onOpenChange: (o: boolean) => void
-  address?: Address
-  date?: Date
-  timeLabel: string
-  isPending: boolean
-  onConfirm: () => void
-}
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  address?: Address;
+  date?: Date;
+  timeLabel: string;
+  isPending: boolean;
+  onConfirm: () => void;
+};
 
 export default function PickupConfirmDialog({
   open,
@@ -41,12 +41,14 @@ export default function PickupConfirmDialog({
             Confirm Your Pickup
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
-            <div className="space-y-4 pt-2">
+            <div className="space-y-4 pt-2 text-left">
               {address && (
                 <div className="flex gap-3 items-start">
                   <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-foreground">{address.label}</p>
+                    <p className="text-sm font-medium text-foreground">
+                      {address.label}
+                    </p>
                     <p className="text-sm text-muted-foreground">
                       {address.street}, {address.city}, {address.province}
                     </p>
@@ -66,7 +68,8 @@ export default function PickupConfirmDialog({
               <div className="flex gap-3 items-start">
                 <Truck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
                 <p className="text-sm text-muted-foreground">
-                  A driver from the nearest outlet will be assigned to your pickup.
+                  A driver from the nearest outlet will be assigned to your
+                  pickup.
                 </p>
               </div>
             </div>
@@ -91,5 +94,5 @@ export default function PickupConfirmDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

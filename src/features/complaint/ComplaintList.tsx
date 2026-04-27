@@ -29,7 +29,10 @@ import {
 } from '@/components/ui/pagination';
 import { useComplaints } from '@/hooks/useComplaints';
 import { ComplaintStatus } from '@/types/enums';
-import { COMPLAINT_STATUS_LABEL, COMPLAINT_STATUS_COLOR } from '@/utils/complaint';
+import {
+  COMPLAINT_STATUS_LABEL,
+  COMPLAINT_STATUS_COLOR,
+} from '@/utils/complaint';
 import { cn } from '@/lib/utils';
 
 const PAGE_SIZE = 10;
@@ -58,7 +61,7 @@ export default function ComplaintList() {
       </div>
 
       <Card>
-        <CardHeader className="flex-row items-center justify-between space-y-0 pb-3">
+        <CardHeader className="flex-row items-center justify-between space-y-0">
           <CardTitle className="text-base">Complaints ({total})</CardTitle>
           <Select
             value={status}
@@ -73,7 +76,9 @@ export default function ComplaintList() {
             <SelectContent>
               <SelectItem value="ALL">All Statuses</SelectItem>
               <SelectItem value={ComplaintStatus.OPEN}>Open</SelectItem>
-              <SelectItem value={ComplaintStatus.IN_REVIEW}>In Review</SelectItem>
+              <SelectItem value={ComplaintStatus.IN_REVIEW}>
+                In Review
+              </SelectItem>
               <SelectItem value={ComplaintStatus.RESOLVED}>Resolved</SelectItem>
             </SelectContent>
           </Select>
@@ -98,7 +103,9 @@ export default function ComplaintList() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Order</TableHead>
-                  <TableHead className="hidden sm:table-cell">Description</TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                    Description
+                  </TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="hidden sm:table-cell">Filed</TableHead>
                 </TableRow>
@@ -123,7 +130,10 @@ export default function ComplaintList() {
                     <TableCell>
                       <Badge
                         variant="outline"
-                        className={cn('text-xs', COMPLAINT_STATUS_COLOR[c.status])}
+                        className={cn(
+                          'text-xs',
+                          COMPLAINT_STATUS_COLOR[c.status],
+                        )}
                       >
                         {COMPLAINT_STATUS_LABEL[c.status]}
                       </Badge>
@@ -143,7 +153,11 @@ export default function ComplaintList() {
                 <PaginationItem>
                   <PaginationPrevious
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className={page === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                    className={
+                      page === 1
+                        ? 'pointer-events-none opacity-50'
+                        : 'cursor-pointer'
+                    }
                   />
                 </PaginationItem>
                 {Array.from({ length: totalPages }).map((_, i) => (
@@ -161,7 +175,9 @@ export default function ComplaintList() {
                   <PaginationNext
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     className={
-                      page === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'
+                      page === totalPages
+                        ? 'pointer-events-none opacity-50'
+                        : 'cursor-pointer'
                     }
                   />
                 </PaginationItem>

@@ -52,7 +52,11 @@ export default function CustomerOrderDetailPage() {
     return (
       <div className="text-center py-8">
         <p className="text-muted-foreground">Order not found.</p>
-        <Button variant="link" className="mt-4" onClick={() => navigate('/orders')}>
+        <Button
+          variant="link"
+          className="mt-4"
+          onClick={() => navigate('/orders')}
+        >
           Back to Orders
         </Button>
       </div>
@@ -63,7 +67,12 @@ export default function CustomerOrderDetailPage() {
 
   return (
     <div className="max-w-4xl">
-      <Button variant="ghost" size="sm" className="mb-4" onClick={() => navigate('/orders')}>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="mb-4"
+        onClick={() => navigate('/orders')}
+      >
         <ArrowLeft className="h-4 w-4 mr-1" /> Back to Orders
       </Button>
       <Header order={order} />
@@ -110,7 +119,7 @@ export default function CustomerOrderDetailPage() {
       </div>
 
       {/* Mobile: compact timeline + non-payment actions at bottom */}
-      <div className="md:hidden mt-6 space-y-4">
+      <div className="md:hidden space-y-4">
         <StatusTimelineDrawer status={order.status} />
         <Actions
           order={order}
@@ -134,12 +143,18 @@ function Header({ order }: { order: OrderDetailType }) {
         </p>
       </div>
       <div className="flex gap-2 flex-wrap">
-        <Badge variant="outline" className={cn('text-xs', ORDER_STATUS_COLOR[order.status])}>
+        <Badge
+          variant="outline"
+          className={cn('text-xs', ORDER_STATUS_COLOR[order.status])}
+        >
           {ORDER_STATUS_LABEL[order.status] ?? order.status}
         </Badge>
         <Badge
           variant="outline"
-          className={cn('text-xs capitalize', PAYMENT_BADGE[order.paymentStatus])}
+          className={cn(
+            'text-xs capitalize',
+            PAYMENT_BADGE[order.paymentStatus],
+          )}
         >
           {order.paymentStatus}
         </Badge>
@@ -184,7 +199,13 @@ function PaymentActions({ order }: { order: OrderDetailType }) {
   );
 }
 
-function ConfirmReceiptDialog({ onConfirm, confirming }: { onConfirm: () => void; confirming: boolean }) {
+function ConfirmReceiptDialog({
+  onConfirm,
+  confirming,
+}: {
+  onConfirm: () => void;
+  confirming: boolean;
+}) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -223,7 +244,8 @@ function Actions({
   confirming: boolean;
   hideMobilePayment?: boolean;
 }) {
-  const isDelivered = order.status === OrderStatus.LAUNDRY_DELIVERED_TO_CUSTOMER;
+  const isDelivered =
+    order.status === OrderStatus.LAUNDRY_DELIVERED_TO_CUSTOMER;
   const hasActions =
     (!hideMobilePayment && order.status === OrderStatus.WAITING_FOR_PAYMENT) ||
     isDelivered ||
@@ -234,7 +256,9 @@ function Actions({
   return (
     <div className="flex gap-3 flex-wrap">
       {!hideMobilePayment && <PaymentActions order={order} />}
-      {isDelivered && <ConfirmReceiptDialog onConfirm={onConfirm} confirming={confirming} />}
+      {isDelivered && (
+        <ConfirmReceiptDialog onConfirm={onConfirm} confirming={confirming} />
+      )}
       {isDelivered && !complaint && <FileComplaintDialog orderId={order.id} />}
       {complaint && (
         <Link to={`/complaints/${complaint.id}`}>

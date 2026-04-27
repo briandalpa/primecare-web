@@ -144,3 +144,17 @@ export type PaginatedPickupHistoryResponse = {
   data: PickupHistoryItem[];
   meta: PaginationMeta;
 };
+
+export type DriverOrderItem = {
+  name: string;
+  quantity: number;
+  unitPrice: number;
+};
+
+export type DriverOrderSummary = {
+  items: DriverOrderItem[];
+  subTotal: number;
+  totalPrice: number;
+  deliveryFee: number;
+  paymentStatus: 'PAID' | 'UNPAID';
+};

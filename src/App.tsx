@@ -19,6 +19,7 @@ import AdminOrderDetailPage from './pages/AdminOrderDetailPage';
 import AdminPickupRequestsPage from './pages/AdminPickupRequestsPage';
 
 import OrderListPage from './pages/OrderListPage';
+import CustomerDashboardPage from './pages/CustomerDashboardPage';
 import CustomerOrderDetailPage from './pages/CustomerOrderDetailPage';
 
 import AdminLayout from './layouts/AdminLayout';
@@ -41,6 +42,8 @@ import WorkerLayout from './layouts/WorkerLayout';
 import DriverLayout from './layouts/DriverLayout';
 import DriverDashboardPage from './pages/DriverDashboardPage';
 import DriverHistoryPage from './pages/DriverHistoryPage';
+import DriverActiveOrderPage from './pages/DriverActiveOrderPage';
+import DriverProfilePage from './pages/DriverProfilePage';
 
 import { Toaster } from '@/components/ui/sonner';
 import CreatePickupPage from './pages/CreatePickupPage';
@@ -88,6 +91,7 @@ export default function App() {
 
         {/* ================= CUSTOMER ROUTES ================= */}
         <Route element={<CustomerLayout />}>
+          <Route path="/home" element={<CustomerDashboardPage />} />
           <Route path="/addresses" element={<AddressManagementPage />} />
           <Route path="/orders" element={<OrderListPage />} />
           <Route path="/orders/:id" element={<CustomerOrderDetailPage />} />
@@ -111,7 +115,9 @@ export default function App() {
         <Route path="/driver" element={<DriverLayout />}>
           <Route index element={<DriverDashboardPage />} />
           <Route path="dashboard" element={<DriverDashboardPage />} />
+          <Route path="active" element={<DriverActiveOrderPage />} />
           <Route path="history" element={<DriverHistoryPage />} />
+          <Route path="profile" element={<DriverProfilePage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

@@ -1,31 +1,25 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { acceptDelivery } from '@/services/delivery';
-import { DRIVER_COPY, DRIVER_TASK_STORAGE_KEY } from '@/utils/driver';
-import type { DeliveryListItem, DriverDeliveryTask } from '@/types/delivery';
+import { DRIVER_UI_TEXT } from '@/utils/driver';
+import { queryKeys } from '@/utils/queryKeys';
+import type { DeliveryListItem } from '@/types/delivery';
 
 export function useAcceptDelivery() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (item: DeliveryListItem) => acceptDelivery(item.id),
-    onSuccess: (data, item) => {
-      const activeTask: DriverDeliveryTask = {
-        type: 'delivery',
-        id: data.id,
-        customerName: item.customer.name,
-        customerPhone: item.deliveryAddress.phone ?? item.customer.phone,
-        address: item.deliveryAddress,
-      };
-      localStorage.setItem(DRIVER_TASK_STORAGE_KEY, JSON.stringify(activeTask));
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.driverActiveTask() });
       queryClient.invalidateQueries({ queryKey: ['driver', 'deliveries'] });
-      toast.success(DRIVER_COPY.acceptSuccess);
+      toast.success(DRIVER_UI_TEXT.acceptSuccess);
     },
     onError: (error: { response?: { status: number } }) => {
       if (error.response?.status === 409) {
-        toast.error(DRIVER_COPY.acceptConflictError);
+        toast.error(DRIVER_UI_TEXT.acceptConflictError);
       } else {
-        toast.error(DRIVER_COPY.acceptError);
+        toast.error(DRIVER_UI_TEXT.acceptError);
       }
     },
   });
