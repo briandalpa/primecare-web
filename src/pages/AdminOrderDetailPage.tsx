@@ -44,7 +44,16 @@ export default function AdminOrderDetailPage() {
         <StatusTimeline status={order.status} />
         <div className="md:col-span-2 space-y-6">
           <CustomerCard order={order} />
-          <OrderItemsCard items={order.items.map((i) => ({ id: i.id, name: i.laundryItem.name, quantity: i.quantity }))} />
+          <OrderItemsCard
+            items={order.items.map((i) => ({
+              id: i.id,
+              name: i.laundryItem.name,
+              quantity: i.quantity,
+              unitPrice: i.unitPrice,
+              lineTotal: i.lineTotal,
+              isManualPriced: i.isManualPriced,
+            }))}
+          />
           <OrderPriceCard
             totalWeightKg={order.totalWeightKg}
             pricePerKg={order.pricePerKg}

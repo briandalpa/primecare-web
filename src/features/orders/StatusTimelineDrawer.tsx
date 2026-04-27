@@ -12,14 +12,18 @@ import type { OrderStatus } from '@/types/enums';
 import { getStatusSteps } from '@/utils/orderStatus';
 import { cn } from '@/lib/utils';
 
-export default function StatusTimelineDrawer({ status }: { status: OrderStatus }) {
+export default function StatusTimelineDrawer({
+  status,
+}: {
+  status: OrderStatus;
+}) {
   const steps = getStatusSteps(status);
   const activeStep = steps.find((s) => s.active);
   const completedCount = steps.filter((s) => s.completed).length;
 
   return (
     <Card>
-      <CardContent className="p-4">
+      <CardContent className="px-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             <div className="h-5 w-5 rounded-full border-2 border-primary bg-primary/20 shrink-0" />
@@ -34,7 +38,11 @@ export default function StatusTimelineDrawer({ status }: { status: OrderStatus }
           </div>
           <Drawer>
             <DrawerTrigger asChild>
-              <Button variant="ghost" size="sm" className="shrink-0 text-xs gap-1 px-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="shrink-0 text-xs gap-1 px-2"
+              >
                 View Timeline <ChevronRight className="h-3 w-3" />
               </Button>
             </DrawerTrigger>
@@ -55,7 +63,10 @@ export default function StatusTimelineDrawer({ status }: { status: OrderStatus }
                       )}
                       {i < steps.length - 1 && (
                         <div
-                          className={cn('w-0.5 h-6', step.completed ? 'bg-primary' : 'bg-border')}
+                          className={cn(
+                            'w-0.5 h-6',
+                            step.completed ? 'bg-primary' : 'bg-border',
+                          )}
                         />
                       )}
                     </div>
@@ -65,8 +76,8 @@ export default function StatusTimelineDrawer({ status }: { status: OrderStatus }
                         step.active
                           ? 'font-semibold text-primary'
                           : step.completed
-                            ? 'text-foreground'
-                            : 'text-muted-foreground/50',
+                          ? 'text-foreground'
+                          : 'text-muted-foreground/50',
                       )}
                     >
                       {step.label}

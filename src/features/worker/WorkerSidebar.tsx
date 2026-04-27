@@ -53,14 +53,20 @@ type WorkerSidebarFooterProps = {
 function WorkerSidebarBrand({ collapsed }: { collapsed: boolean }) {
   return (
     <div className="mb-4 flex items-center gap-2.5 px-1 py-2">
-      <img
-        src={logoUrl}
-        alt="PrimeCare"
-        className="h-7 w-7 rounded-lg object-contain shrink-0"
-      />
-      {!collapsed && (
-        <span className="text-md font-bold text-primary">PrimeCare</span>
-      )}
+      <NavLink
+        to={WORKER_ROUTE.home}
+        className="flex items-center gap-2.5 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        aria-label="PrimeCare homepage"
+      >
+        <img
+          src={logoUrl}
+          alt="PrimeCare"
+          className="h-7 w-7 rounded-lg object-contain shrink-0"
+        />
+        {!collapsed && (
+          <span className="text-md font-bold text-primary">PrimeCare</span>
+        )}
+      </NavLink>
     </div>
   );
 }

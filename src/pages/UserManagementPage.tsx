@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
+import { Navigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import PageHeader from '@/components/PageHeader';
@@ -31,7 +32,7 @@ import type { User } from '@/types/user';
 
 export default function UserManagementPage() {
   const queryClient = useQueryClient();
-  const { effectiveRole } = useCurrentUser();
+  const { effectiveRole, isPending: rolePending } = useCurrentUser();
   const isSuperAdmin = effectiveRole === 'SUPER_ADMIN';
 
   const [page, setPage] = useState(1);
@@ -47,7 +48,7 @@ export default function UserManagementPage() {
     outletId: outletId || undefined,
   };
 
-  const { data, isPending } = useUsers(params);
+  const { data, isPending } = useUsers(params, isSuperAdmin);
   const users = data?.data ?? [];
   const meta = data?.meta;
 
@@ -65,6 +66,14 @@ export default function UserManagementPage() {
     cancelDelete,
     handleDelete,
   } = useDeleteUser(invalidate);
+
+  if (rolePending) {
+    return <p className="py-8 text-center text-muted-foreground">Loading...</p>;
+  }
+
+  if (!isSuperAdmin) {
+    return <Navigate to="/forbidden" replace />;
+  }
 
   return (
     <div className="space-y-6">

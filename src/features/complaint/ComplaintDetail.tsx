@@ -63,28 +63,34 @@ export default function ComplaintDetail() {
             >
               #{complaint.orderId.slice(0, 8)}
             </Link>{' '}
-            · Filed {format(new Date(complaint.createdAt), 'dd MMM yyyy, HH:mm')}
+            · Filed{' '}
+            {format(new Date(complaint.createdAt), 'dd MMM yyyy, HH:mm')}
           </p>
         </div>
         <Badge
           variant="outline"
-          className={cn('text-xs w-fit shrink-0', COMPLAINT_STATUS_COLOR[complaint.status])}
+          className={cn(
+            'text-xs w-fit shrink-0',
+            COMPLAINT_STATUS_COLOR[complaint.status],
+          )}
         >
           {COMPLAINT_STATUS_LABEL[complaint.status]}
         </Badge>
       </div>
 
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader>
           <CardTitle className="text-base">Description</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-foreground whitespace-pre-wrap">{complaint.description}</p>
+          <p className="text-sm text-foreground whitespace-pre-wrap -mt-4">
+            {complaint.description}
+          </p>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader>
           <CardTitle className="text-base">Status Timeline</CardTitle>
         </CardHeader>
         <CardContent>
@@ -103,7 +109,12 @@ export default function ComplaintDetail() {
                       <Circle className="h-5 w-5 text-muted-foreground/30 shrink-0" />
                     )}
                     {i < COMPLAINT_STATUS_SEQUENCE.length - 1 && (
-                      <div className={cn('w-0.5 h-6', completed ? 'bg-primary' : 'bg-border')} />
+                      <div
+                        className={cn(
+                          'w-0.5 h-6',
+                          completed ? 'bg-primary' : 'bg-border',
+                        )}
+                      />
                     )}
                   </div>
                   <span
@@ -127,7 +138,7 @@ export default function ComplaintDetail() {
 
       {complaint.outletName && (
         <Card>
-          <CardContent className="p-4 text-sm">
+          <CardContent className="text-sm">
             <span className="text-muted-foreground">Outlet: </span>
             <span className="text-foreground">{complaint.outletName}</span>
           </CardContent>

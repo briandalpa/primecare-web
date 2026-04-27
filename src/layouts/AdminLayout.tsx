@@ -41,7 +41,7 @@ function useBreadcrumbs(): BreadcrumbSegment[] {
   if (pathname.startsWith('/admin/outlets/') && pathname.endsWith('/edit')) {
     return [{ label: 'Outlets', href: '/admin/outlets' }, { label: 'Edit Outlet' }];
   }
-  if (pathname === '/admin/users') return [{ label: 'Users' }];
+  if (pathname === '/admin/users') return [{ label: 'Employee' }];
   if (pathname === '/admin/profile') return [{ label: 'Profile' }];
   if (pathname === '/admin/settings') return [{ label: 'Settings' }];
   return [{ label: 'Admin' }];

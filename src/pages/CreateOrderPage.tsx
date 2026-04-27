@@ -21,6 +21,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Field, FieldLabel, FieldError } from '@/components/ui/field';
+import ManualOrderItemRows from '@/features/admin/ManualOrderItemRows';
 import OrderItemRows from '@/features/admin/OrderItemRows';
 import OrderSummaryCard from '@/features/admin/OrderSummaryCard';
 import { useCreateOrderForm } from '@/hooks/useCreateOrderForm';
@@ -35,6 +36,11 @@ export default function CreateOrderPage() {
     fields,
     append,
     remove,
+    manualFields,
+    appendManual,
+    removeManual,
+    weightTotal,
+    manualTotal,
     totalPrice,
     selectedPickup,
     pickups,
@@ -116,7 +122,24 @@ export default function CreateOrderPage() {
           </CardContent>
         </Card>
 
-        <OrderSummaryCard total={totalPrice} pickup={selectedPickup} />
+        <Card>
+          <CardContent className="pt-6">
+            <ManualOrderItemRows
+              control={control as never}
+              fields={manualFields}
+              append={appendManual}
+              remove={removeManual}
+              errors={errors.manualItems as never}
+            />
+          </CardContent>
+        </Card>
+
+        <OrderSummaryCard
+          total={totalPrice}
+          pickup={selectedPickup}
+          weightTotal={weightTotal}
+          manualTotal={manualTotal}
+        />
 
         <AlertDialog>
           <AlertDialogTrigger asChild>

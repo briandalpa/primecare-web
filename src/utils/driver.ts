@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 
-export const DRIVER_COPY = {
+export const DRIVER_UI_TEXT = {
   dashboardTitle: 'Driver Dashboard',
   historyTitle: 'Driver History',
   dashboardDescription:
@@ -12,8 +12,8 @@ export const DRIVER_COPY = {
   activeTaskCompleting: 'Completing...',
   activeTaskCompleteSuccess: 'Task completed successfully.',
   activeTaskCompleteError: 'Failed to complete task. Please try again.',
-  pickupTabLabel: 'Pickup Requests',
-  deliveryTabLabel: 'Delivery Requests',
+  pickupTabLabel: 'Pickup',
+  deliveryTabLabel: 'Delivery',
   pickupEmptyState: 'No available pickup requests for your outlet.',
   deliveryEmptyState: 'No available delivery requests for your outlet.',
   pickupLoadError: 'Pickup requests could not be loaded. Please refresh.',
@@ -30,10 +30,13 @@ export const DRIVER_COPY = {
   orderIdLabel: 'Order ID',
   historyDescription:
     'Review your completed pickups and deliveries. Filter by date.',
+  historyAllTab: 'All History',
   historyPickupTab: 'Pickup History',
   historyDeliveryTab: 'Delivery History',
-  historyPickupEmpty: 'No completed pickup history matches the current filters.',
-  historyDeliveryEmpty: 'No completed delivery history matches the current filters.',
+  historyPickupEmpty:
+    'No completed pickup history matches the current filters.',
+  historyDeliveryEmpty:
+    'No completed delivery history matches the current filters.',
   historyPickupError: 'Pickup history could not be loaded. Please retry.',
   historyDeliveryError: 'Delivery history could not be loaded. Please retry.',
   historyCompletedAtLabel: 'Completed at',
@@ -54,17 +57,19 @@ export const DRIVER_COPY = {
 export const DRIVER_DOCUMENT_TITLE = {
   dashboard: 'PrimeCare | Driver Dashboard',
   history: 'PrimeCare | Driver History',
+  active: 'PrimeCare | Active Order',
+  profile: 'PrimeCare | Driver Profile',
 } as const;
 
 export const DRIVER_ROUTE = {
   base: '/driver',
   dashboard: '/driver/dashboard',
+  active: '/driver/active',
   history: '/driver/history',
+  profile: '/driver/profile',
   forbidden: '/forbidden',
   home: '/',
 } as const;
-
-export const DRIVER_TASK_STORAGE_KEY = 'driver_active_task';
 
 export const DRIVER_HISTORY_DEFAULT_FILTERS = {
   page: 1,

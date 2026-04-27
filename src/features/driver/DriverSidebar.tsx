@@ -1,4 +1,4 @@
-import { History, LayoutDashboard, LogOut, MoreHorizontal, Truck } from 'lucide-react';
+import { History, LayoutDashboard, LogOut, MoreHorizontal, Truck, User } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavLink } from '@/components/NavLink';
 import { Button } from '@/components/ui/button';
@@ -22,13 +22,20 @@ import {
 import { signOut } from '@/lib/auth-client';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { getInitials } from '@/utils/string';
-import { DRIVER_COPY, DRIVER_ROUTE } from '@/utils/driver';
+import { DRIVER_UI_TEXT, DRIVER_ROUTE } from '@/utils/driver';
 import logoUrl from '@/assets/prime-care.png';
 
 const driverNavItems = [
-  { title: DRIVER_COPY.dashboardTitle, url: DRIVER_ROUTE.dashboard, icon: LayoutDashboard },
-  { title: DRIVER_COPY.historyTitle, url: DRIVER_ROUTE.history, icon: History },
+  { title: 'Dashboard', url: DRIVER_ROUTE.base, icon: LayoutDashboard },
+  { title: 'Active Order', url: DRIVER_ROUTE.active, icon: Truck },
+  { title: 'Driver History', url: DRIVER_ROUTE.history, icon: History },
+  { title: 'Profile', url: DRIVER_ROUTE.profile, icon: User },
 ];
+
+function isNavActive(url: string, pathname: string): boolean {
+  if (url === DRIVER_ROUTE.base) return pathname === DRIVER_ROUTE.base || pathname === DRIVER_ROUTE.dashboard;
+  return pathname.startsWith(url);
+}
 
 function DriverSidebarBrand({ collapsed }: { collapsed: boolean }) {
   return (
@@ -46,7 +53,7 @@ function DriverSidebarMenu({ collapsed, pathname }: { collapsed: boolean; pathna
         <SidebarMenuItem key={item.title}>
           <SidebarMenuButton
             asChild
-            isActive={pathname.startsWith(item.url)}
+            isActive={isNavActive(item.url, pathname)}
             className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
           >
             <NavLink to={item.url}>
@@ -90,7 +97,7 @@ function DriverSidebarFooter({ collapsed, profileName, onLogout }: DriverSidebar
         <p className="truncate text-xs font-semibold text-foreground">{profileName ?? '-'}</p>
         <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
           <Truck className="h-3 w-3" />
-          <span>{DRIVER_COPY.driverRoleLabel}</span>
+          <span>{DRIVER_UI_TEXT.driverRoleLabel}</span>
         </div>
       </div>
       <DropdownMenu>

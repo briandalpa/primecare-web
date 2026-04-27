@@ -1,12 +1,12 @@
 import {
   LayoutDashboard,
   Package,
-  Plus,
   MapPin,
   User,
   LogOut,
   MoreHorizontal,
   MessageSquareWarning,
+  Truck,
 } from 'lucide-react';
 import { NavLink } from '@/components/NavLink';
 import { signOut } from '@/lib/auth-client';
@@ -34,11 +34,10 @@ import {
 import { Button } from '@/components/ui/button';
 import logoUrl from '@/assets/prime-care.png';
 
-
 const mainItems = [
-  { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
+  { title: 'Dashboard', url: '/home', icon: LayoutDashboard },
   { title: 'My Orders', url: '/orders', icon: Package },
-  { title: 'Schedule Pickup', url: '/pickup/create', icon: Plus },
+  { title: 'Schedule Pickup', url: '/pickup/create', icon: Truck },
   { title: 'My Addresses', url: '/addresses', icon: MapPin },
   { title: 'My Complaints', url: '/complaints', icon: MessageSquareWarning },
   { title: 'Profile', url: '/profile', icon: User },

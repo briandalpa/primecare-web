@@ -9,8 +9,8 @@ export const workerProcessOrderSchema = z.object({
         .trim()
         .min(1, 'Quantity is required')
         .refine(
-          (value) => Number.isInteger(Number(value)) && Number(value) > 0,
-          'Quantity must be a positive whole number',
+          (value) => Number.isInteger(Number(value)) && Number(value) >= 0,
+          'Quantity must be a non-negative whole number',
         ),
     }),
   ),

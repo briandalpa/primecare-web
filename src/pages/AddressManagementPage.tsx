@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Address } from '@/types/address';
-import { useAddresses, useDeleteAddress, useSetPrimaryAddress } from '@/hooks/useAddresses';
+import {
+  useAddresses,
+  useDeleteAddress,
+  useSetPrimaryAddress,
+} from '@/hooks/useAddresses';
 import { AddressFormDialog } from '@/features/customer/AddressFormDialog';
 import { AddressEmptyState } from '@/features/customer/AddressEmptyState';
 import { AddressList } from '@/features/customer/AddressList';
@@ -58,10 +62,12 @@ export default function AddressManagementPage() {
   };
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold font-heading text-foreground">My Addresses</h1>
+          <h1 className="text-2xl font-bold font-heading text-foreground">
+            My Addresses
+          </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Manage your pickup & delivery addresses
           </p>
@@ -97,7 +103,9 @@ export default function AddressManagementPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete this address?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This action cannot be undone.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>

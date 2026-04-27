@@ -21,6 +21,7 @@ export function useCreateOrderForm() {
       totalWeightKg: 0,
       pricePerKg: 10000,
       items: [{ laundryItemId: '', quantity: 1 }],
+      manualItems: [],
     },
   });
 
@@ -32,10 +33,17 @@ export function useCreateOrderForm() {
     formState: { errors },
   } = form;
   const { fields, append, remove } = useFieldArray({ control, name: 'items' });
+  const manualItemsArray = useFieldArray({ control, name: 'manualItems' });
 
   const totalWeightKg = useWatch({ control, name: 'totalWeightKg' }) || 0;
   const pricePerKg = useWatch({ control, name: 'pricePerKg' }) || 0;
-  const totalPrice = totalWeightKg * pricePerKg;
+  const manualItems = useWatch({ control, name: 'manualItems' }) ?? [];
+  const manualTotal = manualItems.reduce(
+    (sum, item) => sum + (Number(item.quantity) || 0) * (Number(item.unitPrice) || 0),
+    0,
+  );
+  const weightTotal = totalWeightKg * pricePerKg;
+  const totalPrice = weightTotal + manualTotal;
   const pickupRequestId = useWatch({ control, name: 'pickupRequestId' });
   const selectedPickup = pickups.find((p) => p.id === pickupRequestId);
 
@@ -60,6 +68,11 @@ export function useCreateOrderForm() {
     fields,
     append,
     remove,
+    manualFields: manualItemsArray.fields,
+    appendManual: manualItemsArray.append,
+    removeManual: manualItemsArray.remove,
+    weightTotal,
+    manualTotal,
     totalPrice,
     selectedPickup,
     pickups,
