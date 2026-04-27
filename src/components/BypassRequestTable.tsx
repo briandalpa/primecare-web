@@ -23,6 +23,16 @@ const statusMap = {
   REJECTED: { label: 'Rejected', variant: 'destructive' },
 } as const;
 
+const formatMismatchSummary = (item: BypassRequest) => {
+  if (!item.mismatchItems.length) return '-';
+
+  return item.mismatchItems
+    .map((mismatch) => (
+      `${mismatch.itemName}: ${mismatch.expectedQuantity} -> ${mismatch.submittedQuantity}`
+    ))
+    .join(', ');
+};
+
 export default function BypassRequestTable({
   data,
   onApprove,
@@ -36,8 +46,8 @@ export default function BypassRequestTable({
           <TableHead>Order</TableHead>
           <TableHead>Worker</TableHead>
           <TableHead>Station</TableHead>
-          <TableHead>Expected Qty</TableHead>
-          <TableHead>Submitted Qty</TableHead>
+          <TableHead>Mismatch</TableHead>
+          <TableHead>Worker Notes</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Created</TableHead>
           <TableHead>Action</TableHead>
@@ -51,23 +61,23 @@ export default function BypassRequestTable({
           return (
             <TableRow key={item.id}>
               <TableCell>
-                {item.stationRecord?.order?.id ?? '-'}
+                {item.orderId || '-'}
               </TableCell>
 
               <TableCell>
-                {item.worker?.name ?? '-'}
+                {item.workerName || '-'}
               </TableCell>
 
               <TableCell>
-                {item.stationRecord?.station?.name ?? '-'}
+                {item.station || '-'}
               </TableCell>
 
-              <TableCell>
-                {item.stationRecord?.previousQuantity ?? '-'}
+              <TableCell className="max-w-md whitespace-normal">
+                {formatMismatchSummary(item)}
               </TableCell>
 
-              <TableCell>
-                {item.stationRecord?.submittedQuantity ?? '-'}
+              <TableCell className="max-w-xs whitespace-normal">
+                {item.problemDescription || '-'}
               </TableCell>
 
               <TableCell>
