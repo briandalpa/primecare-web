@@ -2,9 +2,10 @@ import { useQuery } from "@tanstack/react-query"
 import { getUsers } from "@/services/adminUser"
 import type { GetUsersParams } from "@/services/adminUser"
 
-export const useUsers = (params: GetUsersParams) => {
+export const useUsers = (params: GetUsersParams, enabled = true) => {
   return useQuery({
     queryKey: ["admin-users", params],
     queryFn: () => getUsers(params),
+    enabled,
   })
 }
