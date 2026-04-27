@@ -45,7 +45,7 @@ const mainNavItems = [
   { title: 'Bypass Requests', url: '/admin/bypass-requests', icon: ShieldAlert },
   { title: 'Outlets', url: '/admin/outlets', icon: Store },
   { title: 'Shifts', url: '/admin/shifts', icon: CalendarRange },
-  { title: 'Employee', url: '/admin/users', icon: Users },
+  { title: 'Employee', url: '/admin/users', icon: Users, superAdminOnly: true },
   { title: 'Complaints', url: '/admin/complaints', icon: MessageSquareWarning },
 ];
 
@@ -77,6 +77,9 @@ export function AdminSidebar() {
       : effectiveRole === 'OUTLET_ADMIN'
       ? 'Outlet Admin'
       : effectiveRole;
+  const visibleMainNavItems = mainNavItems.filter(
+    (item) => !item.superAdminOnly || effectiveRole === 'SUPER_ADMIN',
+  );
 
   return (
     <Sidebar collapsible="icon">
@@ -100,7 +103,7 @@ export function AdminSidebar() {
           </div>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainNavItems.map((item) => (
+              {visibleMainNavItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
