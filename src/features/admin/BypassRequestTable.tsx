@@ -16,6 +16,16 @@ interface Props {
   isLoadingAction: boolean;
 }
 
+const formatMismatchSummary = (item: BypassRequest) => {
+  if (!item.mismatchItems.length) return '-';
+
+  return item.mismatchItems
+    .map((mismatch) => (
+      `${mismatch.itemName}: ${mismatch.expectedQuantity} -> ${mismatch.submittedQuantity}`
+    ))
+    .join(', ');
+};
+
 export default function BypassRequestTable({
   data,
   onAction,
@@ -37,9 +47,8 @@ export default function BypassRequestTable({
             <TableHead>Order</TableHead>
             <TableHead>Worker</TableHead>
             <TableHead>Station</TableHead>
-            <TableHead>Expected Qty</TableHead>
-            <TableHead>Submitted Qty</TableHead>
-            <TableHead>Problem</TableHead>
+            <TableHead>Mismatch</TableHead>
+            <TableHead>Worker Notes</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead>Actions</TableHead>
@@ -50,37 +59,24 @@ export default function BypassRequestTable({
           {data.map((item) => (
             <TableRow key={item.id}>
               <TableCell className="font-mono text-xs">
-                {item.stationRecord?.order?.id ?? '-'}
+                {item.orderId || '-'}
               </TableCell>
-
-              <TableCell>{item.worker?.name ?? '-'}</TableCell>
-
-              <TableCell>
-                {item.stationRecord?.station?.name ?? '-'}
+              <TableCell>{item.workerName || '-'}</TableCell>
+              <TableCell>{item.station || '-'}</TableCell>
+              <TableCell className="max-w-md whitespace-normal">
+                {formatMismatchSummary(item)}
               </TableCell>
-
-              <TableCell>
-                {item.stationRecord?.previousQuantity ?? '-'}
+              <TableCell className="max-w-xs whitespace-normal">
+                {item.problemDescription || '-'}
               </TableCell>
-
-              <TableCell>
-                {item.stationRecord?.submittedQuantity ?? '-'}
-              </TableCell>
-
-              <TableCell>{item.problemDescription ?? '—'}</TableCell>
-
               <TableCell>
                 <Badge variant="secondary">
-                  {item.status === 'PENDING'
-                    ? 'Pending Review'
-                    : item.status}
+                  {item.status === 'PENDING' ? 'Pending Review' : item.status}
                 </Badge>
               </TableCell>
-
               <TableCell className="text-muted-foreground">
                 {new Date(item.createdAt).toLocaleString()}
               </TableCell>
-
               <TableCell>
                 <div className="flex gap-2">
                   <Button
@@ -90,7 +86,6 @@ export default function BypassRequestTable({
                   >
                     Approve
                   </Button>
-
                   <Button
                     size="sm"
                     variant="destructive"
