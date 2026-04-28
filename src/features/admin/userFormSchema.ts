@@ -10,7 +10,12 @@ export const createUserSchema = z.object({
   outletId: z.string().uuid('Invalid outlet').optional(),
   workerType: z.enum(workerTypes).optional(),
 }).superRefine((data, ctx) => {
-  if ((data.role === 'WORKER' || data.role === 'DRIVER') && !data.outletId) {
+  if (
+    (data.role === 'OUTLET_ADMIN' ||
+      data.role === 'WORKER' ||
+      data.role === 'DRIVER') &&
+    !data.outletId
+  ) {
     ctx.addIssue({ code: 'custom', path: ['outletId'], message: 'Outlet ID is required for this role' });
   }
   if (data.role === 'WORKER' && !data.workerType) {
@@ -24,6 +29,14 @@ export const updateUserSchema = z.object({
   isActive: z.boolean().optional(),
   workerType: z.enum(workerTypes).optional(),
 }).superRefine((data, ctx) => {
+  if (
+    (data.role === 'OUTLET_ADMIN' ||
+      data.role === 'WORKER' ||
+      data.role === 'DRIVER') &&
+    !data.outletId
+  ) {
+    ctx.addIssue({ code: 'custom', path: ['outletId'], message: 'Outlet ID is required for this role' });
+  }
   if (data.role === 'WORKER' && !data.workerType) {
     ctx.addIssue({ code: 'custom', path: ['workerType'], message: 'Worker type is required for Worker role' });
   }

@@ -70,7 +70,10 @@ const CreateForm = ({
   });
 
   const roleValue = useWatch({ control, name: 'role' });
-  const needsOutlet = roleValue === 'WORKER' || roleValue === 'DRIVER';
+  const needsOutlet =
+    roleValue === 'OUTLET_ADMIN' ||
+    roleValue === 'WORKER' ||
+    roleValue === 'DRIVER';
   const submitLockRef = useRef(false);
   const { mutateAsync, isPending } = useCreateUser(async () => {
     await onSuccess();
@@ -230,7 +233,10 @@ const EditForm = ({
   const outletIdValue = useWatch({ control, name: 'outletId' });
   const isActiveValue = useWatch({ control, name: 'isActive' });
   const workerTypeValue = useWatch({ control, name: 'workerType' });
-  const needsOutlet = roleValue === 'WORKER' || roleValue === 'DRIVER';
+  const needsOutlet =
+    roleValue === 'OUTLET_ADMIN' ||
+    roleValue === 'WORKER' ||
+    roleValue === 'DRIVER';
   const submitLockRef = useRef(false);
   const { mutateAsync, isPending } = useUpdateUser(async () => {
     await onSuccess();
