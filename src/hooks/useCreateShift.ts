@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
 import { toast } from 'sonner';
 import { createShift } from '@/services/shift';
 import type { CreateShiftValues } from '@/types/shift';
@@ -13,8 +14,12 @@ export const useCreateShift = (onSuccess?: () => void) => {
       queryClient.invalidateQueries({ queryKey: ['shifts'] });
       onSuccess?.();
     },
-    onError: () => {
-      toast.error('Failed to create shift');
+    onError: (error) => {
+      const message = isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+
+      toast.error(message || 'Failed to create shift');
     },
   });
 };
