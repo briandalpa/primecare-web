@@ -71,6 +71,11 @@ function WorkerOrderCard({
 }: {
   order: WorkerOrderListResponse['data'][number];
 }) {
+  const actionLabel =
+    order.status === 'COMPLETED'
+      ? WORKER_COPY.historyOpenDetail
+      : WORKER_COPY.processOrderTitle;
+
   return (
     <Card>
       <CardHeader className="space-y-3">
@@ -94,7 +99,7 @@ function WorkerOrderCard({
         </div>
         <Button asChild className="w-full sm:w-auto">
           <Link to={getWorkerOrderProcessRoute(order.orderId)}>
-            {WORKER_COPY.processOrderTitle}
+            {actionLabel}
           </Link>
         </Button>
       </CardContent>
