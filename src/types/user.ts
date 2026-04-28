@@ -36,6 +36,7 @@ export interface UserProfile {
 
 export type User = {
   id: string
+  staffId?: string | null
   name: string
   email: string
   role: string
