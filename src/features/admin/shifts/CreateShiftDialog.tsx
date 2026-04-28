@@ -91,7 +91,10 @@ export function CreateShiftDialog({
                     </SelectTrigger>
                     <SelectContent>
                       {workers.map((worker) => (
-                        <SelectItem key={worker.id} value={worker.id}>
+                        <SelectItem
+                          key={worker.staffId ?? worker.id}
+                          value={worker.staffId ?? worker.id}
+                        >
                           {worker.name} {worker.workerType ? `(${worker.workerType})` : ''}
                         </SelectItem>
                       ))}
