@@ -1,7 +1,7 @@
 export const SHIFT_TIME_OPTIONS = [
   { value: '07:00', label: 'Shift 1 (07.00 - 15.00)' },
-  { value: '13:00', label: 'Shift 2 (13.00 - 21.00)' },
-  { value: '15:00', label: 'Shift 3 (15.00 - 23.00)' },
+  { value: '15:00', label: 'Shift 2 (15.00 - 23.00)' },
+  { value: '23:00', label: 'Shift 3 (23.00 - 07.00)' },
 ] as const;
 
 export type ShiftStartTime = (typeof SHIFT_TIME_OPTIONS)[number]['value'];
@@ -14,9 +14,9 @@ export const getDefaultShiftDate = () => {
 
 export const getCurrentShiftStartTime = (): ShiftStartTime => {
   const hour = new Date().getHours();
-  if (hour < 13) return '07:00';
-  if (hour < 15) return '13:00';
-  return '15:00';
+  if (hour >= 7 && hour < 15) return '07:00';
+  if (hour >= 15 && hour < 23) return '15:00';
+  return '23:00';
 };
 
 export const createShiftStartedAt = (date: string, time: string) => {
