@@ -55,6 +55,7 @@ export default function WorkerOrderProcessPage() {
 
   const detail = orderDetail.data.data;
   const isAwaitingBypassApproval = detail.stationStatus === 'BYPASS_REQUESTED';
+  const isStationCompleted = detail.stationStatus === 'COMPLETED';
 
   return (
     <div className="space-y-6">
@@ -79,22 +80,35 @@ export default function WorkerOrderProcessPage() {
           </CardContent>
         </Card>
       ) : null}
-      <WorkerOrderProcessFormCard
-        errors={errors}
-        hasMismatch={hasMismatch}
-        isAwaitingBypassApproval={isAwaitingBypassApproval}
-        isBypassSubmitting={bypassRequest.isPending}
-        isSubmitting={processOrder.isPending}
-        items={normalizedReferenceItems}
-        mismatchByIndex={mismatchByIndex}
-        onRequestBypass={() => setBypassDialogOpen(true)}
-        onSubmit={handleSubmit(onSubmit)}
-        register={register}
-      />
+      {isStationCompleted ? (
+        <Card>
+          <CardContent className="space-y-2 p-6">
+            <p className="text-sm font-medium text-foreground">
+              {WORKER_COPY.processOrderCompletedTitle}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {WORKER_COPY.processOrderCompletedDescription}
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <WorkerOrderProcessFormCard
+          errors={errors}
+          hasMismatch={hasMismatch}
+          isAwaitingBypassApproval={isAwaitingBypassApproval}
+          isBypassSubmitting={bypassRequest.isPending}
+          isSubmitting={processOrder.isPending}
+          items={normalizedReferenceItems}
+          mismatchByIndex={mismatchByIndex}
+          onRequestBypass={() => setBypassDialogOpen(true)}
+          onSubmit={handleSubmit(onSubmit)}
+          register={register}
+        />
+      )}
       <WorkerBypassRequestDialog
         isSubmitting={bypassRequest.isPending}
         items={mismatchItems}
-        open={bypassDialogOpen && !isAwaitingBypassApproval}
+        open={bypassDialogOpen && !isAwaitingBypassApproval && !isStationCompleted}
         onOpenChange={setBypassDialogOpen}
         onSubmit={(values: WorkerBypassRequestFormValues) => submitBypassRequest(values)}
       />
