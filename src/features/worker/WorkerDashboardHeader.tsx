@@ -83,9 +83,11 @@ export function WorkerDashboardHeader({
                 {WORKER_COPY.queueUpdatesBadge}
               </Badge>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {WORKER_COPY.queueUpdatesDescription}
-            </p>
+            {WORKER_COPY.queueUpdatesDescription ? (
+              <p className="text-xs text-muted-foreground">
+                {WORKER_COPY.queueUpdatesDescription}
+              </p>
+            ) : null}
           </div>
         </WorkerSummaryCard>
 
@@ -103,9 +105,11 @@ export function WorkerDashboardHeader({
                 ? WORKER_COPY.currentShiftActive
                 : WORKER_COPY.currentShiftInactive}
             </Badge>
-            <p className="text-xs text-muted-foreground">
-              {WORKER_COPY.currentShiftDescription}
-            </p>
+            {WORKER_COPY.currentShiftDescription ? (
+              <p className="text-xs text-muted-foreground">
+                {WORKER_COPY.currentShiftDescription}
+              </p>
+            ) : null}
           </div>
         </WorkerSummaryCard>
       </div>
