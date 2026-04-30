@@ -21,12 +21,12 @@ export function OutletFilters({
   onStatusChange,
 }: OutletFiltersProps) {
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:gap-4">
       <Input
         placeholder="Search outlet..."
         value={search}
         onChange={(event) => onSearchChange(event.target.value)}
-        className="max-w-xs"
+        className="w-full md:max-w-xs"
       />
 
       <Select
@@ -35,7 +35,7 @@ export function OutletFilters({
           onStatusChange(value as 'ALL' | 'ACTIVE' | 'INACTIVE')
         }
       >
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-full md:w-[180px]">
           <SelectValue placeholder="Filter status" />
         </SelectTrigger>
         <SelectContent>

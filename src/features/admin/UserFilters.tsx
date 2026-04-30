@@ -25,17 +25,17 @@ export const UserFilters = ({
   onOutletChange,
 }: Props) => {
   return (
-    <div className="flex gap-4 flex-wrap">
+    <div className="flex flex-col gap-3 md:flex-row md:flex-wrap md:gap-4">
 
       <Input
         placeholder="Search name..."
         value={search}
         onChange={(e) => onSearchChange(e.target.value)}
-        className="max-w-xs"
+        className="w-full md:max-w-xs"
       />
 
       <Select value={role} onValueChange={onRoleChange}>
-        <SelectTrigger className="w-[180px]">
+        <SelectTrigger className="w-full md:w-[180px]">
           <SelectValue placeholder="Filter role" />
         </SelectTrigger>
 
@@ -52,7 +52,7 @@ export const UserFilters = ({
         placeholder="Outlet ID"
         value={outletId}
         onChange={(e) => onOutletChange(e.target.value)}
-        className="max-w-xs"
+        className="w-full md:max-w-xs"
       />
 
     </div>
