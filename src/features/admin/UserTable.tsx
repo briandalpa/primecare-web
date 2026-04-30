@@ -18,8 +18,65 @@ export function UserTable({ users, onEdit, onDelete, canDelete }: Props) {
       <CardHeader>
         <CardTitle className="text-lg">Users ({users.length})</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto">
+      <CardContent className="space-y-4">
+        <div className="space-y-3 md:hidden">
+          {users.length === 0 && (
+            <div className="rounded-lg border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+              No users found.
+            </div>
+          )}
+
+          {users.map((user) => (
+            <div key={user.id} className="rounded-xl border bg-card p-4 shadow-sm">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate font-semibold">{user.name}</p>
+                  <p className="mt-1 break-all text-sm text-muted-foreground">{user.email}</p>
+                </div>
+
+                <RoleBadge role={user.role} />
+              </div>
+
+              <div className="mt-4 grid gap-3 text-sm">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Outlet
+                  </p>
+                  <p className="mt-1">{user.outlet?.name || user.outlet?.id || '\u2014'}</p>
+                </div>
+
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                    Joined
+                  </p>
+                  <p className="mt-1">
+                    {user.createdAt ? format(new Date(user.createdAt), 'dd MMM yyyy') : '\u2014'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={() => onEdit(user)}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </Button>
+
+                {canDelete && (
+                  <Button
+                    variant="destructive"
+                    className="flex-1"
+                    onClick={() => onDelete(user.id)}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete
+                  </Button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-left">

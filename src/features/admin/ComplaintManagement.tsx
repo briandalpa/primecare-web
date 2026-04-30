@@ -120,45 +120,96 @@ export default function ComplaintManagement() {
           ) : complaints.length === 0 ? (
             <p className="text-sm text-muted-foreground py-8 text-center">No complaints found.</p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Order</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Outlet</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Filed</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <div className="space-y-4">
+              <div className="space-y-3 md:hidden">
                 {complaints.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell className="font-medium">#{c.orderId.slice(0, 8)}</TableCell>
-                    <TableCell className="text-sm">{c.customerName}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{c.outletName}</TableCell>
-                    <TableCell className="max-w-xs truncate text-sm text-muted-foreground">
-                      {c.description}
-                    </TableCell>
-                    <TableCell>
+                  <div key={c.id} className="rounded-xl border bg-card p-4 shadow-sm">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-semibold">#{c.orderId.slice(0, 8)}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">{c.customerName}</p>
+                      </div>
+
                       <Badge
                         variant="outline"
                         className={cn('text-xs', COMPLAINT_STATUS_COLOR[c.status])}
                       >
                         {COMPLAINT_STATUS_LABEL[c.status]}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {format(new Date(c.createdAt), 'dd MMM yyyy')}
-                    </TableCell>
-                    <TableCell className="text-right">
+                    </div>
+
+                    <div className="mt-4 grid gap-3 text-sm">
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                          Outlet
+                        </p>
+                        <p className="mt-1">{c.outletName || '\u2014'}</p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                          Description
+                        </p>
+                        <p className="mt-1 whitespace-normal">{c.description}</p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                          Filed
+                        </p>
+                        <p className="mt-1">{format(new Date(c.createdAt), 'dd MMM yyyy')}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
                       <ComplaintActions complaint={c} onUpdate={handleUpdate} />
-                    </TableCell>
-                  </TableRow>
+                    </div>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
+              </div>
+
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Order</TableHead>
+                      <TableHead>Customer</TableHead>
+                      <TableHead>Outlet</TableHead>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Filed</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {complaints.map((c) => (
+                      <TableRow key={c.id}>
+                        <TableCell className="font-medium">#{c.orderId.slice(0, 8)}</TableCell>
+                        <TableCell className="text-sm">{c.customerName}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{c.outletName}</TableCell>
+                        <TableCell className="max-w-xs truncate text-sm text-muted-foreground">
+                          {c.description}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={cn('text-xs', COMPLAINT_STATUS_COLOR[c.status])}
+                          >
+                            {COMPLAINT_STATUS_LABEL[c.status]}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {format(new Date(c.createdAt), 'dd MMM yyyy')}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <ComplaintActions complaint={c} onUpdate={handleUpdate} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
           )}
 
           {!isLoading && totalPages > 1 && (

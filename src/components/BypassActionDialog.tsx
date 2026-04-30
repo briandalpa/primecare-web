@@ -1,6 +1,7 @@
 import {
   AlertDialog,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogFooter,
@@ -70,9 +71,12 @@ export default function BypassActionDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent>
+      <AlertDialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>
+            Confirm the admin action and add a short explanation for the worker.
+          </AlertDialogDescription>
         </AlertDialogHeader>
 
         <div className="space-y-4">
