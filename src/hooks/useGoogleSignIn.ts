@@ -11,7 +11,7 @@ export function useGoogleSignIn() {
     try {
       await authClient.signIn.social({
         provider: 'google',
-        callbackURL: '/auth/google-callback',
+        callbackURL: `${import.meta.env.VITE_CLIENT_URL}/auth/google-callback`,
       });
       // Page redirects to Google; code below does not execute in redirect mode.
     } catch {
