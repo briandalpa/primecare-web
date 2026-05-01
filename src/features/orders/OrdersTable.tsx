@@ -59,7 +59,75 @@ export default function OrdersTable({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
+          <div className="space-y-4 md:hidden">
+            {isPending &&
+              Array.from({ length: 4 }).map((_, i) => (
+                <Card key={i} className="border border-border/60 shadow-none">
+                  <CardContent className="space-y-3 p-4">
+                    <Skeleton className="h-6 w-24" />
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-5 w-28 rounded-full" />
+                    <Skeleton className="h-4 w-24" />
+                  </CardContent>
+                </Card>
+              ))}
+
+            {!isPending && orders.length === 0 && (
+              <div className="py-8 text-center text-muted-foreground">
+                No orders found.
+              </div>
+            )}
+
+            {!isPending &&
+              orders.map((o) => (
+                <Card
+                  key={o.id}
+                  className="cursor-pointer border border-border/60 shadow-none transition-colors hover:bg-muted/20"
+                  onClick={() => onRowClick(o.id)}
+                >
+                  <CardContent className="space-y-3 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-lg font-semibold text-foreground">
+                          {resolveCustomerName(o)}
+                        </p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {o.outlet?.name ?? '—'}
+                        </p>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          'shrink-0 text-xs whitespace-nowrap',
+                          ORDER_STATUS_COLOR[o.status as OrderStatus],
+                        )}
+                      >
+                        {ORDER_STATUS_LABEL[o.status as OrderStatus] ?? o.status}
+                      </Badge>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <p className="text-muted-foreground">Weight</p>
+                        <p className="font-medium text-foreground">{o.totalWeightKg} kg</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Total</p>
+                        <p className="font-semibold text-foreground">
+                          Rp {o.totalPrice.toLocaleString('id-ID')}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-muted-foreground">
+                      {format(new Date(o.createdAt), 'dd MMM yyyy')}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+          </div>
+
+          <Table className="hidden md:table">
             <TableHeader>
               <TableRow>
                 <TableHead>Customer</TableHead>
