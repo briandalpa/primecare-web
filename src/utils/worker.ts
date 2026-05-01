@@ -78,13 +78,11 @@ export const WORKER_COPY = {
   stationQueueDescription: 'Orders currently visible for your station.',
   queueUpdatesTitle: 'Queue Updates',
   queueUpdatesBadge: 'badge',
-  queueUpdatesDescription:
-    'Updates in real time when a new order arrives at your station.',
+  queueUpdatesDescription: '',
   currentShiftTitle: 'Current Shift',
   currentShiftActive: 'On Duty',
   currentShiftInactive: 'Unavailable',
-  currentShiftDescription:
-    'Using the current worker active flag until shift-specific backend data is exposed.',
+  currentShiftDescription: '',
   statusLabel: 'Status',
   statusPlaceholder: 'All statuses',
   dateLabel: 'Process date',

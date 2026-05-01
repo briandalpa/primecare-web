@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import type { BypassRequest } from '@/types/bypassRequest';
 
 type Props = {
@@ -40,80 +41,163 @@ export default function BypassRequestTable({
   isLoading,
 }: Props) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Order</TableHead>
-          <TableHead>Worker</TableHead>
-          <TableHead>Station</TableHead>
-          <TableHead>Mismatch</TableHead>
-          <TableHead>Worker Notes</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Created</TableHead>
-          <TableHead>Action</TableHead>
-        </TableRow>
-      </TableHeader>
+    <div className="space-y-4">
+      <div className="space-y-3 md:hidden">
+        {data.length === 0 ? (
+          <div className="rounded-lg border border-dashed px-4 py-8 text-center text-sm text-muted-foreground">
+            No bypass requests found.
+          </div>
+        ) : (
+          data.map((item) => {
+            const status = statusMap[item.status];
 
-      <TableBody>
-        {data.map((item) => {
-          const status = statusMap[item.status];
+            return (
+              <Card key={item.id} className="rounded-xl shadow-sm">
+                <CardContent className="space-y-4 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold">{item.orderId || '-'}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{item.workerName || '-'}</p>
+                    </div>
 
-          return (
-            <TableRow key={item.id}>
-              <TableCell>
-                {item.orderId || '-'}
-              </TableCell>
+                    <Badge variant={status.variant}>{status.label}</Badge>
+                  </div>
 
-              <TableCell>
-                {item.workerName || '-'}
-              </TableCell>
+                  <div className="grid gap-3 text-sm">
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        Station
+                      </p>
+                      <p className="mt-1">{item.station || '-'}</p>
+                    </div>
 
-              <TableCell>
-                {item.station || '-'}
-              </TableCell>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        Mismatch Summary
+                      </p>
+                      <p className="mt-1 whitespace-normal">{formatMismatchSummary(item)}</p>
+                    </div>
 
-              <TableCell className="max-w-md whitespace-normal">
-                {formatMismatchSummary(item)}
-              </TableCell>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        Worker Notes
+                      </p>
+                      <p className="mt-1 whitespace-normal">{item.problemDescription || '-'}</p>
+                    </div>
 
-              <TableCell className="max-w-xs whitespace-normal">
-                {item.problemDescription || '-'}
-              </TableCell>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                        Created
+                      </p>
+                      <p className="mt-1">{new Date(item.createdAt).toLocaleString()}</p>
+                    </div>
+                  </div>
 
-              <TableCell>
-                <Badge variant={status.variant}>
-                  {status.label}
-                </Badge>
-              </TableCell>
+                  <div className="flex flex-col gap-2">
+                    <Button disabled={isLoading} onClick={() => onApprove(item.id)}>
+                      Approve
+                    </Button>
 
-              <TableCell>
-                {new Date(item.createdAt).toLocaleString()}
-              </TableCell>
+                    <Button
+                      variant="destructive"
+                      disabled={isLoading}
+                      onClick={() => onReject(item.id)}
+                    >
+                      Reject
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })
+        )}
+      </div>
 
-              <TableCell>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    disabled={isLoading}
-                    onClick={() => onApprove(item.id)}
-                  >
-                    Approve
-                  </Button>
-
-                  <Button
-                    size="sm"
-                    variant="destructive"
-                    disabled={isLoading}
-                    onClick={() => onReject(item.id)}
-                  >
-                    Reject
-                  </Button>
-                </div>
-              </TableCell>
+      <div className="hidden md:block">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Order</TableHead>
+              <TableHead>Worker</TableHead>
+              <TableHead>Station</TableHead>
+              <TableHead>Mismatch</TableHead>
+              <TableHead>Worker Notes</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Created</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+          </TableHeader>
+
+          <TableBody>
+            {data.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} className="py-8 text-center text-muted-foreground">
+                  No bypass requests found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              data.map((item) => {
+                const status = statusMap[item.status];
+
+                return (
+                  <TableRow key={item.id}>
+                    <TableCell>
+                      {item.orderId || '-'}
+                    </TableCell>
+
+                    <TableCell>
+                      {item.workerName || '-'}
+                    </TableCell>
+
+                    <TableCell>
+                      {item.station || '-'}
+                    </TableCell>
+
+                    <TableCell className="max-w-md whitespace-normal">
+                      {formatMismatchSummary(item)}
+                    </TableCell>
+
+                    <TableCell className="max-w-xs whitespace-normal">
+                      {item.problemDescription || '-'}
+                    </TableCell>
+
+                    <TableCell>
+                      <Badge variant={status.variant}>
+                        {status.label}
+                      </Badge>
+                    </TableCell>
+
+                    <TableCell>
+                      {new Date(item.createdAt).toLocaleString()}
+                    </TableCell>
+
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          disabled={isLoading}
+                          onClick={() => onApprove(item.id)}
+                        >
+                          Approve
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          disabled={isLoading}
+                          onClick={() => onReject(item.id)}
+                        >
+                          Reject
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
   );
 }
